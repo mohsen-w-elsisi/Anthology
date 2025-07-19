@@ -1,0 +1,12 @@
+name: anthology_server
+description: server package for anthology app
+version: 1.0.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0
