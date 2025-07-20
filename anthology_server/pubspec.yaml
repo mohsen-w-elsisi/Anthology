@@ -1,12 +1,15 @@
 name: anthology_server
 description: server package for anthology app
 version: 1.0.0
+publish_to: none
 
 environment:
   sdk: ^3.8.1
 
 dependencies:
   alfred: ^1.1.3
+  anthology_common:
+    path: ../anthology_common
 
 dev_dependencies:
   lints: ^5.0.0

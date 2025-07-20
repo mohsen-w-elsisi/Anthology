@@ -1,19 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:anthology_server/article.dart';
+import 'package:anthology_common/entities/article.dart';
+import 'package:anthology_common/article_data_gaetway.dart';
 
-class ArticleDataGateway {
+class LocalJsonArticleDataGateway extends ArticleDataGaetway {
   static const savesFIlePath = "./db/saves.json";
 
+  @override
   Future<void> save(Article article) async {
     final savedArticles = await _readJsonFile();
     final newArticles = <Article>[...savedArticles, article];
     _writeToJsonFile(newArticles);
   }
 
+  @override
   Future<List<Article>> getAll() {
     return _readJsonFile();
+  }
+
+  @override
+  Future<Article> get(String id) {
+    throw UnimplementedError();
   }
 
   Future<List<Article>> _readJsonFile() async {
@@ -29,7 +37,6 @@ class ArticleDataGateway {
     final articlesAsJson = jsonEncode([
       for (final article in artciles) article.toJson(),
     ]);
-
     await File(savesFIlePath).writeAsString(articlesAsJson);
   }
 }
