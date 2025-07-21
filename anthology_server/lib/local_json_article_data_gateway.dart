@@ -9,9 +9,9 @@ class LocalJsonArticleDataGateway extends ArticleDataGaetway {
 
   @override
   Future<void> save(Article article) async {
-    final savedArticles = await _readJsonFile();
-    final newArticles = <Article>[...savedArticles, article];
-    _writeToJsonFile(newArticles);
+    final articles = await _readJsonFile();
+    articles.add(article);
+    _writeToJsonFile(articles);
   }
 
   @override
@@ -20,8 +20,9 @@ class LocalJsonArticleDataGateway extends ArticleDataGaetway {
   }
 
   @override
-  Future<Article> get(String id) {
-    throw UnimplementedError();
+  Future<Article> get(String id) async {
+    var articles = await _readJsonFile();
+    return articles.singleWhere((art) => art.id == id);
   }
 
   Future<List<Article>> _readJsonFile() async {
