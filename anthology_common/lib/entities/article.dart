@@ -1,3 +1,8 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
+
+part 'article.g.dart';
+
+@CopyWith()
 class Article {
   final String id;
   final Uri uri;

@@ -3,15 +3,17 @@ import 'dart:io';
 
 import 'package:anthology_common/entities/article.dart';
 import 'package:anthology_common/article_data_gaetway.dart';
+import 'package:anthology_common/errors.dart';
 
 class LocalJsonArticleDataGateway extends ArticleDataGaetway {
   static const savesFIlePath = "./db/saves.json";
 
   @override
   Future<void> save(Article article) async {
+    assert(!(await _articleIsSaved(article.id)));
     final articles = await _readJsonFile();
     articles.add(article);
-    _writeToJsonFile(articles);
+    await _writeToJsonFile(articles);
   }
 
   @override
@@ -22,7 +24,45 @@ class LocalJsonArticleDataGateway extends ArticleDataGaetway {
   @override
   Future<Article> get(String id) async {
     var articles = await _readJsonFile();
-    return articles.singleWhere((art) => art.id == id);
+    try {
+      return articles.singleWhere((art) => art.id == id);
+    } on StateError {
+      throw ArticleNotFoundError(id);
+    }
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    final articles = await _readJsonFile();
+    final index = await _findArticleIndex(id);
+    articles.removeAt(index);
+    _writeToJsonFile(articles);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await _writeToJsonFile(<Article>[]);
+  }
+
+  @override
+  Future<void> markRead(String id) async {
+    final article = await get(id);
+    final readArticle = article.copyWith.read(true);
+    await _updateArticle(readArticle);
+  }
+
+  @override
+  Future<void> markUnread(String id) async {
+    final article = await get(id);
+    final readArticle = article.copyWith.read(false);
+    await _updateArticle(readArticle);
+  }
+
+  Future<void> _updateArticle(Article article) async {
+    final index = await _findArticleIndex(article.id);
+    final articles = await _readJsonFile();
+    articles[index] = article;
+    _writeToJsonFile(articles);
   }
 
   Future<List<Article>> _readJsonFile() async {
@@ -34,10 +74,26 @@ class LocalJsonArticleDataGateway extends ArticleDataGaetway {
     return savedArticles;
   }
 
-  Future<void> _writeToJsonFile(List<Article> artciles) async {
+  Future<void> _writeToJsonFile(List<Article> articles) async {
     final articlesAsJson = jsonEncode([
-      for (final article in artciles) article.toJson(),
+      for (final article in articles) article.toJson(),
     ]);
     await File(savesFIlePath).writeAsString(articlesAsJson);
+  }
+
+  Future<bool> _articleIsSaved(String id) async {
+    try {
+      await get(id);
+      return true;
+    } on ArticleNotFoundError {
+      return false;
+    }
+  }
+
+  Future<int> _findArticleIndex(String id) async {
+    final articles = await _readJsonFile();
+    final index = articles.indexWhere((article) => article.id == id);
+    if (index.isNegative) throw ArticleNotFoundError(id);
+    return index;
   }
 }
