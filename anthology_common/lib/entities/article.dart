@@ -47,7 +47,7 @@ class ArticleJsonDecoder {
   Article decode() {
     return Article(
       id: _json["id"],
-      uri: Uri.dataFromString(_json["uri"]),
+      uri: Uri.parse(_json["uri"]),
       tags: (_json["tags"] as Iterable).cast<String>().toSet(),
       dateSaved: DateTime.parse(_json["dateSaved"]),
       read: _json["read"],
