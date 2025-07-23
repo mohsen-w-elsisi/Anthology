@@ -39,10 +39,26 @@ void main() {
     read: false,
   );
 
+  final example2Article = Article(
+    uri: Uri.http("example.com"),
+    id: "example-2",
+    tags: {},
+    dateSaved: DateTime.now(),
+    read: false,
+  );
+
   Future<http.Response> requestSaveExampleArticle() async {
     return await http.post(
       apiUri(ApiUris.article),
       body: jsonEncode(exampleArticle.toJson()),
+      headers: {"content-type": "application/json"},
+    );
+  }
+
+  Future<http.Response> requestSaveExample2Article() async {
+    return await http.post(
+      apiUri(ApiUris.article),
+      body: jsonEncode(example2Article.toJson()),
       headers: {"content-type": "application/json"},
     );
   }
@@ -56,13 +72,17 @@ void main() {
     return Article.fromJson(jsonDecode(res.body));
   }
 
+  Future<http.Response> requestGetAllArticles() async {
+    return await http.get(apiUri(ApiUris.allArticles));
+  }
+
   group("checks that saving an article and getting it works", () {
     test('saving an article', () async {
       final res = await requestSaveExampleArticle();
       expect(res.statusCode, 200);
     });
 
-    test("getting an article", () async {
+    test("getting an article by its id", () async {
       await requestSaveExampleArticle();
       final res = await requestGetExampleArticle();
       expect(res.statusCode, 200);
@@ -94,6 +114,29 @@ void main() {
       expect(markResponse.statusCode, 200);
       final article = await getExampleArticleFromServer();
       expect(article.read, false);
+    });
+  });
+
+  group('deletion requests', () {
+    Future<http.Response> deleteExampleArticle() async {
+      return await http.delete(apiUri("${ApiUris.article}/example-1"));
+    }
+
+    test("deleting an article using its id", () async {
+      await requestSaveExampleArticle();
+      final res = await deleteExampleArticle();
+      expect(res.statusCode, 200);
+      final getRes = await requestGetExampleArticle();
+      expect(getRes.statusCode, 404);
+    });
+
+    test('deleteing all articles', () async {
+      await requestSaveExampleArticle();
+      await requestSaveExample2Article();
+      final res = await http.delete(apiUri(ApiUris.allArticles));
+      expect(res.statusCode, 200);
+      final getRes = await requestGetAllArticles();
+      expect(jsonDecode(getRes.body), isEmpty);
     });
   });
 }
