@@ -1,0 +1,19 @@
+{
+  "name": "anthology_briefing_server",
+  "version": "1.0.0",
+  "description": "an http server used to provide article summaries for anthology",
+  "main": "./build/index.js",
+  "author": "mohsen waheed elsisi",
+  "license": "ISC",
+  "scripts": {
+    "dev": "tsc; node .",
+    "build": "tsc"
+  },
+  "keywords": [
+    "anthology"
+  ],
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "@types/node": "^24.1.0"
+  }
+}
