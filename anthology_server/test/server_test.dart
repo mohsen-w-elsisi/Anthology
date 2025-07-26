@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:anthology_common/config/api_uris.dart';
-import 'package:anthology_common/entities/article.dart';
+import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_server/local_json_article_data_gateway.dart';
 import 'package:anthology_server/server_initer.dart';
 import 'package:test/test.dart';

@@ -1,6 +1,6 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 
-part 'article.g.dart';
+part 'entities.g.dart';
 
 @CopyWith()
 class Article {

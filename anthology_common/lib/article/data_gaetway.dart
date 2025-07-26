@@ -1,4 +1,4 @@
-import 'entities/article.dart';
+import 'entities.dart';
 
 abstract class ArticleDataGaetway {
   Future<Article> get(String id);

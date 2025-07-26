@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:anthology_common/entities/article.dart';
-import 'package:anthology_common/article_data_gaetway.dart';
+import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/errors.dart';
 
 class LocalJsonArticleDataGateway extends ArticleDataGaetway {

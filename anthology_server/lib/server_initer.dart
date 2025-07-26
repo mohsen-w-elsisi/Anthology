@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:alfred/alfred.dart';
 import 'package:anthology_common/config/api_uris.dart';
-import 'package:anthology_common/entities/article.dart';
+import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/errors.dart';
 
 import 'local_json_article_data_gateway.dart';
@@ -63,6 +63,10 @@ class ServerIniter {
       await _reportIfArticleNotFound(res, () async {
         await LocalJsonArticleDataGateway().markUnread(id);
       });
+    });
+
+    _alfred.get(ApiUris.articleBrief, (req, res) {
+      return 500;
     });
   }
 

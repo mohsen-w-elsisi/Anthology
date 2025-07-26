@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'article.dart';
+part of 'entities.dart';
 
 // **************************************************************************
 // CopyWithGenerator

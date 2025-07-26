@@ -7,4 +7,5 @@ class ApiUris {
   static const allArticles = "$apiBase/all-articles";
   static const markAsRead = "$apiBase/mark-read";
   static const markAsUnRead = "$apiBase/mark-unread";
+  static const articleBrief = "$apiBase/brief";
 }
