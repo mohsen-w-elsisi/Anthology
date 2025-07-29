@@ -8,7 +8,8 @@ app.use(express.text());
 const PORT = 8080;
 
 app.get("/", async (req, res) => {
-  const textUri = req.body;
+  const textUri = req.query["url"] as string;
+  console.log(`generating brief for ${textUri}`);
   const HTMLString = await fetchHTMLString(textUri);
   const brief = generateBrief(HTMLString);
   res.json(brief);

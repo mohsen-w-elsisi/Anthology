@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:alfred/alfred.dart';
+import 'package:anthology_server/article_brief_fetcher.dart';
 import 'package:anthology_common/config/api_uris.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/errors.dart';
@@ -65,8 +66,11 @@ class ServerIniter {
       });
     });
 
-    _alfred.get(ApiUris.articleBrief, (req, res) {
-      return 500;
+    _alfred.get("${ApiUris.articleBrief}/:id", (req, res) async {
+      return await _reportIfArticleNotFound(res, () async {
+        final id = req.params["id"] as String;
+        return await ArticleBriefFetcher(id).fetchBrief();
+      });
     });
   }
 
