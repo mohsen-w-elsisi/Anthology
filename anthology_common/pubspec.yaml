@@ -9,6 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   copy_with_extension: ^6.0.1
+  get_it: ^8.0.3
   # path: ^1.8.0
 
 dev_dependencies:

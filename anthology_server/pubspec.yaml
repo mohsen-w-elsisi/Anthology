@@ -11,6 +11,7 @@ dependencies:
   http: ^1.4.0
   anthology_common:
     path: ../anthology_common
+  get_it: ^8.0.3
 
 dev_dependencies:
   lints: ^5.0.0

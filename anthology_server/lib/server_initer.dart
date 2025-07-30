@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:alfred/alfred.dart';
-import 'package:anthology_server/article_brief_fetcher.dart';
+import 'package:anthology_common/article/data_gaetway.dart';
+import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_common/config/api_uris.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/errors.dart';
-
-import 'local_json_article_data_gateway.dart';
+import 'package:get_it/get_it.dart';
 
 class ServerIniter {
   final Alfred _alfred;
@@ -24,45 +24,45 @@ class ServerIniter {
 
     _alfred.get(
       ApiUris.allArticles,
-      (req, res) => LocalJsonArticleDataGateway().getAll(),
+      (req, res) => GetIt.I<ArticleDataGaetway>().getAll(),
     );
 
     _alfred.get("${ApiUris.article}/:id", (req, res) async {
       final id = req.params["id"];
       return await _reportIfArticleNotFound(res, () async {
-        return await LocalJsonArticleDataGateway().get(id);
+        return await GetIt.I<ArticleDataGaetway>().get(id);
       });
     });
 
     _alfred.post(ApiUris.article, (req, res) async {
       final json = await req.bodyAsJsonMap;
       final article = Article.fromJson(json);
-      await LocalJsonArticleDataGateway().save(article);
+      await GetIt.I<ArticleDataGaetway>().save(article);
       res.statusCode = 200;
     });
 
     _alfred.delete(ApiUris.allArticles, (req, res) async {
-      await LocalJsonArticleDataGateway().deleteAll();
+      await GetIt.I<ArticleDataGaetway>().deleteAll();
     });
 
     _alfred.delete("${ApiUris.article}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfArticleNotFound(res, () async {
-        await LocalJsonArticleDataGateway().delete(id);
+        await GetIt.I<ArticleDataGaetway>().delete(id);
       });
     });
 
     _alfred.put("${ApiUris.markAsRead}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfArticleNotFound(res, () async {
-        await LocalJsonArticleDataGateway().markRead(id);
+        await GetIt.I<ArticleDataGaetway>().markRead(id);
       });
     });
 
     _alfred.put("${ApiUris.markAsUnRead}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfArticleNotFound(res, () async {
-        await LocalJsonArticleDataGateway().markUnread(id);
+        await GetIt.I<ArticleDataGaetway>().markUnread(id);
       });
     });
 
