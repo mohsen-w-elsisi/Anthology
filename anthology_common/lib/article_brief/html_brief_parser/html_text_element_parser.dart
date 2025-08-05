@@ -2,20 +2,20 @@ import 'package:html/dom.dart';
 import 'package:anthology_common/article_brief/entities.dart';
 
 abstract class HtmlTextElementParser {
-  final Element _htmlElement;
+  final Element htmlElement;
 
-  HtmlTextElementParser(this._htmlElement) {
+  HtmlTextElementParser(this.htmlElement) {
     assert(
-      _htmlElement.localName == htmlTag,
+      htmlElement.localName == htmlTag,
       ElementParserMismatchError(
         parserTag: htmlTag,
-        elementTag: _htmlElement.localName!,
+        elementTag: htmlElement.localName!,
       ),
     );
   }
 
   TextNode parse() {
-    final elementText = _htmlElement.text;
+    final elementText = htmlElement.text;
     return TextNode(
       text: elementText,
       nodeType: nodeType,

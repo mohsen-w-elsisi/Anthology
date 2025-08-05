@@ -32,4 +32,6 @@ enum TextNodeType {
   heading5,
   heading6,
   body,
+  orderedList,
+  unorderedList,
 }

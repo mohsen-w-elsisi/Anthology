@@ -17,6 +17,8 @@ class HtmlTextParserFactory {
       "h4" => HtmlH4Parser(_htmlElement),
       "h5" => HtmlH5Parser(_htmlElement),
       "h6" => HtmlH6Parser(_htmlElement),
+      "ul" => HtmlUnorderdListParser(_htmlElement),
+      "ol" => HtmlOrderdListParser(_htmlElement),
       _ => throw UnimplementedError("No parser for tag $_htmlTag"),
     };
   }
