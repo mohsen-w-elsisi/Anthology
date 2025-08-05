@@ -69,7 +69,8 @@ class ServerIniter {
     _alfred.get("${ApiUris.articleBrief}/:id", (req, res) async {
       return await _reportIfArticleNotFound(res, () async {
         final id = req.params["id"] as String;
-        return await ArticleBriefFetcher(id).fetchBrief();
+        final brief = await ArticleBriefFetcher(id).fetchBrief();
+        return [for (final node in brief) node.text];
       });
     });
   }

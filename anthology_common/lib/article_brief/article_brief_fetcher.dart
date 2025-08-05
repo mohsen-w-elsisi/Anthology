@@ -1,15 +1,19 @@
 import 'package:anthology_common/article/data_gaetway.dart';
-import 'package:anthology_common/article_brief/generator.dart';
+import 'package:anthology_common/article_brief/entities.dart';
+import 'package:anthology_common/article_brief/html_brief_parser.dart';
 import 'package:get_it/get_it.dart';
+
+import 'generator.dart';
 
 class ArticleBriefFetcher {
   final String id;
   late final Uri _uri;
-  late final String _brief;
+  late final String _htmlBrief;
+  late final List<TextNode> _brief;
 
   ArticleBriefFetcher(this.id);
 
-  Future<String> fetchBrief() async {
+  Future<List<TextNode>> fetchBrief() async {
     await _getArticleUri();
     await _requestBriefHtml();
     _parseBriefHtml();
@@ -22,8 +26,12 @@ class ArticleBriefFetcher {
   }
 
   Future<void> _requestBriefHtml() async {
-    _brief = await GetIt.I<ArticleBriefHtmlGenerator>(param1: _uri).generate();
+    _htmlBrief = await GetIt.I<ArticleBriefHtmlGenerator>(
+      param1: _uri,
+    ).generate();
   }
 
-  void _parseBriefHtml() {} // useful in future
+  void _parseBriefHtml() {
+    _brief = Htmlbriefparser(_htmlBrief).parse();
+  }
 }
