@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:anthology_common/config/api_uris.dart';
-import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_server/local_json_article_data_gateway.dart';
 import 'package:test/test.dart';
-import 'package:http/http.dart' as http;
 
+import 'basic_http_requests.dart';
+import 'example_data.dart';
 import 'server_tests_setup.dart';
+import 'test_requests.dart';
 
 void main() {
   final serverTestsSetup = ServerTestsSetup(
@@ -16,119 +16,62 @@ void main() {
   setUp(serverTestsSetup.setupServer);
   tearDown(serverTestsSetup.tearDown);
 
-  Uri apiUri(String path) =>
-      Uri(scheme: "http", host: "localhost", port: 3000, path: path);
+  final baseRequests = BasicHttpRequests(serverTestsSetup.serverUri);
+  final testRequests = TestRequests(baseRequests);
 
   test("hello world", () async {
-    final res = await http.get(apiUri(ApiUris.apiBase));
+    final res = await baseRequests.helloWorld();
     expect(res.body, "hello world");
   });
 
-  final exampleArticle = Article(
-    uri: Uri.http("example.com"),
-    id: "example-1",
-    tags: {},
-    dateSaved: DateTime.now(),
-    read: false,
-  );
-
-  final example2Article = Article(
-    uri: Uri.http("example.com"),
-    id: "example-2",
-    tags: {},
-    dateSaved: DateTime.now(),
-    read: false,
-  );
-
-  Future<http.Response> requestSaveExampleArticle() async {
-    return await http.post(
-      apiUri(ApiUris.article),
-      body: jsonEncode(exampleArticle.toJson()),
-      headers: {"content-type": "application/json"},
-    );
-  }
-
-  Future<http.Response> requestSaveExample2Article() async {
-    return await http.post(
-      apiUri(ApiUris.article),
-      body: jsonEncode(example2Article.toJson()),
-      headers: {"content-type": "application/json"},
-    );
-  }
-
-  Future<http.Response> requestGetExampleArticle() async {
-    return await http.get(apiUri("${ApiUris.article}/example-1"));
-  }
-
-  Future<Article> getExampleArticleFromServer() async {
-    final res = await requestGetExampleArticle();
-    return Article.fromJson(jsonDecode(res.body));
-  }
-
-  Future<http.Response> requestGetAllArticles() async {
-    return await http.get(apiUri(ApiUris.allArticles));
-  }
-
   group("checks that saving an article and getting it works", () {
     test('saving an article', () async {
-      final res = await requestSaveExampleArticle();
+      final res = await testRequests.saveArticle1();
       expect(res.statusCode, 200);
     });
 
     test("getting an article by its id", () async {
-      await requestSaveExampleArticle();
-      final res = await requestGetExampleArticle();
+      await testRequests.saveArticle1();
+      final res = await testRequests.getArticle1();
       expect(res.statusCode, 200);
-      expect(res.body, jsonEncode(exampleArticle.toJson()));
+      expect(res.body, jsonEncode(ExampleData.article1.toJson()));
     });
   });
 
   group("articles are marked as read and unread", () {
-    Future<http.Response> markExampleAsRead() async {
-      return http.put(apiUri("${ApiUris.markAsRead}/example-1"));
-    }
-
-    Future<http.Response> markExampleAsUnread() async {
-      return http.put(apiUri("${ApiUris.markAsUnRead}/example-1"));
-    }
-
     test("article is marked as read", () async {
-      await requestSaveExampleArticle();
-      final markResponse = await markExampleAsRead();
+      await testRequests.saveArticle1();
+      final markResponse = await testRequests.markArticle1Read();
       expect(markResponse.statusCode, 200);
-      final article = await getExampleArticleFromServer();
+      final article = await testRequests.getArticle1AsArticle();
       expect(article.read, true);
     });
 
     test("article is marked as unread", () async {
-      await requestSaveExampleArticle();
-      await markExampleAsRead();
-      final markResponse = await markExampleAsUnread();
+      await testRequests.saveArticle1();
+      await testRequests.markArticle1Read();
+      final markResponse = await testRequests.markArticle1Unread();
       expect(markResponse.statusCode, 200);
-      final article = await getExampleArticleFromServer();
+      final article = await testRequests.getArticle1AsArticle();
       expect(article.read, false);
     });
   });
 
   group('deletion requests', () {
-    Future<http.Response> deleteExampleArticle() async {
-      return await http.delete(apiUri("${ApiUris.article}/example-1"));
-    }
-
     test("deleting an article using its id", () async {
-      await requestSaveExampleArticle();
-      final res = await deleteExampleArticle();
+      await testRequests.saveArticle1();
+      final res = await testRequests.deleteArticle1();
       expect(res.statusCode, 200);
-      final getRes = await requestGetExampleArticle();
+      final getRes = await testRequests.getArticle1();
       expect(getRes.statusCode, 404);
     });
 
     test('deleteing all articles', () async {
-      await requestSaveExampleArticle();
-      await requestSaveExample2Article();
-      final res = await http.delete(apiUri(ApiUris.allArticles));
+      await testRequests.saveArticle1();
+      await testRequests.saveArticle2();
+      final res = await baseRequests.deleteAllArticles();
       expect(res.statusCode, 200);
-      final getRes = await requestGetAllArticles();
+      final getRes = await baseRequests.getAllArticles();
       expect(jsonDecode(getRes.body), isEmpty);
     });
   });

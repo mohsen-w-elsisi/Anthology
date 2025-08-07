@@ -32,4 +32,6 @@ class ServerTestsSetup {
     _server.close();
     await GetIt.I.reset();
   }
+
+  Uri get serverUri => Uri(scheme: "http", host: "localhost", port: 3000);
 }
