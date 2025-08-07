@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/config/api_uris.dart';
+import 'package:anthology_common/highlight/entities.dart';
 import 'package:http/http.dart';
 
 class BasicHttpRequests {
@@ -34,4 +35,21 @@ class BasicHttpRequests {
 
   Future<Response> markUnread(String id) =>
       put(apiUri("${ApiUris.markAsUnRead}/$id"));
+
+  Future<Response> getAllHighlights() => get(apiUri(ApiUris.allHighlights));
+
+  Future<Response> getArticleHighlights(String id) =>
+      get(apiUri("${ApiUris.articleHighlights}/$id"));
+
+  Future<Response> getHighlight(String id) =>
+      get(apiUri("${ApiUris.highlight}/$id"));
+
+  Future<Response> saveHighlight(Highlight highlight) => post(
+    apiUri(ApiUris.highlight),
+    body: jsonEncode(highlight.toJson()),
+    headers: {"content-type": "application/json"},
+  );
+
+  Future<Response> deleteHighlight(String id) =>
+      delete(apiUri("${ApiUris.highlight}/$id"));
 }

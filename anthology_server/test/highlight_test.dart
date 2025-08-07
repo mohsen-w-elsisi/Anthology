@@ -1,0 +1,103 @@
+import 'dart:convert';
+
+import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/errors.dart';
+import 'package:anthology_common/highlight/data_gateway.dart';
+import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_server/local_json_article_data_gateway.dart';
+import 'package:get_it/get_it.dart';
+import 'package:test/test.dart';
+
+import 'basic_http_requests.dart';
+import 'example_data.dart';
+import 'server_tests_setup.dart';
+import 'test_requests.dart';
+
+void main() {
+  final serverTestsSetup = ServerTestsSetup(
+    articleDataGaetway: LocalJsonArticleDataGateway(),
+  );
+
+  setUp(serverTestsSetup.setupServer);
+  tearDown(serverTestsSetup.tearDown);
+
+  final testRequests = TestRequests(
+    BasicHttpRequests(serverTestsSetup.serverUri),
+  );
+
+  group("highlights CRUD functionallity", () {
+    test('saving highlights', () async {
+      final res = await testRequests.saveHighlight1();
+      expect(res.statusCode, 200);
+      await GetIt.I<HightlightDataGateway>().get(ExampleData.highlight1.id);
+    });
+
+    test('getting accurate highlights', () async {
+      await testRequests.saveHighlight1();
+      final res = await testRequests.getHighlight1();
+      expect(res.statusCode, 200);
+      final highlight = Highlight.fromJson(jsonDecode(res.body));
+      expect(
+        jsonEncode(highlight.toJson()),
+        jsonEncode(ExampleData.highlight1.toJson()),
+      );
+    });
+
+    test('deleting highlights', () async {
+      await testRequests.saveHighlight1();
+      await testRequests.saveHighlight2();
+      final res = await testRequests.deleteArticle1();
+      expect(res.statusCode, 200);
+      expect(
+        GetIt.I<HightlightDataGateway>().get(ExampleData.highlight1.id),
+        throwsA(isA<HighlightNotFoundError>()),
+      );
+      expect(
+        GetIt.I<HightlightDataGateway>().get(ExampleData.highlight2.id),
+        completes,
+      );
+    });
+
+    test('getting highlights for an article', () async {
+      await testRequests.saveHighlight1();
+      await testRequests.saveHighlight2();
+      final res = await testRequests.getHighlightsForArticle1();
+      expect(res.statusCode, 200);
+      final highlights = jsonDecode(res.body);
+      expect(highlights.length, 1);
+      final highlight = Highlight.fromJson(highlights[0]);
+      expect(highlight.id, ExampleData.highlight1.id);
+    });
+
+    test("getting higlights for all articles", () async {
+      await testRequests.saveHighlight1();
+      await testRequests.saveHighlight3();
+      final res = await testRequests.baseRequests.getAllHighlights();
+      expect(res.statusCode, 200);
+      final json = jsonDecode(res.body);
+      expect(json.length, 2);
+    });
+
+    test("getting all highlights sorts them correctly", () async {
+      await testRequests.saveHighlight1();
+      await testRequests.saveHighlight3();
+      final res = await testRequests.baseRequests.getAllHighlights();
+      final json = jsonDecode(res.body);
+      final parsedList = {
+        for (MapEntry<String, List<Json>> entry in json.entries)
+          entry.key: [
+            for (final highlightJson in entry.value)
+              Highlight.fromJson(highlightJson),
+          ],
+      };
+      expect(
+        parsedList[ExampleData.article1.id]?.first.id,
+        ExampleData.highlight1.id,
+      );
+      expect(
+        parsedList[ExampleData.article2.id]?.first.id,
+        ExampleData.highlight3.id,
+      );
+    });
+  });
+}

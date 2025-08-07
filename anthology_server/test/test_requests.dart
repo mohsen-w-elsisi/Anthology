@@ -39,4 +39,36 @@ class TestRequests {
   Future<Response> markArticle1Unread() {
     return baseRequests.markUnread(ExampleData.article1.id);
   }
+
+  Future<Response> saveHighlight1() {
+    return baseRequests.saveHighlight(ExampleData.highlight1);
+  }
+
+  Future<Response> getHighlight1() {
+    return baseRequests.getHighlight(ExampleData.highlight1.id);
+  }
+
+  Future<Response> deleteHighlight1() {
+    return baseRequests.deleteHighlight(ExampleData.highlight1.id);
+  }
+
+  Future<Response> saveHighlight2() {
+    return baseRequests.saveHighlight(ExampleData.highlight2);
+  }
+
+  Future<Response> getHighlight2() {
+    return baseRequests.getHighlight(ExampleData.highlight2.id);
+  }
+
+  Future<Response> deleteHighlight2() {
+    return baseRequests.deleteHighlight(ExampleData.highlight2.id);
+  }
+
+  Future<Response> saveHighlight3() {
+    return baseRequests.saveHighlight(ExampleData.highlight3);
+  }
+
+  Future<Response> getHighlightsForArticle1() {
+    return baseRequests.getArticleHighlights(ExampleData.article1.id);
+  }
 }

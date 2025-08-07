@@ -7,6 +7,8 @@ import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_common/config/api_uris.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/errors.dart';
+import 'package:anthology_common/highlight/data_gateway.dart';
+import 'package:anthology_common/highlight/entities.dart';
 import 'package:get_it/get_it.dart';
 
 class ServerIniter {
@@ -67,11 +69,50 @@ class ServerIniter {
     });
 
     _alfred.get("${ApiUris.articleBrief}/:id", (req, res) async {
+      final id = req.params["id"] as String;
       return await _reportIfArticleNotFound(res, () async {
-        final id = req.params["id"] as String;
         final brief = await ArticleBriefFetcher(id).fetchBrief();
         return [for (final node in brief) node.text];
       });
+    });
+
+    _alfred.get("${ApiUris.highlight}/:id", (req, res) async {
+      final id = req.params["id"];
+      return await _reportIfHighlightNotFound(res, () async {
+        final highlight = await GetIt.I<HightlightDataGateway>().get(id);
+        return highlight.toJson();
+      });
+    });
+
+    _alfred.post(ApiUris.highlight, (req, res) async {
+      final json = await req.bodyAsJsonMap;
+      final highlight = Highlight.fromJson(json);
+      await GetIt.I<HightlightDataGateway>().save(highlight);
+    });
+
+    _alfred.delete("${ApiUris.highlight}/:id", (req, res) async {
+      final id = req.params["id"];
+      await _reportIfHighlightNotFound(res, () async {
+        await GetIt.I<HightlightDataGateway>().delete(id);
+      });
+    });
+
+    _alfred.get("${ApiUris.articleHighlights}/:id", (req, res) async {
+      final articleId = req.params["id"];
+      return await _reportIfArticleNotFound(res, () async {
+        final highlights = await GetIt.I<HightlightDataGateway>()
+            .getArticleHighlights(articleId);
+        return [for (final highlight in highlights) highlight.toJson()];
+      });
+    });
+
+    _alfred.get(ApiUris.allHighlights, (req, res) async {
+      final highlights = await GetIt.I<HightlightDataGateway>().getAll();
+      final jsonHighlights = {
+        for (final highlight in highlights.entries)
+          highlight.key: highlight.value.toJson(),
+      };
+      return jsonHighlights;
     });
   }
 
@@ -87,6 +128,19 @@ Future _reportIfArticleNotFound(
   try {
     return await tryFunc();
   } on ArticleNotFoundError catch (error) {
+    res
+      ..statusCode = 404
+      ..write(error.message);
+  }
+}
+
+Future _reportIfHighlightNotFound(
+  HttpResponse res,
+  FutureOr Function() tryFunc,
+) async {
+  try {
+    return await tryFunc();
+  } on HighlightNotFoundError catch (error) {
     res
       ..statusCode = 404
       ..write(error.message);
