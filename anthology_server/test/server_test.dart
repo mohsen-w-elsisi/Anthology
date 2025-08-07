@@ -1,30 +1,23 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:anthology_common/config/api_uris.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_server/local_json_article_data_gateway.dart';
-import 'package:anthology_server/server_initer.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
 
+import 'server_tests_setup.dart';
+
 void main() {
-  late HttpServer server;
+  final serverTestsSetup = ServerTestsSetup(
+    articleDataGaetway: LocalJsonArticleDataGateway(),
+  );
 
-  setUp(() async {
-    await LocalJsonArticleDataGateway().deleteAll();
-    final serverIniter = ServerIniter();
-    await serverIniter.startServer();
-    server = serverIniter.server;
-  });
-
-  tearDown(() async {
-    await LocalJsonArticleDataGateway().deleteAll();
-    server.close();
-  });
+  setUp(serverTestsSetup.setupServer);
+  tearDown(serverTestsSetup.tearDown);
 
   Uri apiUri(String path) =>
-      Uri(scheme: "http", host: "localhost", port: server.port, path: path);
+      Uri(scheme: "http", host: "localhost", port: 3000, path: path);
 
   test("hello world", () async {
     final res = await http.get(apiUri(ApiUris.apiBase));
