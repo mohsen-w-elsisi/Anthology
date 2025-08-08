@@ -1,22 +1,23 @@
 import 'dart:convert';
 
+import 'package:anthology_common/server_request_interface.dart';
 import 'package:anthology_server/local_json_article_data_gateway.dart';
+import 'package:anthology_server/local_json_highligh_data_gateway.dart';
 import 'package:test/test.dart';
 
-import 'basic_http_requests.dart';
-import 'example_data.dart';
 import 'server_tests_setup.dart';
 import 'test_requests.dart';
 
 void main() {
   final serverTestsSetup = ServerTestsSetup(
     articleDataGaetway: LocalJsonArticleDataGateway(),
+    highlightDataGaetway: LocalJsonHighlighDataGateway(),
   );
 
   setUp(serverTestsSetup.setupServer);
   tearDown(serverTestsSetup.tearDown);
 
-  final baseRequests = BasicHttpRequests(serverTestsSetup.serverUri);
+  final baseRequests = ServerRequestInterface(serverTestsSetup.serverUri);
   final testRequests = TestRequests(baseRequests);
 
   test("hello world", () async {

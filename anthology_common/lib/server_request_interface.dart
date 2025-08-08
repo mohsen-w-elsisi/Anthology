@@ -5,10 +5,10 @@ import 'package:anthology_common/config/api_uris.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:http/http.dart';
 
-class BasicHttpRequests {
+class ServerRequestInterface {
   final Uri _serverBaseUri;
 
-  BasicHttpRequests(this._serverBaseUri);
+  ServerRequestInterface(this._serverBaseUri);
 
   Uri apiUri(String path) => _serverBaseUri.replace(path: path);
 

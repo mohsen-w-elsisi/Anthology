@@ -1,18 +1,17 @@
 import 'dart:convert';
 
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_common/server_request_interface.dart';
 import 'package:http/http.dart';
 
-import 'basic_http_requests.dart';
-import 'example_data.dart';
-
 class TestRequests {
-  final BasicHttpRequests baseRequests;
+  final ServerRequestInterface serverRequestInterface;
 
-  TestRequests(this.baseRequests);
+  TestRequests(this.serverRequestInterface);
 
   Future<Response> getArticle1() {
-    return baseRequests.getArticle(ExampleData.article1.id);
+    return serverRequestInterface.getArticle(ExampleData.article1.id);
   }
 
   Future<Article> getArticle1AsArticle() async {
@@ -21,54 +20,96 @@ class TestRequests {
   }
 
   Future<Response> saveArticle1() {
-    return baseRequests.postArticle(ExampleData.article1);
+    return serverRequestInterface.postArticle(ExampleData.article1);
   }
 
   Future<Response> saveArticle2() {
-    return baseRequests.postArticle(ExampleData.article2);
+    return serverRequestInterface.postArticle(ExampleData.article2);
   }
 
   Future<Response> deleteArticle1() {
-    return baseRequests.deleteArticle(ExampleData.article1.id);
+    return serverRequestInterface.deleteArticle(ExampleData.article1.id);
   }
 
   Future<Response> markArticle1Read() {
-    return baseRequests.markRead(ExampleData.article1.id);
+    return serverRequestInterface.markRead(ExampleData.article1.id);
   }
 
   Future<Response> markArticle1Unread() {
-    return baseRequests.markUnread(ExampleData.article1.id);
+    return serverRequestInterface.markUnread(ExampleData.article1.id);
   }
 
   Future<Response> saveHighlight1() {
-    return baseRequests.saveHighlight(ExampleData.highlight1);
+    return serverRequestInterface.saveHighlight(ExampleData.highlight1);
   }
 
   Future<Response> getHighlight1() {
-    return baseRequests.getHighlight(ExampleData.highlight1.id);
+    return serverRequestInterface.getHighlight(ExampleData.highlight1.id);
   }
 
   Future<Response> deleteHighlight1() {
-    return baseRequests.deleteHighlight(ExampleData.highlight1.id);
+    return serverRequestInterface.deleteHighlight(ExampleData.highlight1.id);
   }
 
   Future<Response> saveHighlight2() {
-    return baseRequests.saveHighlight(ExampleData.highlight2);
+    return serverRequestInterface.saveHighlight(ExampleData.highlight2);
   }
 
   Future<Response> getHighlight2() {
-    return baseRequests.getHighlight(ExampleData.highlight2.id);
+    return serverRequestInterface.getHighlight(ExampleData.highlight2.id);
   }
 
   Future<Response> deleteHighlight2() {
-    return baseRequests.deleteHighlight(ExampleData.highlight2.id);
+    return serverRequestInterface.deleteHighlight(ExampleData.highlight2.id);
   }
 
   Future<Response> saveHighlight3() {
-    return baseRequests.saveHighlight(ExampleData.highlight3);
+    return serverRequestInterface.saveHighlight(ExampleData.highlight3);
   }
 
   Future<Response> getHighlightsForArticle1() {
-    return baseRequests.getArticleHighlights(ExampleData.article1.id);
+    return serverRequestInterface.getArticleHighlights(ExampleData.article1.id);
   }
+}
+
+class ExampleData {
+  static final article1 = Article(
+    uri: Uri.http("example.com"),
+    id: "example-1",
+    tags: {},
+    dateSaved: DateTime.now(),
+    read: false,
+  );
+
+  static final article2 = Article(
+    uri: Uri.http("example.com"),
+    id: "example-2",
+    tags: {},
+    dateSaved: DateTime.now(),
+    read: false,
+  );
+
+  static final highlight1 = Highlight(
+    id: 'example-1.1',
+    articleId: 'example-1',
+    text: 'T',
+    startIndex: 0,
+    endIndex: 0,
+  );
+
+  static final highlight2 = Highlight(
+    id: 'example-1.2',
+    articleId: 'example-1',
+    text: 'domain is for use',
+    startIndex: 5,
+    endIndex: 21,
+  );
+
+  static final highlight3 = Highlight(
+    id: 'example-2.1',
+    articleId: 'example-2',
+    text: 'hi',
+    startIndex: 1,
+    endIndex: 2,
+  );
 }

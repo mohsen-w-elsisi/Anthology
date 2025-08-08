@@ -109,8 +109,10 @@ class ServerIniter {
     _alfred.get(ApiUris.allHighlights, (req, res) async {
       final highlights = await GetIt.I<HightlightDataGateway>().getAll();
       final jsonHighlights = {
-        for (final highlight in highlights.entries)
-          highlight.key: highlight.value.toJson(),
+        for (final highlightEntry in highlights.entries)
+          highlightEntry.key: [
+            for (final highlight in highlightEntry.value) highlight.toJson(),
+          ],
       };
       return jsonHighlights;
     });
