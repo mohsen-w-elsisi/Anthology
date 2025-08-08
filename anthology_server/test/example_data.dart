@@ -19,7 +19,7 @@ class ExampleData {
   );
 
   static final highlight1 = Highlight(
-    id: 'example-1/1',
+    id: 'example-1.1',
     articleId: 'example-1',
     text: 'T',
     startIndex: 0,
@@ -27,7 +27,7 @@ class ExampleData {
   );
 
   static final highlight2 = Highlight(
-    id: 'example-1/2',
+    id: 'example-1.2',
     articleId: 'example-1',
     text: 'domain is for use',
     startIndex: 5,
@@ -35,7 +35,7 @@ class ExampleData {
   );
 
   static final highlight3 = Highlight(
-    id: 'example-2/1',
+    id: 'example-2.1',
     articleId: 'example-2',
     text: 'hi',
     startIndex: 1,

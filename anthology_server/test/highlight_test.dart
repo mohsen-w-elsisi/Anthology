@@ -5,6 +5,7 @@ import 'package:anthology_common/errors.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_server/local_json_article_data_gateway.dart';
+import 'package:anthology_server/local_json_highligh_data_gateway.dart';
 import 'package:get_it/get_it.dart';
 import 'package:test/test.dart';
 
@@ -16,6 +17,7 @@ import 'test_requests.dart';
 void main() {
   final serverTestsSetup = ServerTestsSetup(
     articleDataGaetway: LocalJsonArticleDataGateway(),
+    highlightDataGaetway: LocalJsonHighlighDataGateway(),
   );
 
   setUp(serverTestsSetup.setupServer);
@@ -46,7 +48,7 @@ void main() {
     test('deleting highlights', () async {
       await testRequests.saveHighlight1();
       await testRequests.saveHighlight2();
-      final res = await testRequests.deleteArticle1();
+      final res = await testRequests.deleteHighlight1();
       expect(res.statusCode, 200);
       expect(
         GetIt.I<HightlightDataGateway>().get(ExampleData.highlight1.id),
@@ -61,10 +63,11 @@ void main() {
     test('getting highlights for an article', () async {
       await testRequests.saveHighlight1();
       await testRequests.saveHighlight2();
+      await testRequests.saveHighlight3();
       final res = await testRequests.getHighlightsForArticle1();
       expect(res.statusCode, 200);
       final highlights = jsonDecode(res.body);
-      expect(highlights.length, 1);
+      expect(highlights.length, 2);
       final highlight = Highlight.fromJson(highlights[0]);
       expect(highlight.id, ExampleData.highlight1.id);
     });
@@ -82,9 +85,9 @@ void main() {
       await testRequests.saveHighlight1();
       await testRequests.saveHighlight3();
       final res = await testRequests.baseRequests.getAllHighlights();
-      final json = jsonDecode(res.body);
+      final json = (jsonDecode(res.body) as Map).cast<String, List>();
       final parsedList = {
-        for (MapEntry<String, List<Json>> entry in json.entries)
+        for (MapEntry<String, List> entry in json.entries)
           entry.key: [
             for (final highlightJson in entry.value)
               Highlight.fromJson(highlightJson),
