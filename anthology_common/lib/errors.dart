@@ -9,3 +9,9 @@ class HighlightNotFoundError extends StateError {
 
   HighlightNotFoundError(this.id) : super("highlight with id $id not saved");
 }
+
+class FeedNotFoundError extends StateError {
+  final String id;
+
+  FeedNotFoundError(this.id) : super("feed with id $id not saved");
+}

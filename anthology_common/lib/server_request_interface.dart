@@ -60,21 +60,21 @@ mixin _HighlightRequestInterface on _ApiUri {
 }
 
 mixin _FeedRequestInterface on _ApiUri {
-  Future<Response> getFeeds() => get(apiUri(ApiUris.feeds));
+  Future<Response> getFeeds() => get(apiUri(ApiUris.feed));
 
   Future<Response> getFeedItems(String feedId) =>
-      get(apiUri("${ApiUris.feeds}/$feedId"));
+      get(apiUri("${ApiUris.feed}/$feedId"));
 
   Future<Response> createFeed(Feed feed) => post(
-    apiUri(ApiUris.feeds),
+    apiUri(ApiUris.feed),
     body: jsonEncode(feed.toJson()),
     headers: {"content-type": "application/json"},
   );
 
   Future<Response> deleteFeed(String feedId) =>
-      delete(apiUri("${ApiUris.feeds}/$feedId"));
+      delete(apiUri("${ApiUris.feed}/$feedId"));
 
-  Future<Response> deleteAllFeeds() => delete(apiUri(ApiUris.feeds));
+  Future<Response> deleteAllFeeds() => delete(apiUri(ApiUris.feed));
 
   Future<Response> markFeedItemsSeen(String feedId) =>
       put(apiUri("${ApiUris.markFeedSeen}/$feedId"));

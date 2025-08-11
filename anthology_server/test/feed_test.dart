@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:anthology_common/feed/data_gateway.dart';
 import 'package:anthology_common/feed/entities.dart';
+import 'package:anthology_server/data_gateways/local_json_feed_data_gateway.dart';
 import 'package:get_it/get_it.dart';
 import 'package:test/test.dart';
 import 'package:anthology_common/server_request_interface.dart';
@@ -10,7 +11,9 @@ import 'server_tests_setup.dart';
 import 'test_requests.dart';
 
 void main() {
-  final serverTestsSetup = ServerTestsSetup();
+  final serverTestsSetup = ServerTestsSetup(
+    feedDataGateway: LocalJsonFeedDataGateway(),
+  );
 
   setUp(serverTestsSetup.setupServer);
   tearDown(serverTestsSetup.tearDown);

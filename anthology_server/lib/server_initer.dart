@@ -7,6 +7,8 @@ import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_common/config/api_uris.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/errors.dart';
+import 'package:anthology_common/feed/data_gateway.dart';
+import 'package:anthology_common/feed/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:get_it/get_it.dart';
@@ -116,6 +118,38 @@ class ServerIniter {
       };
       return jsonHighlights;
     });
+
+    _alfred.get(ApiUris.feed, (req, res) {
+      return GetIt.I<FeedDataGateway>().getAll();
+    });
+
+    _alfred.get('${ApiUris.feed}/:id', (req, res) {
+      final id = req.params['id'] as String;
+      return _reportIfFeedNotFound(res, () {
+        return GetIt.I<FeedDataGateway>().get(id);
+      });
+    });
+
+    _alfred.post(ApiUris.feed, (req, res) async {
+      final json = await req.bodyAsJsonMap;
+      final feed = Feed.fromJson(json);
+      await GetIt.I<FeedDataGateway>().save(feed);
+    });
+
+    _alfred.delete('${ApiUris.feed}/:id', (req, res) async {
+      final id = req.params['id'] as String;
+      await _reportIfFeedNotFound(res, () async {
+        await GetIt.I<FeedDataGateway>().delete(id);
+      });
+    });
+
+    _alfred.delete(ApiUris.feed, (req, res) async {
+      await GetIt.I<FeedDataGateway>().deleteAll();
+    });
+
+    _alfred.put('${ApiUris.feed}/seen/:id', (req, res) async {
+      return 500; // TODO: Implement mark feed as seen
+    });
   }
 
   Future<void> startServer() async {
@@ -130,6 +164,19 @@ Future _reportIfArticleNotFound(
   try {
     return await tryFunc();
   } on ArticleNotFoundError catch (error) {
+    res
+      ..statusCode = 404
+      ..write(error.message);
+  }
+}
+
+Future _reportIfFeedNotFound(
+  HttpResponse res,
+  FutureOr Function() tryFunc,
+) async {
+  try {
+    return await tryFunc();
+  } on FeedNotFoundError catch (error) {
     res
       ..statusCode = 404
       ..write(error.message);

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:anthology_common/errors.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_server/local_json_highligh_data_gateway.dart';
+import 'package:anthology_server/data_gateways/local_json_highligh_data_gateway.dart';
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:get_it/get_it.dart';
 import 'package:test/test.dart';
