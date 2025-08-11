@@ -2,3 +2,4 @@
 build
 .vscode
 anthology_briefing_server/node_modules
+**/db
