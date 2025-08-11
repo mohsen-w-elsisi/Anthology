@@ -14,7 +14,6 @@ import 'test_requests.dart';
 
 void main() {
   final serverTestsSetup = ServerTestsSetup(
-    articleDataGaetway: LocalJsonArticleDataGateway(),
     highlightDataGaetway: LocalJsonHighlighDataGateway(),
   );
 

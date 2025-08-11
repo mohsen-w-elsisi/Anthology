@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:anthology_server/local_json_article_data_gateway.dart';
-import 'package:anthology_server/local_json_highligh_data_gateway.dart';
 import 'package:test/test.dart';
 
 import 'server_tests_setup.dart';
@@ -11,7 +10,6 @@ import 'test_requests.dart';
 void main() {
   final serverTestsSetup = ServerTestsSetup(
     articleDataGaetway: LocalJsonArticleDataGateway(),
-    highlightDataGaetway: LocalJsonHighlighDataGateway(),
   );
 
   setUp(serverTestsSetup.setupServer);
