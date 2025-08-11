@@ -14,4 +14,7 @@ class ApiUris {
   static const highlight = "$apiBase/highlight";
   static const articleHighlights = "$article/highlights";
   static const allHighlights = "$apiBase/all-highlight";
+
+  static const feeds = "$apiBase/feed";
+  static const markFeedSeen = "$feeds/seen";
 }

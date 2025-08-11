@@ -7,13 +7,13 @@ class Feed {
   final String id;
   final String name;
   final FeedType type;
-  final Uint8List? data;
+  final Uint8List data;
 
   const Feed({
     required this.id,
     required this.name,
     required this.type,
-    this.data,
+    required this.data,
   });
 
   factory Feed.fromJson(Map<String, dynamic> json) =>

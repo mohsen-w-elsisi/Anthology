@@ -10,7 +10,7 @@ class _FeedJsonEncoder {
       'id': feed.id,
       'name': feed.name,
       'type': feed.type.name,
-      if (feed.data != null) 'data': base64Encode(feed.data!),
+      'data': base64Encode(feed.data),
     };
   }
 }
@@ -25,7 +25,7 @@ class _FeedJsonDecoder {
       id: json['id'] as String,
       name: json['name'] as String,
       type: FeedType.values.byName(json['type'] as String),
-      data: json['data'] != null ? base64Decode(json['data'] as String) : null,
+      data: base64Decode(json['data'] as String),
     );
   }
 }

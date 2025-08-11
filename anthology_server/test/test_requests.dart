@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/feed/entities.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:http/http.dart';
@@ -70,6 +72,31 @@ class TestRequests {
   Future<Response> getHighlightsForArticle1() {
     return serverRequestInterface.getArticleHighlights(ExampleData.article1.id);
   }
+
+  // Feed related requests
+  Future<Response> saveFeed1() {
+    return serverRequestInterface.createFeed(ExampleData.feed1);
+  }
+
+  Future<Response> saveFeed2() {
+    return serverRequestInterface.createFeed(ExampleData.feed2);
+  }
+
+  Future<Response> getFeed1() {
+    return serverRequestInterface.getFeedItems(ExampleData.feed1.id);
+  }
+
+  Future<Response> getFeed2() {
+    return serverRequestInterface.getFeedItems(ExampleData.feed2.id);
+  }
+
+  Future<Response> deleteFeed1() {
+    return serverRequestInterface.deleteFeed(ExampleData.feed1.id);
+  }
+
+  Future<Response> deleteAllFeeds() {
+    return serverRequestInterface.deleteAllFeeds();
+  }
 }
 
 class ExampleData {
@@ -111,5 +138,19 @@ class ExampleData {
     text: 'hi',
     startIndex: 1,
     endIndex: 2,
+  );
+
+  static final feed1 = Feed(
+    id: 'feed-1',
+    name: 'Feed 1',
+    type: FeedType.rss,
+    data: Uint8List(0),
+  );
+
+  static final feed2 = Feed(
+    id: 'feed-2',
+    name: 'Feed 2',
+    type: FeedType.rss,
+    data: Uint8List(0),
   );
 }
