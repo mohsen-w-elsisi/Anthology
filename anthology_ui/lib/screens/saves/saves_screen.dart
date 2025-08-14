@@ -1,3 +1,4 @@
+import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
@@ -14,7 +15,10 @@ class SavesScreen extends StatelessWidget {
         actions: const [SettingsButton()],
       ),
       body: ListView(
-        children: [const SaveCard()],
+        children: [
+          SaveCard(_article1),
+          SaveCard(_article2),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -24,3 +28,19 @@ class SavesScreen extends StatelessWidget {
     );
   }
 }
+
+final _article1 = Article(
+  uri: Uri.http("example.com"),
+  id: "example-1",
+  tags: {},
+  dateSaved: DateTime.now(),
+  read: false,
+);
+
+final _article2 = Article(
+  uri: Uri.http("reddit.com"),
+  id: "example-2",
+  tags: {},
+  dateSaved: DateTime.now(),
+  read: false,
+);

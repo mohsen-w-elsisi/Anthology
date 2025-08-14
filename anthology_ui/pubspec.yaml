@@ -7,8 +7,12 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
+  anthology_common:
+    path: /home/mohsen/apps/Anthology/anthology_common
   flutter:
     sdk: flutter
+  html: ^0.15.6
+  http: ^1.5.0
   page_transition: ^2.2.1
 
 dev_dependencies:
