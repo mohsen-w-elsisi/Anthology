@@ -14,18 +14,49 @@ class SavesScreen extends StatelessWidget {
         title: const Text('Saves'),
         actions: const [SettingsButton()],
       ),
-      body: ListView(
-        children: [
-          SaveCard(_article1),
-          SaveCard(_article2),
-        ],
-      ),
+      body: SaveCardsView([_article1, _article2]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: const BottomAppNavigation(),
     );
+  }
+}
+
+class SaveCardsView extends StatelessWidget {
+  static const _maximumColumnWidth = 450;
+  static const _cardArea = 100000;
+
+  final List<Article> articles;
+
+  const SaveCardsView(this.articles, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cards = [for (final article in articles) SaveCard(article)];
+    return LayoutBuilder(
+      builder: (_, contraints) {
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _columnsCount(contraints),
+            mainAxisExtent: _rowHeight(contraints),
+          ),
+          itemBuilder: (_, i) => cards[i],
+          itemCount: cards.length,
+        );
+      },
+    );
+  }
+
+  int _columnsCount(BoxConstraints constraints) {
+    final calculatedWidth = (constraints.maxWidth ~/ _maximumColumnWidth);
+    return calculatedWidth == 0 ? 1 : calculatedWidth;
+  }
+
+  double _rowHeight(BoxConstraints constraints) {
+    final cardWidth = (constraints.maxWidth ~/ _columnsCount(constraints));
+    return _cardArea / cardWidth;
   }
 }
 
