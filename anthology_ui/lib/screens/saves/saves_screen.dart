@@ -1,8 +1,10 @@
+import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'new_save_modal.dart';
 
@@ -16,7 +18,11 @@ class SavesScreen extends StatelessWidget {
         title: const Text('Saves'),
         actions: const [SettingsButton()],
       ),
-      body: SaveCardsView([_article1, _article2]),
+      body: FutureBuilder(
+        future: GetIt.I<ArticleDataGaetway>().getAll(),
+        initialData: <Article>[],
+        builder: (_, asyncSnapshot) => SaveCardsView(asyncSnapshot.data!),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => NewSaveModal().show(context),
         child: const Icon(Icons.add),
@@ -61,19 +67,3 @@ class SaveCardsView extends StatelessWidget {
     return _cardArea / cardWidth;
   }
 }
-
-final _article1 = Article(
-  uri: Uri.http("example.com"),
-  id: "example-1",
-  tags: {},
-  dateSaved: DateTime.now(),
-  read: false,
-);
-
-final _article2 = Article(
-  uri: Uri.http("reddit.com"),
-  id: "example-2",
-  tags: {},
-  dateSaved: DateTime.now(),
-  read: false,
-);

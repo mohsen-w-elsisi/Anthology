@@ -11,6 +11,7 @@ dependencies:
     path: /home/mohsen/apps/Anthology/anthology_common
   flutter:
     sdk: flutter
+  get_it: ^8.2.0
   html: ^0.15.6
   http: ^1.5.0
   page_transition: ^2.2.1

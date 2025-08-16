@@ -1,7 +1,10 @@
 import 'package:anthology_ui/screens/saves/saves_screen.dart';
 import 'package:flutter/material.dart';
 
+import 'app_dependency_initer.dart';
+
 void main() {
+  AppDependencyIniter.init();
   runApp(const MainApp());
 }
 

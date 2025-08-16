@@ -1,4 +1,7 @@
+import 'package:anthology_common/article/data_gaetway.dart';
+import 'package:anthology_common/article/entities.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class NewSaveModal extends StatefulWidget {
   const NewSaveModal({super.key});
@@ -90,7 +93,14 @@ class _NewSaveModalState extends State<NewSaveModal> {
       caseSensitive: false,
     );
     if (urlRegex.hasMatch(inputText)) {
-      // _saveArticle();
+      final article = Article(
+        uri: Uri.parse(inputText),
+        id: DateTime.now().toIso8601String(),
+        tags: {},
+        dateSaved: DateTime.now(),
+        read: false,
+      );
+      GetIt.I<ArticleDataGaetway>().save(article);
       Navigator.pop(context);
     } else {
       setState(() => _showInvalidUriText = true);
