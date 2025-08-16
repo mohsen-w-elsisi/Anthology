@@ -4,6 +4,8 @@ import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:flutter/material.dart';
 
+import 'new_save_modal.dart';
+
 class SavesScreen extends StatelessWidget {
   const SavesScreen({super.key});
 
@@ -16,7 +18,7 @@ class SavesScreen extends StatelessWidget {
       ),
       body: SaveCardsView([_article1, _article2]),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => NewSaveModal().show(context),
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: const BottomAppNavigation(),
