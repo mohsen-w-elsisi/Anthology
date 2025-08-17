@@ -21,7 +21,7 @@ class ArticleBriefFetcher {
   }
 
   Future<void> _getArticleUri() async {
-    final article = await GetIt.I<ArticleDataGaetway>().get(id);
+    final article = await GetIt.I<ArticleDataGateway>().get(id);
     _uri = article.uri;
   }
 

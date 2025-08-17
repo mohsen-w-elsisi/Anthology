@@ -9,6 +9,7 @@ environment:
 dependencies:
   anthology_common:
     path: /home/mohsen/apps/Anthology/anthology_common
+  collection: ^1.19.1
   flutter:
     sdk: flutter
   get_it: ^8.2.0

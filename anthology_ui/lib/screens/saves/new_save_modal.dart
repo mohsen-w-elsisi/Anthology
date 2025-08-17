@@ -100,7 +100,7 @@ class _NewSaveModalState extends State<NewSaveModal> {
         dateSaved: DateTime.now(),
         read: false,
       );
-      GetIt.I<ArticleDataGaetway>().save(article);
+      GetIt.I<ArticleDataGateway>().save(article);
       Navigator.pop(context);
     } else {
       setState(() => _showInvalidUriText = true);

@@ -1,6 +1,6 @@
 import 'entities.dart';
 
-abstract class ArticleDataGaetway {
+abstract class ArticleDataGateway {
   Future<Article> get(String id);
   Future<List<Article>> getAll();
   Future<void> save(Article article);

@@ -29,7 +29,14 @@ class _SaveCardState extends State<SaveCard> {
         return Card(
           child: ListTile(
             title: Text(_metaDataFetcher.title),
-            subtitle: Text("${widget.article.uri.host} • 0 hgihilights"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("${widget.article.uri.host} • 0 hgihilights"),
+                const SizedBox(height: 8),
+                _tagChips,
+              ],
+            ),
             trailing: _image(),
           ),
         );
@@ -50,4 +57,15 @@ class _SaveCardState extends State<SaveCard> {
       );
     }
   }
+
+  Widget get _tagChips => Wrap(
+    children: [
+      for (final tag in widget.article.tags)
+        Chip(
+          visualDensity: VisualDensity.compact,
+          label: Text(tag),
+          labelStyle: Theme.of(context).textTheme.labelSmall,
+        ),
+    ],
+  );
 }

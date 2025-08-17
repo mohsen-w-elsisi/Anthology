@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'app_dependency_initer.dart';
 
-void main() {
-  AppDependencyIniter.init();
+void main() async {
+  await AppDependencyIniter.init();
   runApp(const MainApp());
 }
 

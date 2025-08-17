@@ -28,45 +28,45 @@ class ServerIniter {
 
     _alfred.get(
       ApiUris.allArticles,
-      (req, res) => GetIt.I<ArticleDataGaetway>().getAll(),
+      (req, res) => GetIt.I<ArticleDataGateway>().getAll(),
     );
 
     _alfred.get("${ApiUris.article}/:id", (req, res) async {
       final id = req.params["id"];
       return await _reportIfArticleNotFound(res, () async {
-        return await GetIt.I<ArticleDataGaetway>().get(id);
+        return await GetIt.I<ArticleDataGateway>().get(id);
       });
     });
 
     _alfred.post(ApiUris.article, (req, res) async {
       final json = await req.bodyAsJsonMap;
       final article = Article.fromJson(json);
-      await GetIt.I<ArticleDataGaetway>().save(article);
+      await GetIt.I<ArticleDataGateway>().save(article);
       res.statusCode = 200;
     });
 
     _alfred.delete(ApiUris.allArticles, (req, res) async {
-      await GetIt.I<ArticleDataGaetway>().deleteAll();
+      await GetIt.I<ArticleDataGateway>().deleteAll();
     });
 
     _alfred.delete("${ApiUris.article}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfArticleNotFound(res, () async {
-        await GetIt.I<ArticleDataGaetway>().delete(id);
+        await GetIt.I<ArticleDataGateway>().delete(id);
       });
     });
 
     _alfred.put("${ApiUris.markAsRead}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfArticleNotFound(res, () async {
-        await GetIt.I<ArticleDataGaetway>().markRead(id);
+        await GetIt.I<ArticleDataGateway>().markRead(id);
       });
     });
 
     _alfred.put("${ApiUris.markAsUnRead}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfArticleNotFound(res, () async {
-        await GetIt.I<ArticleDataGaetway>().markUnread(id);
+        await GetIt.I<ArticleDataGateway>().markUnread(id);
       });
     });
 

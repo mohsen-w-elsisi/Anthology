@@ -7,7 +7,7 @@ import 'package:anthology_server/server_initer.dart';
 import 'package:get_it/get_it.dart';
 
 void main(List<String> arguments) {
-  GetIt.I.registerSingleton<ArticleDataGaetway>(LocalJsonArticleDataGateway());
+  GetIt.I.registerSingleton<ArticleDataGateway>(LocalJsonArticleDataGateway());
   GetIt.I.registerSingleton(LocalJsonHighlighDataGateway());
   GetIt.I.registerFactoryParam<ArticleBriefHtmlGenerator, Uri, Null>(
     (uri, _) => BriefingServerArticleBriefHtmlGenerator(uri),

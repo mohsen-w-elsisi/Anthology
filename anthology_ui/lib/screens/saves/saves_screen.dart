@@ -3,6 +3,8 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
+import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
+import 'package:anthology_ui/state/tag_selection_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -19,9 +21,16 @@ class SavesScreen extends StatelessWidget {
         actions: const [SettingsButton()],
       ),
       body: FutureBuilder(
-        future: GetIt.I<ArticleDataGaetway>().getAll(),
+        future: GetIt.I<ArticleDataGateway>().getAll(),
         initialData: <Article>[],
-        builder: (_, asyncSnapshot) => SaveCardsView(asyncSnapshot.data!),
+        builder: (_, asyncSnapshot) => ListView(
+          children: [
+            TagSelectorChips(
+              tagSelectionController: TagSelectionController(),
+            ),
+            SaveCardsView(asyncSnapshot.data!),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => NewSaveModal().show(context),
@@ -46,6 +55,7 @@ class SaveCardsView extends StatelessWidget {
     return LayoutBuilder(
       builder: (_, contraints) {
         return GridView.builder(
+          shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: _columnsCount(contraints),
             mainAxisExtent: _rowHeight(contraints),

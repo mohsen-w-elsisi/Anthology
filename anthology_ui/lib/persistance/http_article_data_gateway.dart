@@ -6,7 +6,7 @@ import 'package:anthology_common/errors.dart';
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:http/http.dart';
 
-class HttpArticleDataGateway implements ArticleDataGaetway {
+class HttpArticleDataGateway implements ArticleDataGateway {
   final ServerRequestInterface _server;
 
   HttpArticleDataGateway(this._server);

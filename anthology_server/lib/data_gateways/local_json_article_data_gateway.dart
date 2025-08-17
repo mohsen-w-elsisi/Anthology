@@ -5,7 +5,7 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/errors.dart';
 
-class LocalJsonArticleDataGateway extends ArticleDataGaetway {
+class LocalJsonArticleDataGateway extends ArticleDataGateway {
   static const savesFIlePath = "./db/saves.json";
 
   @override

@@ -9,12 +9,12 @@ import 'package:get_it/get_it.dart';
 class ServerTestsSetup {
   late HttpServer _server;
 
-  final ArticleDataGaetway? _articleDataGaetway;
+  final ArticleDataGateway? _articleDataGaetway;
   final HightlightDataGateway? _highlightDataGaetway;
   final FeedDataGateway? _feedDataGateway;
 
   ServerTestsSetup({
-    ArticleDataGaetway? articleDataGaetway,
+    ArticleDataGateway? articleDataGaetway,
     HightlightDataGateway? highlightDataGaetway,
     FeedDataGateway? feedDataGateway,
   }) : _highlightDataGaetway = highlightDataGaetway,
@@ -38,7 +38,7 @@ class ServerTestsSetup {
   }
 
   void _registerDataGatewaysWithGetit() {
-    _registerIfNotNull<ArticleDataGaetway>(_articleDataGaetway);
+    _registerIfNotNull<ArticleDataGateway>(_articleDataGaetway);
     _registerIfNotNull<HightlightDataGateway>(_highlightDataGaetway);
     _registerIfNotNull<FeedDataGateway>(_feedDataGateway);
   }
