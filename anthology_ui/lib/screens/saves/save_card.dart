@@ -1,4 +1,5 @@
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'article_presentation_meta_data_fetcher.dart';
@@ -23,24 +24,27 @@ class _SaveCardState extends State<SaveCard> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _metaDataFetcher.fetch(),
-      builder: (_, _) {
-        return Card(
-          child: ListTile(
-            title: Text(_metaDataFetcher.title),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("${widget.article.uri.host} • 0 hgihilights"),
-                const SizedBox(height: 8),
-                _tagChips,
-              ],
+    return GestureDetector(
+      onTap: _openReaderScreen,
+      child: FutureBuilder(
+        future: _metaDataFetcher.fetch(),
+        builder: (_, _) {
+          return Card(
+            child: ListTile(
+              title: Text(_metaDataFetcher.title),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${widget.article.uri.host} • 0 hgihilights"),
+                  const SizedBox(height: 8),
+                  _tagChips,
+                ],
+              ),
+              trailing: _image(),
             ),
-            trailing: _image(),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -68,4 +72,12 @@ class _SaveCardState extends State<SaveCard> {
         ),
     ],
   );
+
+  void _openReaderScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ReaderScreen(widget.article),
+      ),
+    );
+  }
 }

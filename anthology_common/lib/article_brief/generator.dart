@@ -1,7 +1,9 @@
-abstract class ArticleBriefHtmlGenerator {
-  final Uri uri;
+import 'package:anthology_common/article/entities.dart';
 
-  ArticleBriefHtmlGenerator(this.uri);
+abstract class ArticleBriefHtmlGenerator {
+  final Article article;
+
+  ArticleBriefHtmlGenerator(this.article);
 
   Future<String> generate();
 }

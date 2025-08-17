@@ -1,3 +1,5 @@
+part 'entities.json.dart';
+
 class ArticleBrief {
   final String title;
   final List<TextNode> body;
@@ -8,6 +10,11 @@ class ArticleBrief {
     required this.body,
     required this.uri,
   });
+
+  factory ArticleBrief.fromJson(Map<String, dynamic> json) =>
+      _ArticleBriefJsonDecoder(json).decode();
+
+  Map<String, dynamic> toJson() => _ArticleBriefJsonEncoder(this).encode();
 }
 
 class TextNode {
@@ -22,6 +29,11 @@ class TextNode {
     required this.bold,
     required this.italic,
   });
+
+  factory TextNode.fromJson(Map<String, dynamic> json) =>
+      _TextNodeJsonDecoder(json).decode();
+
+  Map<String, dynamic> toJson() => _TextNodeJsonEncoder(this).encode();
 }
 
 enum TextNodeType {

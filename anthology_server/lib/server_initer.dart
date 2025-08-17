@@ -70,14 +70,6 @@ class ServerIniter {
       });
     });
 
-    _alfred.get("${ApiUris.articleBrief}/:id", (req, res) async {
-      final id = req.params["id"] as String;
-      return await _reportIfArticleNotFound(res, () async {
-        final brief = await ArticleBriefFetcher(id).fetchBrief();
-        return [for (final node in brief) node.text];
-      });
-    });
-
     _alfred.get("${ApiUris.highlight}/:id", (req, res) async {
       final id = req.params["id"];
       return await _reportIfHighlightNotFound(res, () async {
@@ -149,6 +141,11 @@ class ServerIniter {
 
     _alfred.put('${ApiUris.feed}/seen/:id', (req, res) async {
       return 500; // TODO: Implement mark feed as seen
+    });
+
+    _alfred.get("${ApiUris.articleBrief}/:id", (req, res) async {
+      final id = req.params["id"] as String;
+      return (await ArticleBriefFetcher(id).fetchBrief()).toJson();
     });
   }
 

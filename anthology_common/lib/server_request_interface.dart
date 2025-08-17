@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 class ServerRequestInterface extends _ApiUri
     with
         _ArticleRequestInterface,
+        _ArticleBriefRequestInterface,
         _HighlightRequestInterface,
         _FeedRequestInterface {
   ServerRequestInterface(super._baseUri);
@@ -38,6 +39,11 @@ mixin _ArticleRequestInterface on _ApiUri {
 
   Future<Response> markUnread(String id) =>
       put(apiUri("${ApiUris.markAsUnRead}/$id"));
+}
+
+mixin _ArticleBriefRequestInterface on _ApiUri {
+  Future<Response> getArticleBrief(String id) =>
+      get(apiUri("${ApiUris.articleBrief}/$id"));
 }
 
 mixin _HighlightRequestInterface on _ApiUri {
