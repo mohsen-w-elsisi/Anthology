@@ -1,5 +1,6 @@
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/article/filterer.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
@@ -20,18 +21,7 @@ class SavesScreen extends StatelessWidget {
         title: const Text('Saves'),
         actions: const [SettingsButton()],
       ),
-      body: FutureBuilder(
-        future: GetIt.I<ArticleDataGateway>().getAll(),
-        initialData: <Article>[],
-        builder: (_, asyncSnapshot) => ListView(
-          children: [
-            TagSelectorChips(
-              tagSelectionController: TagSelectionController(),
-            ),
-            SaveCardsView(asyncSnapshot.data!),
-          ],
-        ),
-      ),
+      body: MainSaveView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => NewSaveModal().show(context),
         child: const Icon(Icons.add),
@@ -41,13 +31,54 @@ class SavesScreen extends StatelessWidget {
   }
 }
 
-class SaveCardsView extends StatelessWidget {
+class MainSaveView extends StatefulWidget {
+  const MainSaveView({super.key});
+
+  @override
+  State<MainSaveView> createState() => _MainSaveViewState();
+}
+
+class _MainSaveViewState extends State<MainSaveView> {
+  final _tagfilterationController = TagSelectionController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TagSelectorChips(tagSelectionController: _tagfilterationController),
+        FutureBuilder(
+          future: GetIt.I<ArticleDataGateway>().getAll(),
+          initialData: <Article>[],
+          builder: (_, allArticlesSnapshot) => StreamBuilder(
+            stream: _tagfilterationController.stream,
+            initialData: _tagfilterationController.selectedTags,
+            builder: (_, _) => SaveCardsGrid(
+              _filterArticles(allArticlesSnapshot.data!),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Article> _filterArticles(List<Article> articles) {
+    final selectedTags = _tagfilterationController.selectedTags;
+    if (selectedTags.isNotEmpty) {
+      return ArticleFilterer(articles).onlyTags(selectedTags).articles;
+    } else {
+      return articles;
+    }
+  }
+}
+
+class SaveCardsGrid extends StatelessWidget {
   static const _maximumColumnWidth = 450;
   static const _cardArea = 100000;
 
   final List<Article> articles;
 
-  const SaveCardsView(this.articles, {super.key});
+  const SaveCardsGrid(this.articles, {super.key});
 
   @override
   Widget build(BuildContext context) {

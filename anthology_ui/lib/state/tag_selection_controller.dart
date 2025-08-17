@@ -8,6 +8,7 @@ class TagSelectionController {
     if (initialTags != null) {
       _selectedTags.addAll(initialTags);
     }
+    _updateStream();
   }
 
   Stream<Set<String>> get stream => _streamController.stream;
