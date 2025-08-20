@@ -5,6 +5,8 @@ import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:flutter/material.dart';
 
+import 'text_node_widget/factory.dart';
+
 class ReaderScreen extends StatelessWidget {
   final Article article;
 
@@ -27,7 +29,8 @@ class ReaderScreen extends StatelessWidget {
                   padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
                   sliver: SliverList.list(
                     children: [
-                      for (final node in snapshot.data!.body) Text(node.text),
+                      for (final node in snapshot.data!.body)
+                        TextNodeWidgetFactory(node).widget(),
                     ],
                   ),
                 );

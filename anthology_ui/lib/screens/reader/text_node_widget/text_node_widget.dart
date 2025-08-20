@@ -1,0 +1,27 @@
+import 'package:anthology_common/article_brief/entities.dart';
+import 'package:flutter/material.dart';
+
+import 'node_style_extractor.dart';
+
+abstract class TextNodeWidget extends StatelessWidget {
+  final TextNode node;
+
+  const TextNodeWidget(this.node, {super.key});
+
+  TextNodeType get nodeType;
+
+  Widget buildNodeWidget(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final style = NodeStyleExtractor(textTheme).styleFor(node.nodeType);
+    return Text(node.text, style: style);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    assert(
+      node.nodeType == nodeType,
+      'Incorrect node type for this widget. Expected $nodeType, but got ${node.nodeType}',
+    );
+    return buildNodeWidget(context);
+  }
+}
