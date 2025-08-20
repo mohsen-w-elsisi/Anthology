@@ -9,7 +9,7 @@ class TextNodeWidgetFactory {
   const TextNodeWidgetFactory(this.node);
 
   Widget widget() {
-    switch (node.nodeType) {
+    switch (node.type) {
       case TextNodeType.heading1:
         return Heading1NodeWidget(node);
       case TextNodeType.heading2:

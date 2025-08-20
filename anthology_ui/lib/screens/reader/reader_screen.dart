@@ -29,6 +29,17 @@ class ReaderScreen extends StatelessWidget {
                   padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
                   sliver: SliverList.list(
                     children: [
+                      Text(
+                        snapshot.data!.title,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      Text(
+                        snapshot.data!.byline,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      const SizedBox(height: 24.0),
                       for (final node in snapshot.data!.body)
                         TextNodeWidgetFactory(node).widget(),
                     ],

@@ -12,15 +12,15 @@ abstract class TextNodeWidget extends StatelessWidget {
 
   Widget buildNodeWidget(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final style = NodeStyleExtractor(textTheme).styleFor(node.nodeType);
+    final style = NodeStyleExtractor(textTheme).styleFor(node.type);
     return Text(node.text, style: style);
   }
 
   @override
   Widget build(BuildContext context) {
     assert(
-      node.nodeType == nodeType,
-      'Incorrect node type for this widget. Expected $nodeType, but got ${node.nodeType}',
+      node.type == nodeType,
+      'Incorrect node type for this widget. Expected $nodeType, but got ${node.type}',
     );
     return buildNodeWidget(context);
   }

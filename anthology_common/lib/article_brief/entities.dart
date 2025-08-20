@@ -2,11 +2,13 @@ part 'entities.json.dart';
 
 class ArticleBrief {
   final String title;
+  final String byline;
   final List<TextNode> body;
   final Uri uri;
 
   const ArticleBrief({
     required this.title,
+    required this.byline,
     required this.body,
     required this.uri,
   });
@@ -19,13 +21,13 @@ class ArticleBrief {
 
 class TextNode {
   final String text;
-  final TextNodeType nodeType;
+  final TextNodeType type;
   final bool bold;
   final bool italic;
 
   const TextNode({
     required this.text,
-    required this.nodeType,
+    required this.type,
     required this.bold,
     required this.italic,
   });

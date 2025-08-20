@@ -9,6 +9,7 @@ function generateBrief(HTMLString: string): ArticleBrief {
     url: new URL("https://example.com"),
     title: brief.title,
     bodyHtml: brief.content,
+    byline: brief.byline || "",
   };
 }
 

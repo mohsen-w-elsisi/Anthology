@@ -7,6 +7,7 @@ class _ArticleBriefJsonDecoder {
 
   ArticleBrief decode() => ArticleBrief(
     title: json['title'] as String,
+    byline: json['byline'] as String,
     body: [for (final node in json['body'] as List) TextNode.fromJson(node)],
     uri: Uri.parse(json['uri'] as String),
   );
@@ -19,6 +20,7 @@ class _ArticleBriefJsonEncoder {
 
   Map<String, dynamic> encode() => {
     'title': brief.title,
+    'byline': brief.byline,
     'body': [for (final node in brief.body) node.toJson()],
     'uri': brief.uri.toString(),
   };
@@ -31,7 +33,7 @@ class _TextNodeJsonDecoder {
 
   TextNode decode() => TextNode(
     text: json['text'] as String,
-    nodeType: TextNodeType.values.byName(json['nodeType'] as String),
+    type: TextNodeType.values.byName(json['nodeType'] as String),
     bold: json['bold'] as bool,
     italic: json['italic'] as bool,
   );
@@ -44,7 +46,7 @@ class _TextNodeJsonEncoder {
 
   Map<String, dynamic> encode() => {
     'text': node.text,
-    'nodeType': node.nodeType.name,
+    'nodeType': node.type.name,
     'bold': node.bold,
     'italic': node.italic,
   };

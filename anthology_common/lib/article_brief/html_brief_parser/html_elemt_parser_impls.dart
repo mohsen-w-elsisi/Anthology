@@ -38,12 +38,7 @@ abstract class HtmlListElementParser extends HtmlTextElementParser {
   TextNode parse() {
     _queryListItems();
     _stackListItemsText();
-    return TextNode(
-      text: _text,
-      nodeType: nodeType,
-      bold: false,
-      italic: false,
-    );
+    return TextNode(text: _text, type: nodeType, bold: false, italic: false);
   }
 
   void _queryListItems() {

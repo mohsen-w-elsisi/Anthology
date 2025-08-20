@@ -5,5 +5,17 @@ abstract class ArticleBriefHtmlGenerator {
 
   ArticleBriefHtmlGenerator(this.article);
 
-  Future<String> generate();
+  Future<CrudeArticleBrief> generate();
+}
+
+class CrudeArticleBrief {
+  final String title;
+  final String htmlContent;
+  final String byline;
+
+  CrudeArticleBrief({
+    required this.title,
+    required this.htmlContent,
+    required this.byline,
+  });
 }

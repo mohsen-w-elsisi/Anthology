@@ -9,15 +9,15 @@ import 'generator.dart';
 class ArticleBriefFetcher {
   final String id;
   late final Article _article;
-  late final String _htmlBrief;
+  late final CrudeArticleBrief _curdeBrief;
   late final ArticleBrief _brief;
 
   ArticleBriefFetcher(this.id);
 
   Future<ArticleBrief> fetchBrief() async {
     await _getArticle();
-    await _requestBriefHtml();
-    _parseBriefHtml();
+    await _requestCrudeBrief();
+    _parseCrudeBrief();
     return _brief;
   }
 
@@ -25,14 +25,19 @@ class ArticleBriefFetcher {
     _article = await GetIt.I<ArticleDataGateway>().get(id);
   }
 
-  Future<void> _requestBriefHtml() async {
-    _htmlBrief = await GetIt.I<ArticleBriefHtmlGenerator>(
+  Future<void> _requestCrudeBrief() async {
+    _curdeBrief = await GetIt.I<ArticleBriefHtmlGenerator>(
       param1: _article,
     ).generate();
   }
 
-  void _parseBriefHtml() {
-    final textNodes = Htmlbriefparser(_htmlBrief).parse();
-    _brief = ArticleBrief(title: "title", body: textNodes, uri: _article.uri);
+  void _parseCrudeBrief() {
+    final textNodes = Htmlbriefparser(_curdeBrief.htmlContent).parse();
+    _brief = ArticleBrief(
+      title: _curdeBrief.title,
+      byline: _curdeBrief.byline,
+      body: textNodes,
+      uri: _article.uri,
+    );
   }
 }

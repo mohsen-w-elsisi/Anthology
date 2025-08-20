@@ -18,7 +18,7 @@ abstract class HtmlTextElementParser {
     final elementText = htmlElement.text;
     return TextNode(
       text: elementText,
-      nodeType: nodeType,
+      type: nodeType,
       bold: false,
       italic: false,
     );

@@ -12,9 +12,14 @@ class BriefingServerArticleBriefHtmlGenerator
   BriefingServerArticleBriefHtmlGenerator(this.article);
 
   @override
-  Future<String> generate() async {
+  Future<CrudeArticleBrief> generate() async {
     final res = await http.get(_briefingServerUri);
-    return jsonDecode(res.body)["bodyHtml"];
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    return CrudeArticleBrief(
+      title: json["title"] as String,
+      htmlContent: jsonDecode(res.body)["bodyHtml"] as String,
+      byline: json["byline"] as String,
+    );
   }
 
   Uri get _briefingServerUri => Uri(
