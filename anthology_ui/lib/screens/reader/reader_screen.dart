@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:anthology_common/article/entities.dart';
-import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:flutter/material.dart';
@@ -16,15 +15,21 @@ class ReaderScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(actions: _actionButtons(context)),
+          SliverAppBar(
+            actions: _actionButtons(context),
+            floating: true,
+          ),
           FutureBuilder(
             future: _getBrief(),
             builder: (_, snapshot) {
               if (snapshot.hasData) {
-                return SliverList.list(
-                  children: [
-                    for (final node in snapshot.data!.body) Text(node.text),
-                  ],
+                return SliverPadding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
+                  sliver: SliverList.list(
+                    children: [
+                      for (final node in snapshot.data!.body) Text(node.text),
+                    ],
+                  ),
                 );
               } else {
                 return SliverFillRemaining(

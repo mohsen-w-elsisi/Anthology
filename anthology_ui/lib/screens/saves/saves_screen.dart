@@ -43,22 +43,24 @@ class _MainSaveViewState extends State<MainSaveView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TagSelectorChips(tagSelectionController: _tagfilterationController),
-        FutureBuilder(
-          future: GetIt.I<ArticleDataGateway>().getAll(),
-          initialData: <Article>[],
-          builder: (_, allArticlesSnapshot) => StreamBuilder(
-            stream: _tagfilterationController.stream,
-            initialData: _tagfilterationController.selectedTags,
-            builder: (_, _) => SaveCardsGrid(
-              _filterArticles(allArticlesSnapshot.data!),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TagSelectorChips(tagSelectionController: _tagfilterationController),
+          FutureBuilder(
+            future: GetIt.I<ArticleDataGateway>().getAll(),
+            initialData: <Article>[],
+            builder: (_, allArticlesSnapshot) => StreamBuilder(
+              stream: _tagfilterationController.stream,
+              initialData: _tagfilterationController.selectedTags,
+              builder: (_, _) => SaveCardsGrid(
+                _filterArticles(allArticlesSnapshot.data!),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
