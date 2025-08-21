@@ -17,43 +17,50 @@ class ReaderScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            actions: _actionButtons(context),
-            floating: true,
-          ),
+          _AppBar(article),
           FutureBuilder(
             future: _getBrief(),
-            builder: (_, snapshot) {
-              if (snapshot.hasData) {
-                return SliverPadding(
-                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
-                  sliver: SliverList.list(
-                    children: [
-                      Text(
-                        snapshot.data!.title,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      ),
-                      Text(
-                        snapshot.data!.byline,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      const SizedBox(height: 24.0),
-                      for (final node in snapshot.data!.body)
-                        TextNodeWidgetFactory(node).widget(),
-                    ],
-                  ),
-                );
-              } else {
-                return SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-            },
+            builder: (_, snapshot) =>
+                snapshot.hasData ? _textView(snapshot.data!) : _locadingSpinner,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _textView(ArticleBrief brief) => SliverPadding(
+    padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
+    sliver: SliverToBoxAdapter(
+      child: ReaderViewTextArea(brief),
+    ),
+  );
+
+  Widget get _locadingSpinner => SliverFillRemaining(
+    child: Center(child: CircularProgressIndicator()),
+  );
+
+  Future<ArticleBrief> _getBrief() async {
+    final res = await ServerRequestInterface(
+      Uri(
+        scheme: 'http',
+        host: 'localhost',
+        port: 3000,
+      ),
+    ).getArticleBrief(article.id);
+    return ArticleBrief.fromJson(jsonDecode(res.body));
+  }
+}
+
+class _AppBar extends StatelessWidget {
+  final Article article;
+
+  const _AppBar(this.article);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      floating: true,
+      actions: _actionButtons(context),
     );
   }
 
@@ -68,15 +75,38 @@ class ReaderScreen extends StatelessWidget {
       ),
     ];
   }
+}
 
-  Future<ArticleBrief> _getBrief() async {
-    final res = await ServerRequestInterface(
-      Uri(
-        scheme: 'http',
-        host: 'localhost',
-        port: 3000,
+class ReaderViewTextArea extends StatelessWidget {
+  final ArticleBrief brief;
+
+  const ReaderViewTextArea(this.brief, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SelectionArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ..._titleAndByline(context),
+          const SizedBox(height: 24.0),
+          for (final node in brief.body) TextNodeWidgetFactory(node).widget(),
+        ],
       ),
-    ).getArticleBrief(article.id);
-    return ArticleBrief.fromJson(jsonDecode(res.body));
+    );
   }
+
+  List<Widget> _titleAndByline(BuildContext context) => [
+    Text(
+      brief.title,
+      textAlign: TextAlign.center,
+      style: Theme.of(context).textTheme.headlineLarge,
+    ),
+    const SizedBox(height: 8.0),
+    Text(
+      brief.byline,
+      textAlign: TextAlign.center,
+      style: Theme.of(context).textTheme.bodyLarge,
+    ),
+  ];
 }
