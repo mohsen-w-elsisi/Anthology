@@ -1,31 +1,29 @@
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
-import 'package:anthology_ui/screens/reader/toc_generator.dart';
+import 'package:anthology_ui/screens/reader/toc/generator.dart';
+import 'package:anthology_ui/screens/reader/utility_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class TocModal extends StatelessWidget {
+class TocModal extends StatelessWidget with ReaderScreenUtilityModal {
   final ArticleBrief brief;
 
   const TocModal({super.key, required this.brief});
 
-  void show(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => this,
-    );
-  }
+  @override
+  bool get isScrollable => true;
+
+  @override
+  String get title => 'Contents';
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(8.0),
+      padding: ReaderScreenUtilityModal.modalPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Contents', style: TextTheme.of(context).headlineLarge),
-          const SizedBox(height: 16.0),
+          modalTitle(context),
           _Table(toc: _toc),
         ],
       ),

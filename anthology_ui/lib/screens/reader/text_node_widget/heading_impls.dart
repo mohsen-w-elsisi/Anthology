@@ -50,9 +50,8 @@ abstract class HeadingNodeWidget extends TextNodeWidget {
   const HeadingNodeWidget(super.node, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    super.build(context);
+  Widget buildNodeWidget(BuildContext context, {Key? key}) {
     final headingKey = GetIt.I<HeadingRegistry>().register(node);
-    return buildNodeWidget(context, key: headingKey);
+    return super.buildNodeWidget(context, key: headingKey);
   }
 }

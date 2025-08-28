@@ -6,7 +6,7 @@ import 'package:anthology_common/server_request_interface.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
-import 'package:anthology_ui/screens/reader/text_options_controller.dart';
+import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 

@@ -1,10 +1,10 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:anthology_ui/screens/reader/text_options_controller.dart';
+import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:flutter/material.dart';
 
-import 'text_options_modal.dart';
-import 'toc_modal.dart';
+import 'text_options/modal.dart';
+import 'toc/modal.dart';
 
 class ReaderScreenAppBar extends StatelessWidget {
   final Article article;
@@ -36,12 +36,7 @@ class ReaderScreenAppBar extends StatelessWidget {
       ),
       IconButton(onPressed: () {}, icon: Icon(Icons.headphones_outlined)),
       IconButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (_) => TextOptionsModal(textOptionsNotifier),
-          );
-        },
+        onPressed: () => TextOptionsModal(textOptionsNotifier).show(context),
         icon: Icon(Icons.format_color_text_outlined),
       ),
     ];

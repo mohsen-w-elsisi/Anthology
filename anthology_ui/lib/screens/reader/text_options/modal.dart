@@ -1,21 +1,24 @@
+import 'package:anthology_ui/screens/reader/utility_modal.dart';
 import 'package:flutter/material.dart';
 
-import 'text_options_controller.dart';
+import 'controller.dart';
 
-class TextOptionsModal extends StatelessWidget {
+class TextOptionsModal extends StatelessWidget with ReaderScreenUtilityModal {
   final TextOptionsController textOptionsController;
 
   const TextOptionsModal(this.textOptionsController, {super.key});
 
   @override
+  String get title => "Text Options";
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: ReaderScreenUtilityModal.modalPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Text Options', style: TextTheme.of(context).headlineLarge),
-          const SizedBox(height: 16.0),
+          modalTitle(context),
           _TextScaleControls(textOptionsController),
         ],
       ),

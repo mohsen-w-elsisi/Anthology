@@ -2,6 +2,7 @@ import 'package:anthology_common/article_brief/entities.dart';
 import 'package:flutter/material.dart';
 
 import 'text_node_widget/factory.dart';
+import 'text_options/text_options.dart';
 
 class ReaderViewTextArea extends StatelessWidget {
   final ArticleBrief brief;
@@ -51,10 +52,4 @@ class ReaderViewTextArea extends StatelessWidget {
       style: Theme.of(context).textTheme.bodyLarge,
     ),
   ];
-}
-
-class ReaderViewTextOptions {
-  final double textScaleFactor;
-
-  const ReaderViewTextOptions({this.textScaleFactor = 1.0});
 }

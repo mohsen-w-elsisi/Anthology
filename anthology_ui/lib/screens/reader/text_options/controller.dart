@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'reader_view_text_area.dart';
+import 'text_options.dart';
 
 class TextOptionsController with ChangeNotifier {
   static const double minScale = 0.5;
