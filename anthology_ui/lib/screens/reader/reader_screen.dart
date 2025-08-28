@@ -23,18 +23,18 @@ class _ReaderScreenState extends State<ReaderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          ReaderScreenAppBar(
-            widget.article,
-            textOptionsNotifier: _textOptionsController,
-          ),
-          FutureBuilder(
-            future: _getBrief(),
-            builder: (_, snapshot) =>
-                snapshot.hasData ? _textView(snapshot.data!) : _locadingSpinner,
-          ),
-        ],
+      body: FutureBuilder(
+        future: _getBrief(),
+        builder: (_, snapshot) => CustomScrollView(
+          slivers: [
+            ReaderScreenAppBar(
+              widget.article,
+              brief: snapshot.data,
+              textOptionsNotifier: _textOptionsController,
+            ),
+            snapshot.hasData ? _textView(snapshot.data!) : _locadingSpinner,
+          ],
+        ),
       ),
     );
   }
