@@ -10,10 +10,10 @@ abstract class TextNodeWidget extends StatelessWidget {
 
   TextNodeType get nodeType;
 
-  Widget buildNodeWidget(BuildContext context) {
+  Widget buildNodeWidget(BuildContext context, {Key? key}) {
     final textTheme = Theme.of(context).textTheme;
     final style = NodeStyleExtractor(textTheme).styleFor(node.type);
-    return Text(node.text, style: style);
+    return Text(node.text, style: style, key: key);
   }
 
   @override

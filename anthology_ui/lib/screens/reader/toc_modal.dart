@@ -1,6 +1,8 @@
 import 'package:anthology_common/article_brief/entities.dart';
+import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
 import 'package:anthology_ui/screens/reader/toc_generator.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class TocModal extends StatelessWidget {
   final ArticleBrief brief;
@@ -34,9 +36,6 @@ class TocModal extends StatelessWidget {
 }
 
 class _Table extends StatelessWidget {
-  static const _levelIndent = 22.0;
-  static const _nodeVerticalPadding = 12.0;
-
   final Toc toc;
 
   const _Table({required this.toc});
@@ -45,25 +44,47 @@ class _Table extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [for (final tocNode in toc) _nodeButotn(context, tocNode)],
+      children: [for (final tocNode in toc) _TocNodeButton(tocNode)],
     );
   }
+}
 
-  Widget _nodeButotn(BuildContext context, TocNode tocNode) {
+class _TocNodeButton extends StatelessWidget {
+  static const _levelIndent = 22.0;
+  static const _nodeVerticalPadding = 12.0;
+
+  final TocNode tocNode;
+
+  const _TocNodeButton(this.tocNode);
+
+  @override
+  Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () => _scrollToHeading(context),
       style: TextButton.styleFrom(
+        textStyle: TextStyle(fontSize: _largerFontSize(context)),
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(
-          left: (tocNode.level - 1) * _levelIndent,
+          left: _leftIndent,
           top: _nodeVerticalPadding,
           bottom: _nodeVerticalPadding,
         ),
-        textStyle: TextStyle(
-          fontSize: TextTheme.of(context).bodyLarge!.fontSize,
-        ),
       ),
       child: Text(tocNode.title),
+    );
+  }
+
+  double get _leftIndent => (tocNode.level - 1) * _levelIndent;
+
+  double? _largerFontSize(BuildContext context) =>
+      TextTheme.of(context).bodyLarge!.fontSize;
+
+  void _scrollToHeading(BuildContext context) {
+    Navigator.of(context).pop();
+    Scrollable.ensureVisible(
+      GetIt.I<HeadingRegistry>().keyFor(tocNode.node).currentContext!,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutQuad,
     );
   }
 }

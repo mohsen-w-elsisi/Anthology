@@ -29,9 +29,8 @@ class TocGenerator {
   }
 
   void _mapTextNodesToTocNodes() {
-    for (var i = 0; i < _textNodes.length; i++) {
-      final textNode = _textNodes[i];
-      final tocNode = TocNode.fromTextNode(textNode, i);
+    for (final textNode in _textNodes) {
+      final tocNode = TocNode.fromTextNode(textNode);
       _toc.add(tocNode);
     }
   }
@@ -40,17 +39,17 @@ class TocGenerator {
 typedef Toc = List<TocNode>;
 
 class TocNode {
+  final TextNode node;
   final String title;
   final int level;
-  final int index;
 
   const TocNode({
+    required this.node,
     required this.title,
     required this.level,
-    required this.index,
   });
 
-  TocNode.fromTextNode(TextNode node, this.index)
+  TocNode.fromTextNode(this.node)
     : title = node.text,
       level = node.type.index - TextNodeType.heading1.index + 1;
 }

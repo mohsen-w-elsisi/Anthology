@@ -5,8 +5,10 @@ import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/server_request_interface.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
+import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
 import 'package:anthology_ui/screens/reader/text_options_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class ReaderScreen extends StatefulWidget {
   final Article article;
@@ -19,6 +21,18 @@ class ReaderScreen extends StatefulWidget {
 
 class _ReaderScreenState extends State<ReaderScreen> {
   final _textOptionsController = TextOptionsController.inital();
+
+  @override
+  void initState() {
+    super.initState();
+    GetIt.I.registerSingleton(HeadingRegistry());
+  }
+
+  @override
+  void dispose() {
+    GetIt.I.unregister<HeadingRegistry>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
