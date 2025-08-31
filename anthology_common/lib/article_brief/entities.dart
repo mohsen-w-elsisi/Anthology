@@ -1,17 +1,21 @@
 part 'entities.json.dart';
 
 class ArticleBrief {
+  final String articleId;
   final String title;
   final String byline;
   final List<TextNode> body;
   final Uri uri;
 
   const ArticleBrief({
+    required this.articleId,
     required this.title,
     required this.byline,
     required this.body,
     required this.uri,
   });
+
+  String get text => body.map((node) => node.text).join();
 
   factory ArticleBrief.fromJson(Map<String, dynamic> json) =>
       _ArticleBriefJsonDecoder(json).decode();

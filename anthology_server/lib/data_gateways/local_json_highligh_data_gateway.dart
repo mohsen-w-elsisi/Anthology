@@ -6,7 +6,7 @@ import 'package:anthology_common/errors.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 
-class LocalJsonHighlighDataGateway implements HightlightDataGateway {
+class LocalJsonHighlighDataGateway implements HighlightDataGateway {
   static final savesFIlePath = "./db/highlights.json";
 
   @override

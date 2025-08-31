@@ -73,7 +73,7 @@ class ServerIniter {
     _alfred.get("${ApiUris.highlight}/:id", (req, res) async {
       final id = req.params["id"];
       return await _reportIfHighlightNotFound(res, () async {
-        final highlight = await GetIt.I<HightlightDataGateway>().get(id);
+        final highlight = await GetIt.I<HighlightDataGateway>().get(id);
         return highlight.toJson();
       });
     });
@@ -81,27 +81,27 @@ class ServerIniter {
     _alfred.post(ApiUris.highlight, (req, res) async {
       final json = await req.bodyAsJsonMap;
       final highlight = Highlight.fromJson(json);
-      await GetIt.I<HightlightDataGateway>().save(highlight);
+      await GetIt.I<HighlightDataGateway>().save(highlight);
     });
 
     _alfred.delete("${ApiUris.highlight}/:id", (req, res) async {
       final id = req.params["id"];
       await _reportIfHighlightNotFound(res, () async {
-        await GetIt.I<HightlightDataGateway>().delete(id);
+        await GetIt.I<HighlightDataGateway>().delete(id);
       });
     });
 
     _alfred.get("${ApiUris.articleHighlights}/:id", (req, res) async {
       final articleId = req.params["id"];
       return await _reportIfArticleNotFound(res, () async {
-        final highlights = await GetIt.I<HightlightDataGateway>()
+        final highlights = await GetIt.I<HighlightDataGateway>()
             .getArticleHighlights(articleId);
         return [for (final highlight in highlights) highlight.toJson()];
       });
     });
 
     _alfred.get(ApiUris.allHighlights, (req, res) async {
-      final highlights = await GetIt.I<HightlightDataGateway>().getAll();
+      final highlights = await GetIt.I<HighlightDataGateway>().getAll();
       final jsonHighlights = {
         for (final highlightEntry in highlights.entries)
           highlightEntry.key: [

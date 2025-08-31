@@ -27,7 +27,7 @@ void main() {
     test('saving highlights', () async {
       final res = await testRequests.saveHighlight1();
       expect(res.statusCode, 200);
-      await GetIt.I<HightlightDataGateway>().get(ExampleData.highlight1.id);
+      await GetIt.I<HighlightDataGateway>().get(ExampleData.highlight1.id);
     });
 
     test('getting accurate highlights', () async {
@@ -47,11 +47,11 @@ void main() {
       final res = await testRequests.deleteHighlight1();
       expect(res.statusCode, 200);
       expect(
-        GetIt.I<HightlightDataGateway>().get(ExampleData.highlight1.id),
+        GetIt.I<HighlightDataGateway>().get(ExampleData.highlight1.id),
         throwsA(isA<HighlightNotFoundError>()),
       );
       expect(
-        GetIt.I<HightlightDataGateway>().get(ExampleData.highlight2.id),
+        GetIt.I<HighlightDataGateway>().get(ExampleData.highlight2.id),
         completes,
       );
     });

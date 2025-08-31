@@ -34,6 +34,7 @@ class ArticleBriefFetcher {
   void _parseCrudeBrief() {
     final textNodes = Htmlbriefparser(_curdeBrief.htmlContent).parse();
     _brief = ArticleBrief(
+      articleId: _article.id,
       title: _curdeBrief.title,
       byline: _curdeBrief.byline,
       body: textNodes,

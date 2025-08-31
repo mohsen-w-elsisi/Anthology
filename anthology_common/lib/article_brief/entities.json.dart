@@ -6,6 +6,7 @@ class _ArticleBriefJsonDecoder {
   const _ArticleBriefJsonDecoder(this.json);
 
   ArticleBrief decode() => ArticleBrief(
+    articleId: json['articleId'] as String,
     title: json['title'] as String,
     byline: json['byline'] as String,
     body: [for (final node in json['body'] as List) TextNode.fromJson(node)],
@@ -19,6 +20,7 @@ class _ArticleBriefJsonEncoder {
   _ArticleBriefJsonEncoder(this.brief);
 
   Map<String, dynamic> encode() => {
+    'articleId': brief.articleId,
     'title': brief.title,
     'byline': brief.byline,
     'body': [for (final node in brief.body) node.toJson()],

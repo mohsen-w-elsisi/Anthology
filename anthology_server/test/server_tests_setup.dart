@@ -10,12 +10,12 @@ class ServerTestsSetup {
   late HttpServer _server;
 
   final ArticleDataGateway? _articleDataGaetway;
-  final HightlightDataGateway? _highlightDataGaetway;
+  final HighlightDataGateway? _highlightDataGaetway;
   final FeedDataGateway? _feedDataGateway;
 
   ServerTestsSetup({
     ArticleDataGateway? articleDataGaetway,
-    HightlightDataGateway? highlightDataGaetway,
+    HighlightDataGateway? highlightDataGaetway,
     FeedDataGateway? feedDataGateway,
   }) : _highlightDataGaetway = highlightDataGaetway,
        _articleDataGaetway = articleDataGaetway,
@@ -39,7 +39,7 @@ class ServerTestsSetup {
 
   void _registerDataGatewaysWithGetit() {
     _registerIfNotNull<ArticleDataGateway>(_articleDataGaetway);
-    _registerIfNotNull<HightlightDataGateway>(_highlightDataGaetway);
+    _registerIfNotNull<HighlightDataGateway>(_highlightDataGaetway);
     _registerIfNotNull<FeedDataGateway>(_feedDataGateway);
   }
 

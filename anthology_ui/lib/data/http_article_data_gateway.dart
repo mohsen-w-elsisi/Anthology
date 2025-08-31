@@ -4,6 +4,7 @@ import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/errors.dart';
 import 'package:anthology_common/server_request_interface.dart';
+import 'package:anthology_ui/data/server_response_exception.dart';
 import 'package:http/http.dart';
 
 class HttpArticleDataGateway implements ArticleDataGateway {
@@ -60,27 +61,14 @@ class HttpArticleDataGateway implements ArticleDataGateway {
     if (response.statusCode == 404 && id != null) {
       throw ArticleNotFoundError(id);
     } else if (response.statusCode != 200) {
-      throw ServerArticleResponseError(response, action, id);
+      throw ServerArticleResponseException(response, action, id);
     }
   }
 }
 
-class ServerArticleResponseError extends Error {
-  final Response response;
-  final String action;
-  final String? id;
-
-  ServerArticleResponseError(this.response, this.action, [this.id]);
+class ServerArticleResponseException extends ServerResponseException {
+  ServerArticleResponseException(super.response, super.action, [super.id]);
 
   @override
-  String toString() {
-    if (id == null) {
-      return 'failed to $action all articles. $_serverResponseMessage';
-    } else {
-      return 'Failed to $action article with id $id. $_serverResponseMessage';
-    }
-  }
-
-  String get _serverResponseMessage =>
-      "Server returned ${response.statusCode}:\n${response.body}";
+  String get entityName => "article";
 }

@@ -1,6 +1,6 @@
 import 'entities.dart';
 
-abstract class HightlightDataGateway {
+abstract class HighlightDataGateway {
   Future<Map<String, List<Highlight>>> getAll();
   Future<List<Highlight>> getArticleHighlights(String articleId);
   Future<Highlight> get(String id);
