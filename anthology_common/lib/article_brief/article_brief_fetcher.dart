@@ -32,13 +32,46 @@ class ArticleBriefFetcher {
   }
 
   void _parseCrudeBrief() {
-    final textNodes = Htmlbriefparser(_curdeBrief.htmlContent).parse();
+    final parsedNodes = Htmlbriefparser(_curdeBrief.htmlContent).parse();
+    final textNodesWithIndices = TextNodeIndiciesAssigner(
+      parsedNodes,
+    ).assignIndicies();
     _brief = ArticleBrief(
       articleId: _article.id,
       title: _curdeBrief.title,
       byline: _curdeBrief.byline,
-      body: textNodes,
+      body: textNodesWithIndices,
       uri: _article.uri,
     );
+  }
+}
+
+class TextNodeIndiciesAssigner {
+  final List<TextNode> unindexedNodes;
+  final List<TextNode> indexedNodes = [];
+
+  int _currentIndex = 0;
+
+  TextNodeIndiciesAssigner(this.unindexedNodes);
+
+  List<TextNode> assignIndicies() {
+    unindexedNodes.forEach(_assignIndexAndStepThrough);
+    return indexedNodes;
+  }
+
+  void _assignIndexAndStepThrough(TextNode node) {
+    final startIndex = _currentIndex;
+    final endIndex = startIndex + node.text.length;
+    indexedNodes.add(
+      TextNode(
+        text: node.text,
+        type: node.type,
+        bold: node.bold,
+        italic: node.italic,
+        startIndex: startIndex,
+        endIndex: endIndex,
+      ),
+    );
+    _currentIndex = endIndex;
   }
 }

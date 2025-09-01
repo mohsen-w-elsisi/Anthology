@@ -1,10 +1,7 @@
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:anthology_common/highlight/data_gateway.dart';
-import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_ui/screens/reader/highlight/context_menu_button_item_factory.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
+import 'highlight/context_menu_button_item_factory.dart';
 import 'text_node_widget/factory.dart';
 import 'text_options/text_options.dart';
 

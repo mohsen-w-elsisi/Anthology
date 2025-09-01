@@ -10,6 +10,8 @@ import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import 'highlight/provider.dart';
+
 class ReaderScreen extends StatefulWidget {
   final Article article;
 
@@ -26,11 +28,15 @@ class _ReaderScreenState extends State<ReaderScreen> {
   void initState() {
     super.initState();
     GetIt.I.registerSingleton(HeadingRegistry());
+    final highlightProvider = ReaderScreenHighlightProvider(widget.article.id);
+    highlightProvider.initHighlights();
+    GetIt.I.registerSingleton(highlightProvider);
   }
 
   @override
   void dispose() {
     GetIt.I.unregister<HeadingRegistry>();
+    GetIt.I.unregister<ReaderScreenHighlightProvider>();
     super.dispose();
   }
 
@@ -46,7 +52,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
               brief: snapshot.data,
               textOptionsNotifier: _textOptionsController,
             ),
-            snapshot.hasData ? _textView(snapshot.data!) : _locadingSpinner,
+            snapshot.hasData ? _textView(snapshot.data!) : _loadingSpinner,
           ],
         ),
       ),
@@ -57,7 +63,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
     padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
     sliver: SliverToBoxAdapter(
       child: ListenableBuilder(
-        listenable: _textOptionsController,
+        listenable: Listenable.merge([
+          _textOptionsController,
+          GetIt.I<ReaderScreenHighlightProvider>().initListenable,
+        ]),
         builder: (_, _) {
           return ReaderViewTextArea(
             brief: brief,
@@ -68,7 +77,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
     ),
   );
 
-  Widget get _locadingSpinner => SliverFillRemaining(
+  Widget get _loadingSpinner => SliverFillRemaining(
     child: Center(child: CircularProgressIndicator()),
   );
 

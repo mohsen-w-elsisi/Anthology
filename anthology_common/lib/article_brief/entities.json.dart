@@ -38,6 +38,8 @@ class _TextNodeJsonDecoder {
     type: TextNodeType.values.byName(json['nodeType'] as String),
     bold: json['bold'] as bool,
     italic: json['italic'] as bool,
+    startIndex: json['startIndex'] as int,
+    endIndex: json['endIndex'] as int,
   );
 }
 
@@ -51,5 +53,7 @@ class _TextNodeJsonEncoder {
     'nodeType': node.type.name,
     'bold': node.bold,
     'italic': node.italic,
+    'startIndex': node.startIndex,
+    'endIndex': node.endIndex,
   };
 }

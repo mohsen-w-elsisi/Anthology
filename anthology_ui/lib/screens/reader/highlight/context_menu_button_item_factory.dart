@@ -19,6 +19,7 @@ class HighlightContextMenuButtonItemFactory {
     label: "highlight",
   );
 
+  // TODO: selecting a non-unique substring within the brief will not guarentee valid start/end index
   void _saveHighlight() {
     ContextMenuController.removeAny();
     GetIt.I<HighlightDataGateway>().save(_highlight());
