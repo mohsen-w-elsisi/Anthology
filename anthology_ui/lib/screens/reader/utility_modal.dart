@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 mixin ReaderScreenUtilityModal on Widget {
   static const modalPadding = EdgeInsets.all(8.0);
-  static const _breakpoint = 600.0;
+  static const _breakpoint = 840.0;
+
+  BoxConstraints _constraints(BuildContext context) => BoxConstraints(
+    maxWidth: MediaQuery.of(context).size.width * 0.6,
+    maxHeight: MediaQuery.of(context).size.height * 0.6,
+  );
 
   void show(BuildContext context) {
     if (_screenIsSmall(context)) {

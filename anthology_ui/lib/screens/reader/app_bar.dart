@@ -1,5 +1,6 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
+import 'package:anthology_ui/screens/reader/highlight/modal.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,12 @@ class ReaderScreenAppBar extends StatelessWidget {
 
   List<Widget> _actionButtons(BuildContext context) {
     return [
-      IconButton(onPressed: () {}, icon: Icon(Icons.border_color_outlined)),
+      IconButton(
+        onPressed: () {
+          HighlightModal().show(context);
+        },
+        icon: Icon(Icons.border_color_outlined),
+      ),
       IconButton(
         onPressed: brief != null ? () => _showTocModal(context) : null,
         icon: Icon(Icons.toc_outlined),

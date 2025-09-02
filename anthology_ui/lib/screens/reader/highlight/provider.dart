@@ -23,6 +23,9 @@ class ReaderScreenHighlightProvider {
     _highlights!.sort((a, b) => a.startIndex.compareTo(b.startIndex));
   }
 
+  List<Highlight> get highlights =>
+      _highlights != null ? List.unmodifiable(_highlights!) : [];
+
   List<Highlight> highlightsWithingNode(TextNode node) {
     if (_highlights == null) return [];
     return _highlights!
