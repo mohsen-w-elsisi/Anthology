@@ -1,5 +1,7 @@
+import 'package:anthology_ui/config.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
+import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 
 class HighlightsScreen extends StatelessWidget {
@@ -7,6 +9,19 @@ class HighlightsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isExpanded(context)) {
+      return Row(
+        children: [
+          const AppNavigationBar.rail(),
+          Expanded(child: _scaffold(context)),
+        ],
+      );
+    } else {
+      return _scaffold(context);
+    }
+  }
+
+  Widget _scaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Highlights'),
@@ -16,11 +31,12 @@ class HighlightsScreen extends StatelessWidget {
         ],
       ),
       body: ListView(
+        padding: screenMainScrollViewHorizontalPadding,
         children: [
           ArticleHighlightsCard(),
         ],
       ),
-      bottomNavigationBar: const BottomAppNavigation(),
+      bottomNavigationBar: AppNavigationBar.ifNotExpanded(context),
     );
   }
 }

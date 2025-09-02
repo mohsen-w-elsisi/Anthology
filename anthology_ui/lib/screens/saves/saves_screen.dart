@@ -1,6 +1,7 @@
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article/filterer.dart';
+import 'package:anthology_ui/config.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
@@ -21,12 +22,12 @@ class SavesScreen extends StatelessWidget {
         title: const Text('Saves'),
         actions: const [SettingsButton()],
       ),
-      body: MainSaveView(),
+      body: const MainSaveView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => NewSaveModal().show(context),
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: const BottomAppNavigation(),
+      bottomNavigationBar: AppNavigationBar.ifNotExpanded(context),
     );
   }
 }
@@ -44,6 +45,7 @@ class _MainSaveViewState extends State<MainSaveView> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: screenMainScrollViewHorizontalPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

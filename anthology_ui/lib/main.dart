@@ -1,7 +1,7 @@
-import 'package:anthology_ui/screens/saves/saves_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'app_dependency_initer.dart';
+import 'main_view.dart';
 
 void main() async {
   await AppDependencyIniter.init();
@@ -13,8 +13,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SavesScreen(),
+    return const MaterialApp(
+      home: MainView(),
     );
   }
 }
