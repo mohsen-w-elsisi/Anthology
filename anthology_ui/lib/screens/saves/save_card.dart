@@ -1,6 +1,8 @@
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'article_presentation_meta_data_fetcher.dart';
 
@@ -35,7 +37,7 @@ class _SaveCardState extends State<SaveCard> {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${widget.article.uri.host} • 0 hgihilights"),
+                  _DescribtorText(article: widget.article),
                   const SizedBox(height: 8),
                   _tagChips,
                 ],
@@ -79,5 +81,39 @@ class _SaveCardState extends State<SaveCard> {
         builder: (_) => ReaderScreen(widget.article),
       ),
     );
+  }
+}
+
+class _DescribtorText extends StatelessWidget {
+  final Article article;
+
+  const _DescribtorText({required this.article});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _highlightCount(),
+      builder: (_, snapshot) {
+        final highlightText = _asyncSnapshotToHighlightText(snapshot);
+        return Text("$_publisher • $highlightText");
+      },
+    );
+  }
+
+  String get _publisher => article.uri.host;
+
+  Future<int> _highlightCount() async {
+    final highlights = await GetIt.I<HighlightDataGateway>()
+        .getArticleHighlights(article.id);
+    return highlights.length;
+  }
+
+  String _asyncSnapshotToHighlightText(AsyncSnapshot<int> snapshot) {
+    if (snapshot.hasData) {
+      final pluralS = snapshot.data == 1 ? "" : "s";
+      return "${snapshot.data} highlight$pluralS";
+    } else {
+      return "";
+    }
   }
 }
