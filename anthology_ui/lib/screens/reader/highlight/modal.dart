@@ -1,5 +1,5 @@
 import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_ui/screens/highlights/highlight_detail_modal.dart';
+import 'package:anthology_ui/shared_widgets/highlight_detail_modal.dart';
 import 'package:anthology_ui/screens/reader/highlight/provider.dart';
 import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:flutter/material.dart';

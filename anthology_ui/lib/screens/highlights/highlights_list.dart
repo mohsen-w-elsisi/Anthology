@@ -1,6 +1,5 @@
 import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_ui/screens/highlights/highlight_detail_modal.dart';
-import 'package:anthology_ui/screens/reader/highlight/modal.dart';
+import 'package:anthology_ui/shared_widgets/highlight_detail_modal.dart';
 import 'package:flutter/material.dart';
 
 class HighlightsList extends StatefulWidget {
@@ -58,14 +57,17 @@ class _HighlightsListState extends State<HighlightsList>
       opacity: _animation,
       child: SizeTransition(
         sizeFactor: _animation,
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
-          itemCount: widget.highlights.length,
-          separatorBuilder: (_, _) => const Divider(),
-          itemBuilder: (_, i) => _HighlightTile(
-            highlight: widget.highlights[i],
+        child: Card.filled(
+          margin: EdgeInsets.all(20),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16.0),
+            itemCount: widget.highlights.length,
+            separatorBuilder: (_, _) => const Divider(),
+            itemBuilder: (_, i) => _HighlightTile(
+              highlight: widget.highlights[i],
+            ),
           ),
         ),
       ),
@@ -88,6 +90,7 @@ class _HighlightTile extends StatelessWidget {
         highlight.text,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
+        style: TextTheme.of(context).bodyMedium,
       ),
       subtitle: highlight.comment == null
           ? null
@@ -95,6 +98,7 @@ class _HighlightTile extends StatelessWidget {
               highlight.comment!,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
+              style: TextTheme.of(context).bodySmall,
             ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/screens/highlights/highlights_list.dart';
 import 'package:anthology_ui/screens/highlights/show_highlights_button.dart';
+import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 
 class ArticleHighlightsCard extends StatefulWidget {
@@ -43,9 +44,10 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: _highlightCountText,
                 ),
-                _actions(),
+                // if (isExpanded(context)) _actions(),
               ],
             ),
+            trailing: _expansionIcom(),
           ),
           HighlightsList(
             highlights: widget.highlights,
@@ -56,45 +58,29 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
     );
   }
 
+  Widget _expansionIcom() => ValueListenableBuilder(
+    valueListenable: _isExpanded,
+    builder: (_, isExpanded, _) {
+      return Transform.scale(
+        scale: 1.5,
+        child: AnimatedExpandIcon(isExpanded: isExpanded),
+      );
+    },
+  );
+
   void _toggleExpanded() => _isExpanded.value = !_isExpanded.value;
 
   Widget get _articleTitleText => Text(
     widget.articleTitle,
-    style: TextTheme.of(context).headlineMedium,
+    style: isExpanded(context)
+        ? TextTheme.of(context).headlineSmall
+        : TextTheme.of(context).titleMedium,
   );
 
   Widget get _highlightCountText => Text(
     "${widget.highlights.length} highlights",
-    style: TextTheme.of(context).titleMedium,
+    style: isExpanded(context)
+        ? TextTheme.of(context).titleMedium
+        : TextTheme.of(context).bodyMedium,
   );
-
-  Widget _actions() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: FilledButton.tonalIcon(
-                style: FilledButton.styleFrom(
-                  visualDensity: VisualDensity.comfortable,
-                  iconAlignment: IconAlignment.end,
-                ),
-                onPressed: () {},
-                label: const Text("view"),
-                icon: const Icon(Icons.open_in_new),
-              ),
-            ),
-            const SizedBox(width: 16.0),
-            Expanded(
-              flex: 2,
-              child: ShowHighlightsButton(isExpanded: _isExpanded),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

@@ -16,23 +16,23 @@ class ShowHighlightsButton extends StatelessWidget {
       icon: ValueListenableBuilder(
         valueListenable: isExpanded,
         builder: (_, isExpanded, __) =>
-            _AnimatedExpandIcon(isExpanded: isExpanded),
+            AnimatedExpandIcon(isExpanded: isExpanded),
       ),
       label: const Text("show highlights"),
     );
   }
 }
 
-class _AnimatedExpandIcon extends StatefulWidget {
+class AnimatedExpandIcon extends StatefulWidget {
   final bool isExpanded;
 
-  const _AnimatedExpandIcon({required this.isExpanded});
+  const AnimatedExpandIcon({super.key, required this.isExpanded});
 
   @override
-  State<_AnimatedExpandIcon> createState() => _AnimatedExpandIconState();
+  State<AnimatedExpandIcon> createState() => _AnimatedExpandIconState();
 }
 
-class _AnimatedExpandIconState extends State<_AnimatedExpandIcon>
+class _AnimatedExpandIconState extends State<AnimatedExpandIcon>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -49,7 +49,7 @@ class _AnimatedExpandIconState extends State<_AnimatedExpandIcon>
   }
 
   @override
-  void didUpdateWidget(_AnimatedExpandIcon oldWidget) {
+  void didUpdateWidget(AnimatedExpandIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isExpanded != oldWidget.isExpanded) {
       if (widget.isExpanded) {

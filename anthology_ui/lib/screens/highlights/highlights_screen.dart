@@ -1,5 +1,4 @@
 import 'package:anthology_common/article/data_gaetway.dart';
-import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/config.dart';
@@ -52,15 +51,20 @@ class _ArticleHighlightsList extends StatelessWidget {
       future: _getAllHighlights(),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
-          return ListView(
-            padding: screenMainScrollViewHorizontalPadding,
-            children: [
-              for (final entry in snapshot.data!.entries)
-                ArticleHighlightsCard(
-                  articleTitle: entry.key,
-                  highlights: entry.value,
-                ),
-            ],
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 1400),
+              child: ListView(
+                padding: screenMainScrollViewHorizontalPadding,
+                children: [
+                  for (final entry in snapshot.data!.entries)
+                    ArticleHighlightsCard(
+                      articleTitle: entry.key,
+                      highlights: entry.value,
+                    ),
+                ],
+              ),
+            ),
           );
         } else {
           return const Center(child: CircularProgressIndicator());
