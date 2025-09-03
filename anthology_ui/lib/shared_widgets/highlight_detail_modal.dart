@@ -11,8 +11,11 @@ class HighlightDetailModal extends StatelessWidget with UtilityModal {
   String get title => "Highlight";
 
   @override
+  bool get isScrollable => true;
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: UtilityModal.modalPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,

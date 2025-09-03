@@ -1,7 +1,6 @@
 import 'package:anthology_ui/main_view.dart';
 import 'package:anthology_ui/screens/feed/feed_screen.dart';
 import 'package:anthology_ui/screens/highlights/highlights_screen.dart';
-import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';

@@ -1,8 +1,10 @@
 import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_ui/screens/highlights/highlights_list.dart';
-import 'package:anthology_ui/screens/highlights/show_highlights_button.dart';
 import 'package:anthology_ui/utils.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import 'show_highlights_button.dart';
+import 'highlights_list.dart';
 
 class ArticleHighlightsCard extends StatefulWidget {
   final String articleTitle;
@@ -42,9 +44,8 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: _highlightCountText,
+                  child: _subtitleText,
                 ),
-                // if (isExpanded(context)) _actions(),
               ],
             ),
             trailing: _expansionIcom(),
@@ -72,15 +73,34 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
 
   Widget get _articleTitleText => Text(
     widget.articleTitle,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
     style: isExpanded(context)
         ? TextTheme.of(context).headlineSmall
         : TextTheme.of(context).titleMedium,
   );
 
-  Widget get _highlightCountText => Text(
-    "${widget.highlights.length} highlights",
-    style: isExpanded(context)
-        ? TextTheme.of(context).titleMedium
-        : TextTheme.of(context).bodyMedium,
+  Widget get _subtitleText => RichText(
+    maxLines: 1,
+    textScaler: TextScaler.linear(1.4),
+    text: TextSpan(
+      style: TextTheme.of(context).titleMedium,
+      children: [
+        TextSpan(text: "${widget.highlights.length} highlights"),
+        const TextSpan(text: " • "),
+        TextSpan(
+          text: "full article",
+          recognizer: _fullArticleGestureRecogniser,
+          style: TextStyle(decoration: TextDecoration.underline),
+        ),
+      ],
+    ),
   );
+
+  TapGestureRecognizer get _fullArticleGestureRecogniser {
+    return TapGestureRecognizer()
+      ..onTap = () {
+        print("went to full article");
+      };
+  }
 }

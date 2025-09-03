@@ -78,7 +78,7 @@ class _HighlightsListState extends State<HighlightsList>
 class _HighlightTile extends StatelessWidget {
   final Highlight highlight;
 
-  const _HighlightTile({super.key, required this.highlight});
+  const _HighlightTile({required this.highlight});
 
   @override
   Widget build(BuildContext context) {
