@@ -32,7 +32,7 @@ class ReaderScreenAppBar extends StatelessWidget {
     return [
       IconButton(
         onPressed: () {
-          HighlightModal().show(context);
+          HighlightsModal().show(context);
         },
         icon: Icon(Icons.border_color_outlined),
       ),

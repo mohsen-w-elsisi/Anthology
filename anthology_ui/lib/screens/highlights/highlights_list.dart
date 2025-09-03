@@ -1,4 +1,6 @@
 import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_ui/screens/highlights/highlight_detail_modal.dart';
+import 'package:anthology_ui/screens/reader/highlight/modal.dart';
 import 'package:flutter/material.dart';
 
 class HighlightsList extends StatefulWidget {
@@ -79,6 +81,9 @@ class _HighlightTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () {
+        HighlightDetailModal(highlight).show(context);
+      },
       title: Text(
         highlight.text,
         maxLines: 2,

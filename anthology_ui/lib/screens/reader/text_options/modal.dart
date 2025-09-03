@@ -1,9 +1,9 @@
-import 'package:anthology_ui/screens/reader/utility_modal.dart';
+import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:flutter/material.dart';
 
 import 'controller.dart';
 
-class TextOptionsModal extends StatelessWidget with ReaderScreenUtilityModal {
+class TextOptionsModal extends StatelessWidget with UtilityModal {
   final TextOptionsController textOptionsController;
 
   const TextOptionsModal(this.textOptionsController, {super.key});
@@ -14,7 +14,7 @@ class TextOptionsModal extends StatelessWidget with ReaderScreenUtilityModal {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: ReaderScreenUtilityModal.modalPadding,
+      padding: UtilityModal.modalPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

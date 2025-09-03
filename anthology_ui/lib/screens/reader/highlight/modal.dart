@@ -1,11 +1,12 @@
 import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_ui/screens/highlights/highlight_detail_modal.dart';
 import 'package:anthology_ui/screens/reader/highlight/provider.dart';
-import 'package:anthology_ui/screens/reader/utility_modal.dart';
+import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class HighlightModal extends StatelessWidget with ReaderScreenUtilityModal {
-  const HighlightModal({super.key});
+class HighlightsModal extends StatelessWidget with UtilityModal {
+  const HighlightsModal({super.key});
 
   @override
   String get title => "Highlights";
@@ -39,6 +40,7 @@ class HighlightCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(9.0),
       child: ListTile(
+        onTap: () => HighlightDetailModal(highlight).show(context),
         title: Text(highlight.text),
         subtitle: highlight.comment != null ? Text(highlight.comment!) : null,
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-mixin ReaderScreenUtilityModal on Widget {
+mixin UtilityModal on Widget {
   static const modalPadding = EdgeInsets.all(8.0);
   static const _breakpoint = 840.0;
 
@@ -28,7 +28,12 @@ mixin ReaderScreenUtilityModal on Widget {
   void _showDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(content: this),
+      builder: (_) => AlertDialog(
+        content: ConstrainedBox(
+          constraints: _constraints(context),
+          child: this,
+        ),
+      ),
     );
   }
 

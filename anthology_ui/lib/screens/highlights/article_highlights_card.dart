@@ -32,6 +32,9 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
       child: Column(
         children: [
           ListTile(
+            onTap: _toggleExpanded,
+            enableFeedback: false,
+            splashColor: Colors.transparent,
             title: _articleTitleText,
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,6 +55,8 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
       ),
     );
   }
+
+  void _toggleExpanded() => _isExpanded.value = !_isExpanded.value;
 
   Widget get _articleTitleText => Text(
     widget.articleTitle,

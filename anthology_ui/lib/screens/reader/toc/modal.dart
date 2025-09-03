@@ -1,11 +1,11 @@
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
 import 'package:anthology_ui/screens/reader/toc/generator.dart';
-import 'package:anthology_ui/screens/reader/utility_modal.dart';
+import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class TocModal extends StatelessWidget with ReaderScreenUtilityModal {
+class TocModal extends StatelessWidget with UtilityModal {
   final ArticleBrief brief;
 
   const TocModal({super.key, required this.brief});
@@ -19,7 +19,7 @@ class TocModal extends StatelessWidget with ReaderScreenUtilityModal {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: ReaderScreenUtilityModal.modalPadding,
+      padding: UtilityModal.modalPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
