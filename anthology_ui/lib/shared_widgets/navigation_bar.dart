@@ -32,6 +32,7 @@ class AppNavigationBar extends StatelessWidget {
         destinations: _destinations.map(_buildRailDestination).toList(),
         onDestinationSelected: (index) => _openScreen(context, index),
         labelType: NavigationRailLabelType.all,
+        groupAlignment: 0,
       );
     }
   }

@@ -36,7 +36,12 @@ class HttpHighlightDataGateway implements HighlightDataGateway {
   Future<Map<String, List<Highlight>>> getAll() async {
     final res = await _server.getAllHighlights();
     _checkForError(res, "get");
-    throw UnimplementedError();
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    final highlights = <String, List<Highlight>>{
+      for (final entry in json.entries)
+        entry.key: [for (final json in entry.value) Highlight.fromJson(json)],
+    };
+    return highlights;
   }
 
   @override

@@ -1,8 +1,15 @@
+import 'package:anthology_common/article/data_gaetway.dart';
+import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/highlight/data_gateway.dart';
+import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/config.dart';
+import 'package:anthology_ui/screens/highlights/article_highlights_card.dart';
+import 'package:anthology_ui/screens/saves/article_presentation_meta_data_fetcher.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class HighlightsScreen extends StatelessWidget {
   const HighlightsScreen({super.key});
@@ -30,14 +37,58 @@ class HighlightsScreen extends StatelessWidget {
           SettingsButton(),
         ],
       ),
-      body: ListView(
-        padding: screenMainScrollViewHorizontalPadding,
-        children: [
-          ArticleHighlightsCard(),
-        ],
-      ),
+      body: const _ArticleHighlightsList(),
       bottomNavigationBar: AppNavigationBar.ifNotExpanded(context),
     );
+  }
+}
+
+class _ArticleHighlightsList extends StatelessWidget {
+  const _ArticleHighlightsList();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _getAllHighlights(),
+      builder: (_, snapshot) {
+        if (snapshot.hasData) {
+          return ListView(
+            padding: screenMainScrollViewHorizontalPadding,
+            children: [
+              for (final entry in snapshot.data!.entries)
+                ArticleHighlightsCard(
+                  articleTitle: entry.key,
+                  highlights: entry.value,
+                ),
+            ],
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Future<Map<String, List<Highlight>>> _getAllHighlights() async {
+    final highlightsWithIds = await GetIt.I<HighlightDataGateway>().getAll();
+    final articleNames = highlightsWithIds.keys.map(_getArticleName).toList();
+
+    final highlightsWithNames = <String, List<Highlight>>{};
+    for (var i = 0; i < highlightsWithIds.length; i++) {
+      final id = highlightsWithIds.keys.elementAt(i);
+      final highlights = highlightsWithIds[id]!;
+      final name = await articleNames[i];
+      highlightsWithNames[name] = highlights;
+    }
+
+    return highlightsWithNames;
+  }
+
+  Future<String> _getArticleName(String id) async {
+    final article = await GetIt.I<ArticleDataGateway>().get(id);
+    final articleDataFetcher = ArticlePresentationMetaDataFetcher(article);
+    await articleDataFetcher.fetch();
+    return articleDataFetcher.title;
   }
 }
 
@@ -53,25 +104,4 @@ class SearchHighlightsButton extends StatelessWidget {
   }
 
   void _openSearchHighlightsScreen(BuildContext context) {}
-}
-
-class ArticleHighlightsCard extends StatelessWidget {
-  const ArticleHighlightsCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: const Text('Highlight Title'),
-        subtitle: const Text('Highlight Description'),
-        trailing: SizedBox(
-          height: 400,
-          width: 400,
-          child: Placeholder(),
-        ),
-      ),
-    );
-  }
 }
