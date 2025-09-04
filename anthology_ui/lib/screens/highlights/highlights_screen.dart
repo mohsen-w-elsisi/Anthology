@@ -3,7 +3,7 @@ import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/config.dart';
 import 'package:anthology_ui/screens/highlights/article_highlights_card.dart';
-import 'package:anthology_ui/screens/saves/article_presentation_meta_data_fetcher.dart';
+import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:anthology_ui/utils.dart';
@@ -92,7 +92,7 @@ class _ArticleHighlightsList extends StatelessWidget {
     final article = await GetIt.I<ArticleDataGateway>().get(id);
     final articleDataFetcher = ArticlePresentationMetaDataFetcher(article);
     await articleDataFetcher.fetch();
-    return articleDataFetcher.title;
+    return articleDataFetcher.metaData.title;
   }
 }
 

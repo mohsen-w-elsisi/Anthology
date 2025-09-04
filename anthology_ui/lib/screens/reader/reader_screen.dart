@@ -10,6 +10,7 @@ import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../data/article_brief_cache.dart';
 import 'highlight/provider.dart';
 
 class ReaderScreen extends StatefulWidget {
@@ -82,13 +83,21 @@ class _ReaderScreenState extends State<ReaderScreen> {
   );
 
   Future<ArticleBrief> _getBrief() async {
-    final res = await ServerRequestInterface(
-      Uri(
-        scheme: 'http',
-        host: 'localhost',
-        port: 3000,
-      ),
-    ).getArticleBrief(widget.article.id);
-    return ArticleBrief.fromJson(jsonDecode(res.body));
+    final articleBriefCache = GetIt.I<ArticleBriefCache>();
+    if (await articleBriefCache.isCached(widget.article.id)) {
+      print("getting brief from cache");
+      return articleBriefCache.get(widget.article.id);
+    } else {
+      final res = await ServerRequestInterface(
+        Uri(
+          scheme: 'http',
+          host: 'localhost',
+          port: 3000,
+        ),
+      ).getArticleBrief(widget.article.id);
+      final articleBrief = ArticleBrief.fromJson(jsonDecode(res.body));
+      articleBriefCache.cache(widget.article.id, articleBrief);
+      return articleBrief;
+    }
   }
 }

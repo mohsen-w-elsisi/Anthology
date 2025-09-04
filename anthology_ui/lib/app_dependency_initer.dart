@@ -4,7 +4,10 @@ import 'package:anthology_common/server_request_interface.dart';
 import 'package:anthology_ui/data/http_article_data_gateway.dart';
 import 'package:anthology_ui/state/tag_aggregator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
 
+import 'data/article_brief_cache.dart';
+import 'data/article_presentation_meta_data/cache.dart';
 import 'data/http_highlight_data_gateway.dart';
 
 class AppDependencyIniter {
@@ -12,6 +15,8 @@ class AppDependencyIniter {
     _initArticleDataGateway();
     _initHighlightDataGateway();
     await _initTagAggregator();
+    await _initArticlePresentationMetaDataCache();
+    await _initArticleBriefCache();
   }
 
   static void _initArticleDataGateway() {
@@ -37,6 +42,22 @@ class AppDependencyIniter {
         ServerRequestInterface(
           _serverBaseUri,
         ),
+      ),
+    );
+  }
+
+  static Future<void> _initArticlePresentationMetaDataCache() async {
+    GetIt.I.registerSingleton(
+      ArticlePresentationMetaDataCache(
+        (await getApplicationCacheDirectory()).path + "/metadata.json",
+      ),
+    );
+  }
+
+  static Future<void> _initArticleBriefCache() async {
+    GetIt.I.registerSingleton(
+      ArticleBriefCache(
+        (await getApplicationCacheDirectory()).path + "/article_brief.json",
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import 'article_presentation_meta_data_fetcher.dart';
+import '../../data/article_presentation_meta_data/fetcher.dart';
 
 class SaveCard extends StatefulWidget {
   final Article article;
@@ -33,7 +33,7 @@ class _SaveCardState extends State<SaveCard> {
         builder: (_, _) {
           return Card(
             child: ListTile(
-              title: Text(_metaDataFetcher.title),
+              title: Text(_metaDataFetcher.metaData.title),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -51,14 +51,14 @@ class _SaveCardState extends State<SaveCard> {
   }
 
   Widget? _image() {
-    if (_metaDataFetcher.image == null) {
+    if (_metaDataFetcher.metaData.image == null) {
       return null;
     } else {
       return SizedBox.square(
         dimension: 200,
         child: Image.network(
           alignment: Alignment.center,
-          _metaDataFetcher.image!,
+          _metaDataFetcher.metaData.image!,
         ),
       );
     }
