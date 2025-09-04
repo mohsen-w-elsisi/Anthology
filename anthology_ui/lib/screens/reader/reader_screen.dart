@@ -85,7 +85,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
   Future<ArticleBrief> _getBrief() async {
     final articleBriefCache = GetIt.I<ArticleBriefCache>();
     if (await articleBriefCache.isCached(widget.article.id)) {
-      print("getting brief from cache");
       return articleBriefCache.get(widget.article.id);
     } else {
       final res = await ServerRequestInterface(

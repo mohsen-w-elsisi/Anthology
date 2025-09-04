@@ -1,30 +1,27 @@
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
-import 'package:anthology_common/server_request_interface.dart';
-import 'package:anthology_ui/data/http_article_data_gateway.dart';
 import 'package:anthology_ui/state/tag_aggregator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:anthology_common/shared_impls/local_article_data_gateway.dart';
+import 'package:anthology_common/shared_impls/local_highlight_data_gateway.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'data/article_brief_cache.dart';
 import 'data/article_presentation_meta_data/cache.dart';
-import 'data/http_highlight_data_gateway.dart';
 
 class AppDependencyIniter {
   static Future<void> init() async {
-    _initArticleDataGateway();
-    _initHighlightDataGateway();
+    await _initArticleDataGateway();
+    await _initHighlightDataGateway();
     await _initTagAggregator();
     await _initArticlePresentationMetaDataCache();
     await _initArticleBriefCache();
   }
 
-  static void _initArticleDataGateway() {
+  static Future<void> _initArticleDataGateway() async {
     GetIt.I.registerSingleton<ArticleDataGateway>(
-      HttpArticleDataGateway(
-        ServerRequestInterface(
-          _serverBaseUri,
-        ),
+      LocalArticleDataGateway(
+        "${(await getApplicationDocumentsDirectory()).path}/articles.json",
       ),
     );
   }
@@ -36,12 +33,10 @@ class AppDependencyIniter {
     GetIt.I.registerSingleton<TagAggregator>(tagAggregator);
   }
 
-  static void _initHighlightDataGateway() {
+  static Future<void> _initHighlightDataGateway() async {
     GetIt.I.registerSingleton<HighlightDataGateway>(
-      HttpHighlightDataGateway(
-        ServerRequestInterface(
-          _serverBaseUri,
-        ),
+      LocalHighlightDataGateway(
+        "${(await getApplicationDocumentsDirectory()).path}/highlights.json",
       ),
     );
   }
@@ -49,7 +44,7 @@ class AppDependencyIniter {
   static Future<void> _initArticlePresentationMetaDataCache() async {
     GetIt.I.registerSingleton(
       ArticlePresentationMetaDataCache(
-        (await getApplicationCacheDirectory()).path + "/metadata.json",
+        "${(await getApplicationCacheDirectory()).path}/metadata.json",
       ),
     );
   }
@@ -57,7 +52,7 @@ class AppDependencyIniter {
   static Future<void> _initArticleBriefCache() async {
     GetIt.I.registerSingleton(
       ArticleBriefCache(
-        (await getApplicationCacheDirectory()).path + "/article_brief.json",
+        "${(await getApplicationCacheDirectory()).path}/article_brief.json",
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:anthology_common/server_request_interface.dart';
-import 'package:anthology_server/data_gateways/local_json_article_data_gateway.dart';
+import 'package:anthology_common/shared_impls/local_article_data_gateway.dart';
 import 'package:test/test.dart';
 
 import 'server_tests_setup.dart';
@@ -9,7 +9,7 @@ import 'test_requests.dart';
 
 void main() {
   final serverTestsSetup = ServerTestsSetup(
-    articleDataGaetway: LocalJsonArticleDataGateway(),
+    articleDataGaetway: LocalArticleDataGateway("./test-db/saves.json"),
   );
 
   setUp(serverTestsSetup.setupServer);

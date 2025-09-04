@@ -100,7 +100,7 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
   TapGestureRecognizer get _fullArticleGestureRecogniser {
     return TapGestureRecognizer()
       ..onTap = () {
-        print("went to full article");
+        // TODO: implement this
       };
   }
 }
