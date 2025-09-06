@@ -44,25 +44,22 @@ class _MainSaveViewState extends State<MainSaveView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ListView(
       padding: screenMainScrollViewHorizontalPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TagSelectorChips(tagSelectionController: _tagfilterationController),
-          FutureBuilder(
-            future: GetIt.I<ArticleDataGateway>().getAll(),
-            initialData: <Article>[],
-            builder: (_, allArticlesSnapshot) => StreamBuilder(
-              stream: _tagfilterationController.stream,
-              initialData: _tagfilterationController.selectedTags,
-              builder: (_, _) => SaveCardsGrid(
-                _filterArticles(allArticlesSnapshot.data!),
-              ),
+      children: [
+        TagSelectorChips(tagSelectionController: _tagfilterationController),
+        FutureBuilder(
+          future: GetIt.I<ArticleDataGateway>().getAll(),
+          initialData: <Article>[],
+          builder: (_, allArticlesSnapshot) => StreamBuilder(
+            stream: _tagfilterationController.stream,
+            initialData: _tagfilterationController.selectedTags,
+            builder: (_, _) => SaveCardsGrid(
+              _filterArticles(allArticlesSnapshot.data!),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -91,6 +88,7 @@ class SaveCardsGrid extends StatelessWidget {
       builder: (_, contraints) {
         return GridView.builder(
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: _columnsCount(contraints),
             mainAxisExtent: _rowHeight(contraints),

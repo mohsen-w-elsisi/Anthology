@@ -12,6 +12,7 @@ dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
+  flutter_inappwebview: ^6.1.5
   get_it: ^8.2.0
   html: ^0.15.6
   http: ^1.5.0
@@ -25,6 +26,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/Readability.js
 
 formatter:
   trailing_commas: preserve

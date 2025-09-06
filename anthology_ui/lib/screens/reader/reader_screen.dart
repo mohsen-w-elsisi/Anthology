@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:anthology_common/server_request_interface.dart';
+import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
@@ -87,14 +85,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
     if (await articleBriefCache.isCached(widget.article.id)) {
       return articleBriefCache.get(widget.article.id);
     } else {
-      final res = await ServerRequestInterface(
-        Uri(
-          scheme: 'http',
-          host: 'localhost',
-          port: 3000,
-        ),
-      ).getArticleBrief(widget.article.id);
-      final articleBrief = ArticleBrief.fromJson(jsonDecode(res.body));
+      final articleBrief = await ArticleBriefFetcher(
+        widget.article.id,
+      ).fetchBrief();
       articleBriefCache.cache(widget.article.id, articleBrief);
       return articleBrief;
     }
