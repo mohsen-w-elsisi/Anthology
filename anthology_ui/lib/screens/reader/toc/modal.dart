@@ -3,12 +3,17 @@ import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.da
 import 'package:anthology_ui/screens/reader/toc/generator.dart';
 import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class TocModal extends StatelessWidget with UtilityModal {
   final ArticleBrief brief;
+  final HeadingRegistry headingRegistry;
 
-  const TocModal({super.key, required this.brief});
+  const TocModal({
+    super.key,
+    required this.brief,
+    required this.headingRegistry,
+  });
 
   @override
   bool get isScrollable => true;
@@ -18,14 +23,17 @@ class TocModal extends StatelessWidget with UtilityModal {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: UtilityModal.modalPadding,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          modalTitle(context),
-          _Table(toc: _toc),
-        ],
+    return Provider(
+      create: (_) => headingRegistry,
+      child: SingleChildScrollView(
+        padding: UtilityModal.modalPadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            modalTitle(context),
+            _Table(toc: _toc),
+          ],
+        ),
       ),
     );
   }
@@ -80,7 +88,7 @@ class _TocNodeButton extends StatelessWidget {
   void _scrollToHeading(BuildContext context) {
     Navigator.of(context).pop();
     Scrollable.ensureVisible(
-      GetIt.I<HeadingRegistry>().keyFor(tocNode.node).currentContext!,
+      context.read<HeadingRegistry>().keyFor(tocNode.node).currentContext!,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutQuad,
     );

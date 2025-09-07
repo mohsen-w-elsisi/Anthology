@@ -3,6 +3,7 @@ import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.da
 import 'package:anthology_ui/screens/reader/text_node_widget/text_node_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class Heading1NodeWidget extends HeadingNodeWidget {
   const Heading1NodeWidget(super.node, {super.key});
@@ -51,7 +52,7 @@ abstract class HeadingNodeWidget extends TextNodeWidget {
 
   @override
   Widget buildNodeWidget(BuildContext context, {Key? key}) {
-    final headingKey = GetIt.I<HeadingRegistry>().register(node);
+    final headingKey = context.read<HeadingRegistry>().register(node);
     return super.buildNodeWidget(context, key: headingKey);
   }
 }

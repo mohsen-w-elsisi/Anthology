@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 class ReaderViewStatusNotifier with ChangeNotifier {
   Article? _activeArticle;
 
+  bool isReaderModalActive = false;
+
   Article? get activeArticle => _activeArticle;
 
   void setActiveArticle(Article article) {

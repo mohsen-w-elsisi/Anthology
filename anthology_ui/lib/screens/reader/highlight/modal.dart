@@ -1,12 +1,12 @@
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/shared_widgets/highlight_detail_modal.dart';
-import 'package:anthology_ui/screens/reader/highlight/provider.dart';
 import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class HighlightsModal extends StatelessWidget with UtilityModal {
-  const HighlightsModal({super.key});
+  final List<Highlight> highlights;
+
+  const HighlightsModal({super.key, required this.highlights});
 
   @override
   String get title => "Highlights";
@@ -20,14 +20,11 @@ class HighlightsModal extends StatelessWidget with UtilityModal {
       child: Column(
         children: [
           modalTitle(context),
-          for (final highlight in _highlights) HighlightCard(highlight),
+          for (final highlight in highlights) HighlightCard(highlight),
         ],
       ),
     );
   }
-
-  List<Highlight> get _highlights =>
-      GetIt.I<ReaderScreenHighlightProvider>().highlights;
 }
 
 class HighlightCard extends StatelessWidget {

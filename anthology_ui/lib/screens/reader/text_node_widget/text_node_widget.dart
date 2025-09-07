@@ -4,7 +4,7 @@ import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/screens/reader/highlight/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 import 'node_style_extractor.dart';
 
@@ -62,9 +62,10 @@ class NodeWidgetBuilder {
   }
 
   void _fetchHighllights() {
-    highlights = GetIt.I<ReaderScreenHighlightProvider>().highlightsWithingNode(
-      node,
-    );
+    highlights = Provider.of<ReaderScreenHighlightProvider>(
+      context,
+      listen: false,
+    ).highlightsWithingNode(node);
   }
 
   void _defineStyles() {

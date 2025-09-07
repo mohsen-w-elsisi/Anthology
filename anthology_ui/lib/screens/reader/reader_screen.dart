@@ -4,17 +4,21 @@ import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
+import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
+import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
 import 'highlight/provider.dart';
 
 class ReaderScreen extends StatefulWidget {
   final Article article;
+  final bool isModal;
 
-  const ReaderScreen(this.article, {super.key});
+  const ReaderScreen(this.article, {super.key, this.isModal = false});
 
   @override
   State<ReaderScreen> createState() => _ReaderScreenState();
@@ -22,56 +26,69 @@ class ReaderScreen extends StatefulWidget {
 
 class _ReaderScreenState extends State<ReaderScreen> {
   final _textOptionsController = TextOptionsController.inital();
+  // TODO: there should be more restrain and flags behind altering global state like this
+  final _readerStatusNotifier = GetIt.I<ReaderViewStatusNotifier>();
 
   @override
   void initState() {
     super.initState();
-    GetIt.I.registerSingleton(HeadingRegistry());
-    final highlightProvider = ReaderScreenHighlightProvider(widget.article.id);
-    highlightProvider.initHighlights();
-    GetIt.I.registerSingleton(highlightProvider);
+    if (widget.isModal) _readerStatusNotifier.isReaderModalActive = true;
   }
 
   @override
   void dispose() {
-    GetIt.I.unregister<HeadingRegistry>();
-    GetIt.I.unregister<ReaderScreenHighlightProvider>();
+    if (widget.isModal) _readerStatusNotifier.isReaderModalActive = false;
+    _textOptionsController.dispose();
     super.dispose();
   }
 
+  // TODO: when changing screen orientation (compact/expanded) modal ReaderScreen visible for 1 frame
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-        future: _getBrief(),
-        builder: (_, snapshot) => CustomScrollView(
-          slivers: [
-            ReaderScreenAppBar(
-              widget.article,
-              brief: snapshot.data,
-              textOptionsNotifier: _textOptionsController,
-            ),
-            snapshot.hasData ? _textView(snapshot.data!) : _loadingSpinner,
-          ],
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) => HeadingRegistry()),
+        Provider(
+          create: (_) {
+            return ReaderScreenHighlightProvider(widget.article.id)
+              ..initHighlights();
+          },
+        ),
+      ],
+      child: Scaffold(
+        body: FutureBuilder(
+          future: _getBrief(),
+          builder: (_, snapshot) => CustomScrollView(
+            slivers: [
+              ReaderScreenAppBar(
+                widget.article,
+                brief: snapshot.data,
+                textOptionsNotifier: _textOptionsController,
+              ),
+              snapshot.hasData ? _textView(snapshot.data!) : _loadingSpinner,
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _textView(ArticleBrief brief) => SliverPadding(
-    padding: EdgeInsetsGeometry.symmetric(horizontal: 20.0),
+    padding: const EdgeInsets.symmetric(horizontal: 20.0),
     sliver: SliverToBoxAdapter(
-      child: ListenableBuilder(
-        listenable: Listenable.merge([
-          _textOptionsController,
-          GetIt.I<ReaderScreenHighlightProvider>().initListenable,
-        ]),
-        builder: (_, _) {
-          return ReaderViewTextArea(
-            brief: brief,
-            textOptions: _textOptionsController.options,
-          );
-        },
+      child: Consumer<ReaderScreenHighlightProvider>(
+        builder: (_, highlightProvider, _) => ListenableBuilder(
+          listenable: Listenable.merge([
+            _textOptionsController,
+            highlightProvider.initListenable,
+          ]),
+          builder: (_, __) {
+            return ReaderViewTextArea(
+              brief: brief,
+              textOptions: _textOptionsController.options,
+            );
+          },
+        ),
       ),
     ),
   );

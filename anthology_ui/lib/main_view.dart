@@ -8,8 +8,34 @@ import 'package:multi_split_view/multi_split_view.dart';
 import 'screens/saves/saves_screen.dart';
 import 'shared_widgets/navigation_bar.dart';
 
-class MainView extends StatelessWidget {
+class MainView extends StatefulWidget {
   const MainView({super.key});
+
+  @override
+  State<MainView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  final _readerStatusNotifier = GetIt.I<ReaderViewStatusNotifier>();
+  bool? _wasExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _readerStatusNotifier.addListener(_onReaderStatusChanged);
+  }
+
+  @override
+  void dispose() {
+    _readerStatusNotifier.removeListener(_onReaderStatusChanged);
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _handleLayoutChange();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +46,7 @@ class MainView extends StatelessWidget {
           Expanded(
             child: MultiSplitView(
               dividerBuilder: (_, _, _, dragging, highlighted, _) {
-                return ResizablePanDragHandle(
+                return ResizablePaneDragHandle(
                   isPressed: dragging,
                   isHovered: highlighted,
                 );
@@ -35,6 +61,55 @@ class MainView extends StatelessWidget {
       );
     } else {
       return const SavesScreen();
+    }
+  }
+
+  void _handleLayoutChange() {
+    final isCurrentlyExpanded = isExpanded(context);
+    if (_wasExpanded == true && !isCurrentlyExpanded) {
+      _showReaderAsModal();
+    } else if (_wasExpanded == false && isCurrentlyExpanded) {
+      _popReaderIfModal();
+    }
+    _wasExpanded = isCurrentlyExpanded;
+  }
+
+  void _onReaderStatusChanged() {
+    final activeArticle = _readerStatusNotifier.activeArticle;
+    if (!isExpanded(context) && activeArticle != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ReaderScreen(activeArticle, isModal: true),
+        ),
+      );
+    }
+  }
+
+  void _popReaderIfModal() {
+    final readerStatus = GetIt.I<ReaderViewStatusNotifier>();
+    if (readerStatus.isReaderModalActive) {
+      // cannot retrigger build stage during build stage, hence pop postframe
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+      });
+    }
+  }
+
+  void _showReaderAsModal() {
+    final activeArticle = GetIt.I<ReaderViewStatusNotifier>().activeArticle;
+    if (activeArticle != null) {
+      // cannot retrigger build stage during build stage, hence pop postframe
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ReaderScreen(activeArticle, isModal: true),
+            ),
+          );
+        }
+      });
     }
   }
 
@@ -57,13 +132,13 @@ class MainView extends StatelessWidget {
   }
 }
 
-class ResizablePanDragHandle extends StatelessWidget {
+class ResizablePaneDragHandle extends StatelessWidget {
   static const _handleAnimationDuration = Duration(milliseconds: 100);
 
   final bool isPressed;
   final bool isHovered;
 
-  const ResizablePanDragHandle({
+  const ResizablePaneDragHandle({
     super.key,
     required this.isPressed,
     required this.isHovered,
