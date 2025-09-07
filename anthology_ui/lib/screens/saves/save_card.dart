@@ -1,6 +1,6 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
-import 'package:anthology_ui/screens/reader/reader_screen.dart';
+import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -76,11 +76,7 @@ class _SaveCardState extends State<SaveCard> {
   );
 
   void _openReaderScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ReaderScreen(widget.article),
-      ),
-    );
+    GetIt.I<ReaderViewStatusNotifier>().setActiveArticle(widget.article);
   }
 }
 

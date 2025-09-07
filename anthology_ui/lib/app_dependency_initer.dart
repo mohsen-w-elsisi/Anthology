@@ -2,6 +2,7 @@ import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/generator.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
+import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/state/tag_aggregator.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -22,6 +23,7 @@ class AppDependencyIniter {
     await _initArticlePresentationMetaDataCache();
     await _initArticleBriefCache();
     _initArticleBriefGenerator();
+    _initReaderViewStatusNotifier();
   }
 
   static Future<void> _initArticleDataGateway() async {
@@ -68,6 +70,10 @@ class AppDependencyIniter {
     GetIt.I.registerFactoryParam<ArticleBriefHtmlGenerator, Article, Null>(
       (article, _) => ReadabilityArticleBriefGenerator(article),
     );
+  }
+
+  static void _initReaderViewStatusNotifier() {
+    GetIt.I.registerSingleton(ReaderViewStatusNotifier());
   }
 
   static final _serverBaseUri = Uri(

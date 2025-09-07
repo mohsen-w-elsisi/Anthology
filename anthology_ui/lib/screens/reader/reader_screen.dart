@@ -5,10 +5,10 @@ import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
+import 'package:anthology_ui/data/article_brief_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../data/article_brief_cache.dart';
 import 'highlight/provider.dart';
 
 class ReaderScreen extends StatefulWidget {

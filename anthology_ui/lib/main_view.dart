@@ -1,4 +1,9 @@
+import 'package:anthology_ui/screens/reader/reader_screen.dart';
+import 'package:anthology_ui/state/reader_view_status_notifier.dart';
+import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:multi_split_view/multi_split_view.dart';
 
 import 'screens/saves/saves_screen.dart';
 import 'shared_widgets/navigation_bar.dart';
@@ -9,13 +14,21 @@ class MainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isExpanded(context)) {
-      return const Row(
+      return Row(
         children: [
           AppNavigationBar.rail(),
-          Expanded(child: SavesScreen()),
           Expanded(
-            child: Center(
-              child: Text("empty screen"),
+            child: MultiSplitView(
+              dividerBuilder: (_, _, _, dragging, highlighted, _) {
+                return ResizablePanDragHandle(
+                  isPressed: dragging,
+                  isHovered: highlighted,
+                );
+              },
+              initialAreas: [
+                Area(builder: (_, _) => const SavesScreen()),
+                Area(builder: (_, _) => _readerScreenPane()),
+              ],
             ),
           ),
         ],
@@ -25,8 +38,78 @@ class MainView extends StatelessWidget {
     }
   }
 
-  bool isExpanded(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    return width > 840;
+  Widget _readerScreenPane() {
+    return ListenableBuilder(
+      listenable: GetIt.I<ReaderViewStatusNotifier>(),
+      builder: (_, _) {
+        final activeArticle = GetIt.I<ReaderViewStatusNotifier>().activeArticle;
+        if (activeArticle != null) {
+          return ReaderScreen(activeArticle);
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: Text("Select an article to begin reading"),
+            ),
+          );
+        }
+      },
+    );
   }
+}
+
+class ResizablePanDragHandle extends StatelessWidget {
+  static const _handleAnimationDuration = Duration(milliseconds: 100);
+
+  final bool isPressed;
+  final bool isHovered;
+
+  const ResizablePanDragHandle({
+    super.key,
+    required this.isPressed,
+    required this.isHovered,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 24,
+      color: ColorScheme.of(context).surface,
+      child: Center(child: _handle(context)),
+    );
+  }
+
+  Widget _handle(BuildContext context) {
+    return AnimatedOpacity(
+      duration: _handleAnimationDuration,
+      opacity: _handleOpacity,
+      child: AnimatedContainer(
+        duration: _handleAnimationDuration,
+        width: _handleWidth,
+        height: _handleHeight,
+        decoration: BoxDecoration(
+          borderRadius: _handleBorderRadius,
+          color: _handleColor(context),
+        ),
+      ),
+    );
+  }
+
+  double get _handleOpacity => isHovered && !isPressed ? 0.08 : 1;
+
+  BorderRadius get _handleBorderRadius =>
+      BorderRadius.circular(isPressed ? 12 : 4);
+
+  Color _handleColor(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    if (isPressed) {
+      return colorScheme.onSurface;
+    } else if (isHovered) {
+      return colorScheme.onInverseSurface;
+    } else {
+      return colorScheme.outline;
+    }
+  }
+
+  double get _handleHeight => isPressed ? 52 : 48;
+  double get _handleWidth => isPressed ? 12 : 4;
 }
