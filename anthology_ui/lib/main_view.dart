@@ -37,6 +37,16 @@ class _MainViewState extends State<MainView> {
     _handleLayoutChange();
   }
 
+  void _handleLayoutChange() {
+    final isCurrentlyExpanded = isExpanded(context);
+    if (_wasExpanded == true && !isCurrentlyExpanded) {
+      _showReaderAsModal();
+    } else if (_wasExpanded == false && isCurrentlyExpanded) {
+      _popReaderIfModal();
+    }
+    _wasExpanded = isCurrentlyExpanded;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isExpanded(context)) {
@@ -53,7 +63,7 @@ class _MainViewState extends State<MainView> {
               },
               initialAreas: [
                 Area(builder: (_, _) => const SavesScreen()),
-                Area(builder: (_, _) => _readerScreenPane()),
+                Area(builder: (_, _) => const _ReaderViewPane()),
               ],
             ),
           ),
@@ -62,16 +72,6 @@ class _MainViewState extends State<MainView> {
     } else {
       return const SavesScreen();
     }
-  }
-
-  void _handleLayoutChange() {
-    final isCurrentlyExpanded = isExpanded(context);
-    if (_wasExpanded == true && !isCurrentlyExpanded) {
-      _showReaderAsModal();
-    } else if (_wasExpanded == false && isCurrentlyExpanded) {
-      _popReaderIfModal();
-    }
-    _wasExpanded = isCurrentlyExpanded;
   }
 
   void _onReaderStatusChanged() {
@@ -112,14 +112,22 @@ class _MainViewState extends State<MainView> {
       });
     }
   }
+}
 
-  Widget _readerScreenPane() {
+class _ReaderViewPane extends StatelessWidget {
+  const _ReaderViewPane();
+
+  @override
+  Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: GetIt.I<ReaderViewStatusNotifier>(),
       builder: (_, _) {
         final activeArticle = GetIt.I<ReaderViewStatusNotifier>().activeArticle;
         if (activeArticle != null) {
-          return ReaderScreen(activeArticle);
+          return ReaderScreen(
+            activeArticle,
+            key: ValueKey(activeArticle.id),
+          );
         } else {
           return const Scaffold(
             body: Center(
