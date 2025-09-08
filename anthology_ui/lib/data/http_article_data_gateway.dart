@@ -57,6 +57,12 @@ class HttpArticleDataGateway implements ArticleDataGateway {
     _checkForError(response, 'save', article.id);
   }
 
+  @override
+  Future<void> updateProgress(String id, double progress) {
+    // TODO: implement updateProgress
+    throw UnimplementedError();
+  }
+
   void _checkForError(Response response, String action, [String? id]) {
     if (response.statusCode == 404 && id != null) {
       throw ArticleNotFoundError(id);

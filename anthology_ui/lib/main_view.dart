@@ -126,7 +126,7 @@ class _ReaderViewPane extends StatelessWidget {
         if (activeArticle != null) {
           return ReaderScreen(
             activeArticle,
-            key: ValueKey(activeArticle.id),
+            key: GlobalKey(),
           );
         } else {
           return const Scaffold(

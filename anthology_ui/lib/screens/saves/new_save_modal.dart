@@ -99,6 +99,7 @@ class _NewSaveModalState extends State<NewSaveModal> {
         tags: {},
         dateSaved: DateTime.now(),
         read: false,
+        progress: 0,
       );
       GetIt.I<ArticleDataGateway>().save(article);
       Navigator.pop(context);

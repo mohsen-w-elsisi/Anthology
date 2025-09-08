@@ -1,5 +1,6 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
+import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
@@ -27,17 +28,22 @@ class _ReaderScreenState extends State<ReaderScreen> {
   final _textOptionsController = TextOptionsController.inital();
   // TODO: there should be more restrain and flags behind altering global state like this
   final _readerStatusNotifier = GetIt.I<ReaderViewStatusNotifier>();
+  late final ScrollController _scrollController;
+  late final ArticleDataGateway _articleDataGateway;
 
   @override
   void initState() {
     super.initState();
     if (widget.isModal) _readerStatusNotifier.isReaderModalActive = true;
+    _scrollController = ScrollController();
+    _articleDataGateway = GetIt.I<ArticleDataGateway>();
   }
 
   @override
   void dispose() {
     if (widget.isModal) _readerStatusNotifier.isReaderModalActive = false;
     _textOptionsController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -56,19 +62,60 @@ class _ReaderScreenState extends State<ReaderScreen> {
       child: Scaffold(
         body: FutureBuilder(
           future: _getBrief(),
-          builder: (_, snapshot) => CustomScrollView(
-            slivers: [
-              ReaderScreenAppBar(
-                widget.article,
-                brief: snapshot.data,
-                textOptionsNotifier: _textOptionsController,
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _jumpToArticleProgress();
+              });
+            }
+            return NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollEndNotification) {
+                  if (_scrollController.hasClients) {
+                    _updateProgress();
+                  }
+                }
+                return false;
+              },
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  ReaderScreenAppBar(
+                    widget.article,
+                    brief: snapshot.data,
+                    textOptionsNotifier: _textOptionsController,
+                  ),
+                  snapshot.hasData
+                      ? _textView(snapshot.data!)
+                      : _loadingSpinner,
+                ],
               ),
-              snapshot.hasData ? _textView(snapshot.data!) : _loadingSpinner,
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
+  }
+
+  void _jumpToArticleProgress() {
+    if (mounted &&
+        _scrollController.hasClients &&
+        widget.article.progress > 0) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final offset = maxScroll * widget.article.progress;
+      _scrollController.jumpTo(offset);
+    }
+  }
+
+  void _updateProgress() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    late final double progress;
+    if (maxScroll > 0) {
+      progress = (_scrollController.position.pixels / maxScroll).clamp(0, 1);
+    } else {
+      progress = 0.0;
+    }
+    _articleDataGateway.updateProgress(widget.article.id, progress);
   }
 
   Widget _textView(ArticleBrief brief) => SliverPadding(
@@ -91,7 +138,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
     ),
   );
 
-  Widget get _loadingSpinner => SliverFillRemaining(
+  Widget get _loadingSpinner => const SliverFillRemaining(
     child: Center(child: CircularProgressIndicator()),
   );
 

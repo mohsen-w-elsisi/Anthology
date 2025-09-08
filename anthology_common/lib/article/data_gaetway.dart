@@ -8,4 +8,5 @@ abstract class ArticleDataGateway {
   Future<void> deleteAll();
   Future<void> markRead(String id);
   Future<void> markUnread(String id);
+  Future<void> updateProgress(String id, double progress);
 }

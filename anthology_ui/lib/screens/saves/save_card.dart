@@ -85,29 +85,10 @@ class _DescribtorText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _highlightCount(),
-      builder: (_, snapshot) {
-        final highlightText = _asyncSnapshotToHighlightText(snapshot);
-        return Text("$_publisher • $highlightText");
-      },
-    );
+    return Text("$_publisher • $_progress");
   }
 
   String get _publisher => article.uri.host;
 
-  Future<int> _highlightCount() async {
-    final highlights = await GetIt.I<HighlightDataGateway>()
-        .getArticleHighlights(article.id);
-    return highlights.length;
-  }
-
-  String _asyncSnapshotToHighlightText(AsyncSnapshot<int> snapshot) {
-    if (snapshot.hasData) {
-      final pluralS = snapshot.data == 1 ? "" : "s";
-      return "${snapshot.data} highlight$pluralS";
-    } else {
-      return "";
-    }
-  }
+  String get _progress => "${(article.progress * 100).toInt()}%";
 }

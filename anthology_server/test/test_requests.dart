@@ -106,6 +106,7 @@ class ExampleData {
     tags: {},
     dateSaved: DateTime.now(),
     read: false,
+    progress: 0,
   );
 
   static final article2 = Article(
@@ -114,6 +115,7 @@ class ExampleData {
     tags: {},
     dateSaved: DateTime.now(),
     read: false,
+    progress: 0,
   );
 
   static final highlight1 = Highlight(

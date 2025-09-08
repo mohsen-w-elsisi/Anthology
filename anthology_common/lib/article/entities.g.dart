@@ -17,6 +17,8 @@ abstract class _$ArticleCWProxy {
 
   Article read(bool read);
 
+  Article progress(double progress);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Article(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +31,7 @@ abstract class _$ArticleCWProxy {
     Set<String> tags,
     DateTime dateSaved,
     bool read,
+    double progress,
   });
 }
 
@@ -54,6 +57,9 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
   Article read(bool read) => this(read: read);
 
   @override
+  Article progress(double progress) => this(progress: progress);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Article(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -66,6 +72,7 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
     Object? tags = const $CopyWithPlaceholder(),
     Object? dateSaved = const $CopyWithPlaceholder(),
     Object? read = const $CopyWithPlaceholder(),
+    Object? progress = const $CopyWithPlaceholder(),
   }) {
     return Article(
       uri: uri == const $CopyWithPlaceholder()
@@ -88,6 +95,10 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
           ? _value.read
           // ignore: cast_nullable_to_non_nullable
           : read as bool,
+      progress: progress == const $CopyWithPlaceholder()
+          ? _value.progress
+          // ignore: cast_nullable_to_non_nullable
+          : progress as double,
     );
   }
 }
