@@ -2,9 +2,11 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
+import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
+import 'package:anthology_ui/state/highlight_ui_notifier.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
@@ -25,24 +27,20 @@ class ReaderScreen extends StatefulWidget {
 }
 
 class _ReaderScreenState extends State<ReaderScreen> {
-  final _textOptionsController = TextOptionsController.inital();
   // TODO: there should be more restrain and flags behind altering global state like this
   final _readerStatusNotifier = GetIt.I<ReaderViewStatusNotifier>();
   late final ScrollController _scrollController;
-  late final ArticleDataGateway _articleDataGateway;
 
   @override
   void initState() {
     super.initState();
     if (widget.isModal) _readerStatusNotifier.isReaderModalActive = true;
     _scrollController = ScrollController();
-    _articleDataGateway = GetIt.I<ArticleDataGateway>();
   }
 
   @override
   void dispose() {
     if (widget.isModal) _readerStatusNotifier.isReaderModalActive = false;
-    _textOptionsController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -51,8 +49,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => TextOptionsController.inital()),
         Provider(create: (_) => HeadingRegistry()),
-        Provider(
+        ChangeNotifierProvider(
           create: (_) {
             return ReaderScreenHighlightProvider(widget.article.id)
               ..initHighlights();
@@ -83,7 +82,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   ReaderScreenAppBar(
                     widget.article,
                     brief: snapshot.data,
-                    textOptionsNotifier: _textOptionsController,
                   ),
                   snapshot.hasData
                       ? _textView(snapshot.data!)
@@ -115,25 +113,19 @@ class _ReaderScreenState extends State<ReaderScreen> {
     } else {
       progress = 0.0;
     }
-    _articleDataGateway.updateProgress(widget.article.id, progress);
+    AppActions.updateArticleProgress(widget.article.id, progress);
   }
 
   Widget _textView(ArticleBrief brief) => SliverPadding(
     padding: const EdgeInsets.symmetric(horizontal: 20.0),
     sliver: SliverToBoxAdapter(
-      child: Consumer<ReaderScreenHighlightProvider>(
-        builder: (_, highlightProvider, _) => ListenableBuilder(
-          listenable: Listenable.merge([
-            _textOptionsController,
-            highlightProvider.initListenable,
-          ]),
-          builder: (_, __) {
-            return ReaderViewTextArea(
-              brief: brief,
-              textOptions: _textOptionsController.options,
-            );
-          },
-        ),
+      child: Consumer<TextOptionsController>(
+        builder: (_, textOptionsController, _) {
+          return ReaderViewTextArea(
+            brief: brief,
+            textOptions: textOptionsController.options,
+          );
+        },
       ),
     ),
   );

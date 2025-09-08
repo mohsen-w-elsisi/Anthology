@@ -1,8 +1,7 @@
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_ui/app_actions.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class HighlightContextMenuButtonItemFactory {
   final String _textSelection;
@@ -22,7 +21,7 @@ class HighlightContextMenuButtonItemFactory {
   // TODO: selecting a non-unique substring within the brief will not guarentee valid start/end index
   void _saveHighlight() {
     ContextMenuController.removeAny();
-    GetIt.I<HighlightDataGateway>().save(_highlight());
+    AppActions.saveHighlight(_highlight());
   }
 
   Highlight _highlight() => Highlight(

@@ -6,6 +6,7 @@ import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
+import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/tag_selection_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -41,6 +42,33 @@ class MainSaveView extends StatefulWidget {
 
 class _MainSaveViewState extends State<MainSaveView> {
   final _tagfilterationController = TagSelectionController();
+  late Future<List<Article>> _articlesFuture;
+  List<Article>? _previousArticles;
+
+  @override
+  void initState() {
+    super.initState();
+    _articlesFuture = _getArticles();
+    GetIt.I<ArticleUiNotifier>().addListener(_refreshArticles);
+  }
+
+  @override
+  void dispose() {
+    _tagfilterationController.dispose();
+    GetIt.I<ArticleUiNotifier>().removeListener(_refreshArticles);
+    super.dispose();
+  }
+
+  Future<List<Article>> _getArticles() => GetIt.I<ArticleDataGateway>().getAll()
+    ..then(
+      (articles) => _previousArticles = articles,
+    ); // to avoid harsh UI flickers while fetching
+
+  void _refreshArticles() {
+    setState(() {
+      _articlesFuture = _getArticles();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +77,22 @@ class _MainSaveViewState extends State<MainSaveView> {
       children: [
         TagSelectorChips(tagSelectionController: _tagfilterationController),
         FutureBuilder(
-          future: GetIt.I<ArticleDataGateway>().getAll(),
-          initialData: <Article>[],
-          builder: (_, allArticlesSnapshot) => StreamBuilder(
-            stream: _tagfilterationController.stream,
-            initialData: _tagfilterationController.selectedTags,
-            builder: (_, _) => SaveCardsGrid(
-              _filterArticles(allArticlesSnapshot.data!),
-            ),
-          ),
+          future: _articlesFuture,
+          initialData: _previousArticles ?? [],
+          builder: (_, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              return StreamBuilder(
+                stream: _tagfilterationController.stream,
+                initialData: _tagfilterationController.selectedTags,
+                builder: (_, __) => SaveCardsGrid(
+                  _filterArticles(snapshot.data ?? []),
+                  key: UniqueKey(),
+                ),
+              );
+            }
+          },
         ),
       ],
     );
@@ -83,7 +118,9 @@ class SaveCardsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cards = [for (final article in articles) SaveCard(article)];
+    final cards = [
+      for (final article in articles) SaveCard(article),
+    ].reversed.toList();
     return LayoutBuilder(
       builder: (_, contraints) {
         return GridView.builder(

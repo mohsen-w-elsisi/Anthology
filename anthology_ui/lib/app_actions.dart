@@ -1,0 +1,33 @@
+import 'package:anthology_common/article/data_gaetway.dart';
+import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_common/highlight/data_gateway.dart';
+import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_ui/state/article_ui_notifier.dart';
+import 'package:anthology_ui/state/highlight_ui_notifier.dart';
+import 'package:get_it/get_it.dart';
+
+abstract class AppActions {
+  static Future<void> saveArticle(Article article) async {
+    await _articleDataGateway.save(article);
+    _articleUiNotifier.notify();
+  }
+
+  static Future<void> updateArticleProgress(String id, double progress) async {
+    await _articleDataGateway.updateProgress(id, progress);
+    _articleUiNotifier.notify();
+  }
+
+  static Future<void> saveHighlight(Highlight highlight) async {
+    await _highlightDataGateway.save(highlight);
+    _highlightUiNotifier.notify();
+  }
+
+  static ArticleDataGateway get _articleDataGateway =>
+      GetIt.I<ArticleDataGateway>();
+  static ArticleUiNotifier get _articleUiNotifier =>
+      GetIt.I<ArticleUiNotifier>();
+  static HighlightDataGateway get _highlightDataGateway =>
+      GetIt.I<HighlightDataGateway>();
+  static HighlightUiNotifier get _highlightUiNotifier =>
+      GetIt.I<HighlightUiNotifier>();
+}

@@ -16,13 +16,10 @@ class ReaderScreenAppBar extends StatelessWidget {
   final Article article;
   final ArticleBrief? brief;
 
-  final TextOptionsController textOptionsNotifier;
-
   const ReaderScreenAppBar(
     this.article, {
     super.key,
     this.brief,
-    required this.textOptionsNotifier,
   });
 
   @override
@@ -52,12 +49,21 @@ class ReaderScreenAppBar extends StatelessWidget {
         onPressed: brief != null ? () => _showTocModal(context) : null,
         icon: Icon(Icons.toc_outlined),
       ),
-      IconButton(onPressed: () {}, icon: Icon(Icons.headphones_outlined)),
       IconButton(
-        onPressed: () => TextOptionsModal(textOptionsNotifier).show(context),
+        onPressed: () {},
+        icon: Icon(Icons.headphones_outlined),
+      ),
+      IconButton(
+        onPressed: () => _showTextOptionsModal(context),
         icon: Icon(Icons.format_color_text_outlined),
       ),
     ];
+  }
+
+  void _showTextOptionsModal(BuildContext context) {
+    TextOptionsModal(
+      context.read<TextOptionsController>(),
+    ).show(context);
   }
 
   void _showHighlightsModal(BuildContext context) {

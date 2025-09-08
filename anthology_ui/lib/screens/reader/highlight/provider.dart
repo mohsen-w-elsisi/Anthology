@@ -1,22 +1,27 @@
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_ui/state/highlight_ui_notifier.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
-class ReaderScreenHighlightProvider {
+class ReaderScreenHighlightProvider with ChangeNotifier {
   final String _articleId;
   List<Highlight>? _highlights;
-  final initListenable = ValueNotifier(false);
 
   ReaderScreenHighlightProvider(this._articleId);
 
   Future<void> initHighlights() async {
+    await _getCurrentHighlights();
+    GetIt.I<HighlightUiNotifier>().addListener(_getCurrentHighlights);
+  }
+
+  Future<void> _getCurrentHighlights() async {
     _highlights = await GetIt.I<HighlightDataGateway>().getArticleHighlights(
       _articleId,
     );
     _sortHighlights();
-    initListenable.value = true;
+    notifyListeners();
   }
 
   void _sortHighlights() {

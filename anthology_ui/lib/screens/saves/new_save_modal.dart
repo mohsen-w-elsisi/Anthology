@@ -1,7 +1,6 @@
-import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_ui/app_actions.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class NewSaveModal extends StatefulWidget {
   const NewSaveModal({super.key});
@@ -101,7 +100,7 @@ class _NewSaveModalState extends State<NewSaveModal> {
         read: false,
         progress: 0,
       );
-      GetIt.I<ArticleDataGateway>().save(article);
+      AppActions.saveArticle(article);
       Navigator.pop(context);
     } else {
       setState(() => _showInvalidUriText = true);
