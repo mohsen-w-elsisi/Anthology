@@ -7,7 +7,6 @@ import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.da
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
-import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
@@ -42,7 +41,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
     super.dispose();
   }
 
-  // TODO: when changing screen orientation (compact/expanded) modal ReaderScreen visible for 1 frame
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

@@ -2,7 +2,6 @@ import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/text_node_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class Heading1NodeWidget extends HeadingNodeWidget {
