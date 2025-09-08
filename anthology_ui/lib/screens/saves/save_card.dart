@@ -26,27 +26,25 @@ class _SaveCardState extends State<SaveCard> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _openReaderScreen,
-      child: FutureBuilder(
-        future: _metaDataFetcher.fetch(),
-        builder: (_, _) {
-          return Card(
-            child: ListTile(
-              title: Text(_metaDataFetcher.metaData.title),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _DescribtorText(article: widget.article),
-                  const SizedBox(height: 8),
-                  _tagChips,
-                ],
-              ),
-              trailing: _image(),
+    return FutureBuilder(
+      future: _metaDataFetcher.fetch(),
+      builder: (_, _) {
+        return Card(
+          child: ListTile(
+            onTap: _openReaderScreen,
+            title: Text(_metaDataFetcher.metaData.title),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DescribtorText(article: widget.article),
+                const SizedBox(height: 8),
+                _tagChips,
+              ],
             ),
-          );
-        },
-      ),
+            trailing: _image(),
+          ),
+        );
+      },
     );
   }
 

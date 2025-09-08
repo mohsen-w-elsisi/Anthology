@@ -1,4 +1,6 @@
+import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:anthology_ui/utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +10,12 @@ import 'highlights_list.dart';
 
 class ArticleHighlightsCard extends StatefulWidget {
   final String articleTitle;
+  final Article article;
   final List<Highlight> highlights;
 
   const ArticleHighlightsCard({
     required this.articleTitle,
+    required this.article,
     required this.highlights,
     super.key,
   });
@@ -92,6 +96,7 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
           text: "full article",
           recognizer: _fullArticleGestureRecogniser,
           style: TextStyle(decoration: TextDecoration.underline),
+          mouseCursor: SystemMouseCursors.click,
         ),
       ],
     ),
@@ -100,7 +105,9 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
   TapGestureRecognizer get _fullArticleGestureRecogniser {
     return TapGestureRecognizer()
       ..onTap = () {
-        // TODO: implement this
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => ReaderScreen(widget.article)));
       };
   }
 }

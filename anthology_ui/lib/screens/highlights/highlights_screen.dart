@@ -1,4 +1,5 @@
 import 'package:anthology_common/article/data_gaetway.dart';
+import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/config.dart';
@@ -47,25 +48,28 @@ class _ArticleHighlightsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getAllHighlights(),
+    return FutureBuilder<List<_ArticleHighlights>>(
+      future: _getArticleHighlights(),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
           return Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 1400),
+              constraints: const BoxConstraints(maxWidth: 1400),
               child: ListView(
                 padding: screenMainScrollViewHorizontalPadding,
                 children: [
-                  for (final entry in snapshot.data!.entries)
+                  for (final item in snapshot.data!)
                     ArticleHighlightsCard(
-                      articleTitle: entry.key,
-                      highlights: entry.value,
+                      article: item.article,
+                      articleTitle: item.articleTitle,
+                      highlights: item.highlights,
                     ),
                 ],
               ),
             ),
           );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -73,27 +77,35 @@ class _ArticleHighlightsList extends StatelessWidget {
     );
   }
 
-  Future<Map<String, List<Highlight>>> _getAllHighlights() async {
-    final highlightsWithIds = await GetIt.I<HighlightDataGateway>().getAll();
-    final articleNames = highlightsWithIds.keys.map(_getArticleName).toList();
-
-    final highlightsWithNames = <String, List<Highlight>>{};
-    for (var i = 0; i < highlightsWithIds.length; i++) {
-      final id = highlightsWithIds.keys.elementAt(i);
-      final highlights = highlightsWithIds[id]!;
-      final name = await articleNames[i];
-      highlightsWithNames[name] = highlights;
-    }
-
-    return highlightsWithNames;
+  Future<List<_ArticleHighlights>> _getArticleHighlights() async {
+    final highlightsByArticleId = await GetIt.I<HighlightDataGateway>()
+        .getAll();
+    final futures = highlightsByArticleId.entries.map((entry) async {
+      final articleId = entry.key;
+      final highlights = entry.value;
+      final article = await GetIt.I<ArticleDataGateway>().get(articleId);
+      final articleDataFetcher = ArticlePresentationMetaDataFetcher(article);
+      await articleDataFetcher.fetch();
+      return _ArticleHighlights(
+        article: article,
+        articleTitle: articleDataFetcher.metaData.title,
+        highlights: highlights,
+      );
+    });
+    return await Future.wait(futures);
   }
+}
 
-  Future<String> _getArticleName(String id) async {
-    final article = await GetIt.I<ArticleDataGateway>().get(id);
-    final articleDataFetcher = ArticlePresentationMetaDataFetcher(article);
-    await articleDataFetcher.fetch();
-    return articleDataFetcher.metaData.title;
-  }
+class _ArticleHighlights {
+  final Article article;
+  final String articleTitle;
+  final List<Highlight> highlights;
+
+  _ArticleHighlights({
+    required this.article,
+    required this.articleTitle,
+    required this.highlights,
+  });
 }
 
 class SearchHighlightsButton extends StatelessWidget {
