@@ -16,6 +16,12 @@ class ReaderScreenHighlightProvider with ChangeNotifier {
     GetIt.I<HighlightUiNotifier>().addListener(_getCurrentHighlights);
   }
 
+  @override
+  void dispose() {
+    GetIt.I<HighlightUiNotifier>().removeListener(_getCurrentHighlights);
+    super.dispose();
+  }
+
   Future<void> _getCurrentHighlights() async {
     _highlights = await GetIt.I<HighlightDataGateway>().getArticleHighlights(
       _articleId,

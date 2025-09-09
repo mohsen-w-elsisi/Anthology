@@ -75,7 +75,6 @@ class LocalArticleDataGateway with IoQueue implements ArticleDataGateway {
       final updatedArticle = article.copyWith(progress: progress);
       articles[id] = updatedArticle.toJson();
       await _writeArticles(articles);
-      print("updated progress to ${updatedArticle.progress}");
     });
   }
 

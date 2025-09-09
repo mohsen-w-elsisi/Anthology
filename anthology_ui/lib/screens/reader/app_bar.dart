@@ -4,9 +4,7 @@ import 'package:anthology_ui/screens/reader/highlight/modal.dart';
 import 'package:anthology_ui/screens/reader/highlight/provider.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
-import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 import 'text_options/modal.dart';
@@ -25,19 +23,10 @@ class ReaderScreenAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      automaticallyImplyLeading: false,
-      leading: Navigator.canPop(context) ? _backButton(context) : null,
       floating: true,
       actions: _actionButtons(context),
     );
   }
-
-  BackButton _backButton(BuildContext context) => BackButton(
-    onPressed: () {
-      GetIt.I<ReaderViewStatusNotifier>().clearActiveArticle();
-      Navigator.of(context).pop();
-    },
-  );
 
   List<Widget> _actionButtons(BuildContext context) {
     return [

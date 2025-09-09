@@ -58,38 +58,43 @@ class _ReaderScreenState extends State<ReaderScreen> {
           },
         ),
       ],
-      child: Scaffold(
-        body: FutureBuilder(
-          future: _getBrief(),
-          builder: (_, snapshot) {
-            if (snapshot.hasData) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _jumpToArticleProgress();
-              });
-            }
-            return NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification is ScrollEndNotification) {
-                  if (_scrollController.hasClients) {
-                    _updateProgress();
+      child: PopScope(
+        onPopInvokedWithResult: (_, _) {
+          GetIt.I<ReaderViewStatusNotifier>().clearActiveArticle();
+        },
+        child: Scaffold(
+          body: FutureBuilder(
+            future: _getBrief(),
+            builder: (_, snapshot) {
+              if (snapshot.hasData) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _jumpToArticleProgress();
+                });
+              }
+              return NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollEndNotification) {
+                    if (_scrollController.hasClients) {
+                      _updateProgress();
+                    }
                   }
-                }
-                return false;
-              },
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  ReaderScreenAppBar(
-                    widget.article,
-                    brief: snapshot.data,
-                  ),
-                  snapshot.hasData
-                      ? _textView(snapshot.data!)
-                      : _loadingSpinner,
-                ],
-              ),
-            );
-          },
+                  return false;
+                },
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    ReaderScreenAppBar(
+                      widget.article,
+                      brief: snapshot.data,
+                    ),
+                    snapshot.hasData
+                        ? _textView(snapshot.data!)
+                        : _loadingSpinner,
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
