@@ -1,21 +1,20 @@
 import 'package:anthology_common/article/entities.dart';
-import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../data/article_presentation_meta_data/fetcher.dart';
 
-class SaveCard extends StatefulWidget {
+class SaveTile extends StatefulWidget {
   final Article article;
 
-  const SaveCard(this.article, {super.key});
+  const SaveTile(this.article, {super.key});
 
   @override
-  State<SaveCard> createState() => _SaveCardState();
+  State<SaveTile> createState() => _SaveTileState();
 }
 
-class _SaveCardState extends State<SaveCard> {
+class _SaveTileState extends State<SaveTile> {
   late final ArticlePresentationMetaDataFetcher _metaDataFetcher;
 
   @override
@@ -29,37 +28,58 @@ class _SaveCardState extends State<SaveCard> {
     return FutureBuilder(
       future: _metaDataFetcher.fetch(),
       builder: (_, _) {
-        return Card(
-          child: ListTile(
-            onTap: _openReaderScreen,
-            title: Text(_metaDataFetcher.metaData.title),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _DescribtorText(article: widget.article),
-                const SizedBox(height: 8),
-                _tagChips,
-              ],
-            ),
-            trailing: _image(),
+        return ListTile(
+          onTap: _openReaderScreen,
+          leading: _image(),
+          title: Text(
+            _metaDataFetcher.metaData.title,
+            style: TextStyle(fontWeight: _titleFontWeight),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DescribtorText(article: widget.article),
+              const SizedBox(height: 8),
+              _tagChips,
+            ],
+          ),
+          trailing: PopupMenuButton(
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                child: Text('Delete'),
+              ),
+              const PopupMenuItem(
+                child: Text('Edit Tags'),
+              ),
+              const PopupMenuItem(
+                child: Text('Share'),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget? _image() {
-    if (_metaDataFetcher.metaData.image == null) {
-      return null;
-    } else {
-      return SizedBox.square(
-        dimension: 200,
-        child: Image.network(
-          alignment: Alignment.center,
-          _metaDataFetcher.metaData.image!,
-        ),
-      );
-    }
+  FontWeight get _titleFontWeight {
+    return widget.article.progress == 0 ? FontWeight.bold : FontWeight.normal;
+  }
+
+  Widget _image() {
+    final hasImage = _metaDataFetcher.metaData.image != null;
+    return AspectRatio(
+      aspectRatio: 1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: hasImage
+            ? Image.network(
+                _metaDataFetcher.metaData.image!,
+                alignment: Alignment.center,
+                fit: BoxFit.cover,
+              )
+            : Container(color: ColorScheme.of(context).surface),
+      ),
+    );
   }
 
   Widget get _tagChips => Wrap(

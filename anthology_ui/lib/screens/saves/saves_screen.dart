@@ -1,7 +1,6 @@
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article/filterer.dart';
-import 'package:anthology_ui/config.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
@@ -59,10 +58,10 @@ class _MainSaveViewState extends State<MainSaveView> {
     super.dispose();
   }
 
-  Future<List<Article>> _getArticles() => GetIt.I<ArticleDataGateway>().getAll()
-    ..then(
-      (articles) => _previousArticles = articles,
-    ); // to avoid harsh UI flickers while fetching
+  Future<List<Article>> _getArticles() =>
+      GetIt.I<ArticleDataGateway>().getAll()..then(
+        (articles) => _previousArticles = articles,
+      ); // to avoid harsh UI flickers while fetching
 
   void _refreshArticles() {
     setState(() {
@@ -73,7 +72,6 @@ class _MainSaveViewState extends State<MainSaveView> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: screenMainScrollViewHorizontalPadding,
       children: [
         TagSelectorChips(tagSelectionController: _tagfilterationController),
         FutureBuilder(
@@ -86,7 +84,7 @@ class _MainSaveViewState extends State<MainSaveView> {
               return StreamBuilder(
                 stream: _tagfilterationController.stream,
                 initialData: _tagfilterationController.selectedTags,
-                builder: (_, __) => SaveCardsGrid(
+                builder: (_, _) => SaveCardsList(
                   _filterArticles(snapshot.data ?? []),
                   key: UniqueKey(),
                 ),
@@ -108,42 +106,19 @@ class _MainSaveViewState extends State<MainSaveView> {
   }
 }
 
-class SaveCardsGrid extends StatelessWidget {
-  static const _maximumColumnWidth = 450;
-  static const _cardArea = 100000;
-
+class SaveCardsList extends StatelessWidget {
   final List<Article> articles;
 
-  const SaveCardsGrid(this.articles, {super.key});
+  const SaveCardsList(this.articles, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final cards = [
-      for (final article in articles) SaveCard(article),
-    ].reversed.toList();
-    return LayoutBuilder(
-      builder: (_, contraints) {
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _columnsCount(contraints),
-            mainAxisExtent: _rowHeight(contraints),
-          ),
-          itemBuilder: (_, i) => cards[i],
-          itemCount: cards.length,
-        );
-      },
+    return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        for (final article in articles) SaveTile(article),
+      ].reversed.toList(),
     );
-  }
-
-  int _columnsCount(BoxConstraints constraints) {
-    final calculatedWidth = (constraints.maxWidth ~/ _maximumColumnWidth);
-    return calculatedWidth == 0 ? 1 : calculatedWidth;
-  }
-
-  double _rowHeight(BoxConstraints constraints) {
-    final cardWidth = (constraints.maxWidth ~/ _columnsCount(constraints));
-    return _cardArea / cardWidth;
   }
 }
