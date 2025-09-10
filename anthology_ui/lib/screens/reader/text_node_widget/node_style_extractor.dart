@@ -16,5 +16,7 @@ class NodeStyleExtractor {
     TextNodeType.heading5: textTheme.titleMedium!,
     TextNodeType.heading6: textTheme.titleSmall!,
     TextNodeType.body: textTheme.bodyMedium!,
+    TextNodeType.unorderedList: textTheme.bodyMedium!,
+    TextNodeType.orderedList: textTheme.bodyMedium!,
   };
 }

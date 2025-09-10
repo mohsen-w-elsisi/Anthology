@@ -1,4 +1,7 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
+
 part 'entities.json.dart';
+part 'entities.g.dart';
 
 class ArticleBrief {
   final String articleId;
@@ -23,6 +26,7 @@ class ArticleBrief {
   Map<String, dynamic> toJson() => _ArticleBriefJsonEncoder(this).encode();
 }
 
+@CopyWith()
 class TextNode {
   final String text;
   final TextNodeType type;

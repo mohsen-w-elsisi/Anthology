@@ -62,10 +62,9 @@ class NodeWidgetBuilder {
   }
 
   void _fetchHighllights() {
-    highlights = Provider.of<ReaderScreenHighlightProvider>(
-      context,
-      listen: false,
-    ).highlightsWithingNode(node);
+    highlights = context
+        .watch<ReaderScreenHighlightProvider>()
+        .highlightsWithingNode(node);
   }
 
   void _defineStyles() {

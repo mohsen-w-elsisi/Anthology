@@ -129,6 +129,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
           return ReaderViewTextArea(
             brief: brief,
             textOptions: textOptionsController.options,
+            key: UniqueKey(),
           );
         },
       ),

@@ -12,7 +12,7 @@ class HtmlUnorderdListParser extends HtmlListElementParser {
   TextNodeType get nodeType => TextNodeType.unorderedList;
 
   @override
-  String get listLeadingChar => "-";
+  String _bullet(int index) => "•";
 }
 
 class HtmlOrderdListParser extends HtmlListElementParser {
@@ -25,7 +25,7 @@ class HtmlOrderdListParser extends HtmlListElementParser {
   TextNodeType get nodeType => TextNodeType.orderedList;
 
   @override
-  String get listLeadingChar => "-";
+  String _bullet(int index) => "${index + 1}.";
 }
 
 abstract class HtmlListElementParser extends HtmlTextElementParser {
@@ -51,16 +51,36 @@ abstract class HtmlListElementParser extends HtmlTextElementParser {
   }
 
   void _stackListItemsText() {
-    for (final listitem in _listItems) {
-      _text += "$listLeadingChar ${listitem.text}\n";
+    final formattedItems = <String>[];
+    for (int i = 0; i < _listItems.length; i++) {
+      final listItem = _listItems[i];
+      final itemText = listItem.text.trim();
+      if (itemText.isNotEmpty) {
+        final bullet = _bullet(i);
+        formattedItems.add("$bullet $itemText");
+      }
     }
+    _text = formattedItems.join('\n');
   }
 
-  String get listLeadingChar;
+  String _bullet(int index);
 }
 
 class HtmlParagraphParser extends HtmlTextElementParser {
   HtmlParagraphParser(super.htmlElement);
+
+  @override
+  TextNode parse() {
+    final elementText = htmlElement.text.endsWith("\n")
+        ? htmlElement.text
+        : "${htmlElement.text}\n";
+    return TextNode.indexless(
+      text: elementText,
+      type: nodeType,
+      bold: false,
+      italic: false,
+    );
+  }
 
   @override
   String get htmlTag => "p";
@@ -126,5 +146,5 @@ class HtmlH6Parser extends HtmlTextElementParser {
   String get htmlTag => "h6";
 
   @override
-  TextNodeType get nodeType => TextNodeType.heading5;
+  TextNodeType get nodeType => TextNodeType.heading6;
 }

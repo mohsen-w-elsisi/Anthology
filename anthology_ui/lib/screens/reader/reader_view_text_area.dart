@@ -45,11 +45,12 @@ class ReaderViewTextArea extends StatelessWidget {
       style: Theme.of(context).textTheme.headlineLarge,
     ),
     const SizedBox(height: 8.0),
-    Text(
-      brief.byline,
-      textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodyLarge,
-    ),
+    if (brief.byline.isNotEmpty)
+      Text(
+        brief.byline,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
   ];
 }
 
