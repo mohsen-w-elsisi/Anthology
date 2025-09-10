@@ -22,6 +22,13 @@ abstract class AppActions {
     _highlightUiNotifier.notify();
   }
 
+  static Future<void> updateHighlightComment(String id, String comment) async {
+    final highlight = await _highlightDataGateway.get(id);
+    final alteredHighlight = highlight.copyWith(comment: comment);
+    await _highlightDataGateway.save(alteredHighlight);
+    _highlightUiNotifier.notify();
+  }
+
   static ArticleDataGateway get _articleDataGateway =>
       GetIt.I<ArticleDataGateway>();
   static ArticleUiNotifier get _articleUiNotifier =>

@@ -1,5 +1,9 @@
 import 'package:anthology_common/article/entities.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 
+part 'entities.g.dart';
+
+@CopyWith()
 class Highlight {
   final String id;
   final String articleId;

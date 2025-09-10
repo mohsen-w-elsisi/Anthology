@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/screens/reader/highlight/provider.dart';
+import 'package:anthology_ui/shared_widgets/highlight_detail_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 
 import 'node_style_extractor.dart';
@@ -121,10 +123,13 @@ class NodeWidgetBuilder {
   bool get _nodeBoundRangeIsValid => _nodeBoundStartIndex < _nodeBoundEndIndex;
 
   void _appendHighlightSpan() {
+    final highlightDetailModal = HighlightDetailModal(_highlight);
     _spans.add(
       TextSpan(
         text: node.text.substring(_nodeBoundStartIndex, _nodeBoundEndIndex),
         style: _highlightStyle,
+        recognizer: TapGestureRecognizer()
+          ..onTap = () => highlightDetailModal.show(context),
       ),
     );
   }

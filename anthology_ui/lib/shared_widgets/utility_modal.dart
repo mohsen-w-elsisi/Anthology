@@ -7,6 +7,7 @@ mixin UtilityModal on Widget {
   BoxConstraints _constraints(BuildContext context) => BoxConstraints(
     maxWidth: MediaQuery.of(context).size.width * 0.6,
     maxHeight: MediaQuery.of(context).size.height * 0.6,
+    minHeight: MediaQuery.of(context).size.height * 0.4,
   );
 
   void show(BuildContext context) {
@@ -21,7 +22,12 @@ mixin UtilityModal on Widget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: isScrollable,
-      builder: (_) => this,
+      builder: (_) => ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height * 0.4,
+        ),
+        child: this,
+      ),
     );
   }
 
