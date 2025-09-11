@@ -2,12 +2,25 @@ import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
+import 'package:anthology_common/shared_impls/local_article_data_gateway.dart';
+import 'package:anthology_common/shared_impls/local_highlight_data_gateway.dart';
+import 'package:anthology_ui/data/data_gateway_manager.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/highlight_ui_notifier.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'config.dart';
 
 abstract class AppActions {
+  static Future<void> setLocalDataFolder(String folderPath) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(SharedPrefsKeys.localDataFolder, folderPath);
+    DataGatewayIniter(useHttp: false, localDataFolder: folderPath).reInit();
+    _articleUiNotifier.notify();
+    _highlightUiNotifier.notify();
+  }
+
   static Future<void> saveArticle(Article article) async {
     await _articleDataGateway.save(article);
     _articleUiNotifier.notify();
@@ -39,6 +52,10 @@ abstract class AppActions {
 
   static void shareArticle(Article article) {
     SharePlus.instance.share(ShareParams(uri: article.uri));
+  }
+
+  static Future<void> clearCache() async {
+    throw UnimplementedError();
   }
 
   static ArticleDataGateway get _articleDataGateway =>

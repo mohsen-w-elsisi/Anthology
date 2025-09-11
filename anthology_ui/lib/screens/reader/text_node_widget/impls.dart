@@ -1,5 +1,4 @@
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:flutter/material.dart';
 import 'text_node_widget.dart';
 
 class BodyTextNodeWidget extends TextNodeWidget {

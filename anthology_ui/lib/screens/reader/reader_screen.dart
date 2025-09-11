@@ -1,12 +1,10 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
-import 'package:anthology_ui/state/highlight_ui_notifier.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
