@@ -20,6 +20,12 @@ class HttpHighlightDataGateway implements HighlightDataGateway {
   }
 
   @override
+  Future<void> deleteForArticle(String articleId) {
+    // TODO: Implement deleteForArticle. This requires a new method on ServerRequestInterface to call the DELETE /api/highlights/article/:id endpoint.
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> deleteAll() {
     // TODO: implement deleteAll
     throw UnimplementedError();

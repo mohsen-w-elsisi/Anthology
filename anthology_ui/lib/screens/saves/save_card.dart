@@ -1,9 +1,9 @@
 import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
+import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
-import '../../data/article_presentation_meta_data/fetcher.dart';
 
 class SaveTile extends StatefulWidget {
   final Article article;
@@ -43,19 +43,7 @@ class _SaveTileState extends State<SaveTile> {
               _tagChips,
             ],
           ),
-          trailing: PopupMenuButton(
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                child: Text('Delete'),
-              ),
-              const PopupMenuItem(
-                child: Text('Edit Tags'),
-              ),
-              const PopupMenuItem(
-                child: Text('Share'),
-              ),
-            ],
-          ),
+          trailing: _ActionsMenu(widget: widget),
         );
       },
     );
@@ -96,6 +84,34 @@ class _SaveTileState extends State<SaveTile> {
   void _openReaderScreen() {
     GetIt.I<ReaderViewStatusNotifier>().setActiveArticle(widget.article);
   }
+}
+
+class _ActionsMenu extends StatelessWidget {
+  final SaveTile widget;
+
+  const _ActionsMenu({required this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton(
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: _deleteArticle,
+          child: Text('Delete'),
+        ),
+        const PopupMenuItem(
+          child: Text('Edit Tags'),
+        ),
+        PopupMenuItem(
+          onTap: _shareArticle,
+          child: Text('Share'),
+        ),
+      ],
+    );
+  }
+
+  void _deleteArticle() => AppActions.deleteArticle(widget.article.id);
+  void _shareArticle() => AppActions.shareArticle(widget.article);
 }
 
 class _DescribtorText extends StatelessWidget {

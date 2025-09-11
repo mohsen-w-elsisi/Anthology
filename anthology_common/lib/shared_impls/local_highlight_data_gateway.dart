@@ -56,6 +56,16 @@ class LocalHighlightDataGateway with IoQueue implements HighlightDataGateway {
       });
 
   @override
+  Future<void> deleteForArticle(String articleId) => queueUp(() async {
+    final highlights = await _readHighlights();
+    highlights.removeWhere((key, value) {
+      final highlight = Highlight.fromJson(value);
+      return highlight.articleId == articleId;
+    });
+    await _writeHighlights(highlights);
+  });
+
+  @override
   Future<void> save(Highlight highlight) => queueUp(() async {
     final highlights = await _readHighlights();
     highlights[highlight.id] = highlight.toJson();

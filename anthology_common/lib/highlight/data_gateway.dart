@@ -6,5 +6,6 @@ abstract class HighlightDataGateway {
   Future<Highlight> get(String id);
   Future<void> save(Highlight highlight);
   Future<void> delete(String id);
+  Future<void> deleteForArticle(String articleId);
   Future<void> deleteAll();
 }

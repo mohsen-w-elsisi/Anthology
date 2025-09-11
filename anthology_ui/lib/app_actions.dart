@@ -4,6 +4,7 @@ import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/highlight_ui_notifier.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:get_it/get_it.dart';
 
 abstract class AppActions {
@@ -27,6 +28,17 @@ abstract class AppActions {
     final alteredHighlight = highlight.copyWith(comment: comment);
     await _highlightDataGateway.save(alteredHighlight);
     _highlightUiNotifier.notify();
+  }
+
+  static Future<void> deleteArticle(String articleId) async {
+    await _articleDataGateway.delete(articleId);
+    await _highlightDataGateway.deleteForArticle(articleId);
+    _articleUiNotifier.notify();
+    _highlightUiNotifier.notify();
+  }
+
+  static void shareArticle(Article article) {
+    SharePlus.instance.share(ShareParams(uri: article.uri));
   }
 
   static ArticleDataGateway get _articleDataGateway =>

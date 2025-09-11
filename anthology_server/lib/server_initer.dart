@@ -100,6 +100,13 @@ class ServerIniter {
       });
     });
 
+    _alfred.delete("${ApiUris.articleHighlights}/:id", (req, res) async {
+      final articleId = req.params["id"];
+      await _reportIfArticleNotFound(res, () async {
+        await GetIt.I<HighlightDataGateway>().deleteForArticle(articleId);
+      });
+    });
+
     _alfred.get(ApiUris.allHighlights, (req, res) async {
       final highlights = await GetIt.I<HighlightDataGateway>().getAll();
       final jsonHighlights = {
