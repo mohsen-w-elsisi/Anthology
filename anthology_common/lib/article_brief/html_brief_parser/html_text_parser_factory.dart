@@ -1,4 +1,4 @@
-import 'package:anthology_common/article_brief/html_brief_parser/html_elemt_parser_impls.dart';
+import 'package:anthology_common/article_brief/html_brief_parser/impls.dart';
 import 'package:anthology_common/article_brief/html_brief_parser/html_text_element_parser.dart';
 import 'package:html/dom.dart';
 
@@ -19,6 +19,7 @@ class HtmlTextParserFactory {
       "h6" => HtmlH6Parser(_htmlElement),
       "ul" => HtmlUnorderdListParser(_htmlElement),
       "ol" => HtmlOrderdListParser(_htmlElement),
+      "img" => HtmlImageParser(_htmlElement),
       _ => throw UnimplementedError("No parser for tag $_htmlTag"),
     };
   }

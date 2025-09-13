@@ -16,12 +16,7 @@ abstract class HtmlTextElementParser {
 
   TextNode parse() {
     final elementText = htmlElement.text;
-    return TextNode.indexless(
-      text: elementText,
-      type: nodeType,
-      bold: false,
-      italic: false,
-    );
+    return TextNode.indexless(text: elementText, type: nodeType);
   }
 
   TextNodeType get nodeType;

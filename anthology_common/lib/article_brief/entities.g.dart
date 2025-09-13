@@ -11,13 +11,11 @@ abstract class _$TextNodeCWProxy {
 
   TextNode type(TextNodeType type);
 
-  TextNode bold(bool bold);
-
-  TextNode italic(bool italic);
-
   TextNode startIndex(int startIndex);
 
   TextNode endIndex(int endIndex);
+
+  TextNode data(String? data);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TextNode(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -28,10 +26,9 @@ abstract class _$TextNodeCWProxy {
   TextNode call({
     String text,
     TextNodeType type,
-    bool bold,
-    bool italic,
     int startIndex,
     int endIndex,
+    String? data,
   });
 }
 
@@ -48,16 +45,13 @@ class _$TextNodeCWProxyImpl implements _$TextNodeCWProxy {
   TextNode type(TextNodeType type) => this(type: type);
 
   @override
-  TextNode bold(bool bold) => this(bold: bold);
-
-  @override
-  TextNode italic(bool italic) => this(italic: italic);
-
-  @override
   TextNode startIndex(int startIndex) => this(startIndex: startIndex);
 
   @override
   TextNode endIndex(int endIndex) => this(endIndex: endIndex);
+
+  @override
+  TextNode data(String? data) => this(data: data);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TextNode(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -69,10 +63,9 @@ class _$TextNodeCWProxyImpl implements _$TextNodeCWProxy {
   TextNode call({
     Object? text = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),
-    Object? bold = const $CopyWithPlaceholder(),
-    Object? italic = const $CopyWithPlaceholder(),
     Object? startIndex = const $CopyWithPlaceholder(),
     Object? endIndex = const $CopyWithPlaceholder(),
+    Object? data = const $CopyWithPlaceholder(),
   }) {
     return TextNode(
       text: text == const $CopyWithPlaceholder()
@@ -83,14 +76,6 @@ class _$TextNodeCWProxyImpl implements _$TextNodeCWProxy {
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as TextNodeType,
-      bold: bold == const $CopyWithPlaceholder()
-          ? _value.bold
-          // ignore: cast_nullable_to_non_nullable
-          : bold as bool,
-      italic: italic == const $CopyWithPlaceholder()
-          ? _value.italic
-          // ignore: cast_nullable_to_non_nullable
-          : italic as bool,
       startIndex: startIndex == const $CopyWithPlaceholder()
           ? _value.startIndex
           // ignore: cast_nullable_to_non_nullable
@@ -99,6 +84,10 @@ class _$TextNodeCWProxyImpl implements _$TextNodeCWProxy {
           ? _value.endIndex
           // ignore: cast_nullable_to_non_nullable
           : endIndex as int,
+      data: data == const $CopyWithPlaceholder()
+          ? _value.data
+          // ignore: cast_nullable_to_non_nullable
+          : data as String?,
     );
   }
 }

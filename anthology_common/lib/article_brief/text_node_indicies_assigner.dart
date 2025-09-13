@@ -20,10 +20,9 @@ class TextNodeIndiciesAssigner {
       TextNode(
         text: node.text,
         type: node.type,
-        bold: node.bold,
-        italic: node.italic,
         startIndex: startIndex,
         endIndex: endIndex,
+        data: node.data,
       ),
     );
     _currentIndex = endIndex;

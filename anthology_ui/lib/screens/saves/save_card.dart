@@ -64,6 +64,9 @@ class _SaveTileState extends State<SaveTile> {
                 _metaDataFetcher.metaData.image!,
                 alignment: Alignment.center,
                 fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Container(color: ColorScheme.of(context).surface);
+                },
               )
             : Container(color: ColorScheme.of(context).surface),
       ),

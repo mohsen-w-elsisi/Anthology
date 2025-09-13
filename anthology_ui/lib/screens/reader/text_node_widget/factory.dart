@@ -29,6 +29,8 @@ class TextNodeWidgetFactory {
         return OrderedListTextNodeWidget(node);
       case TextNodeType.unorderedList:
         return UnorderedListTextNodeWidget(node);
+      case TextNodeType.image:
+        return ImageTextNodeWidget(node);
     }
   }
 }

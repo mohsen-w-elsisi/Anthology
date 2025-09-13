@@ -36,10 +36,9 @@ class _TextNodeJsonDecoder {
   TextNode decode() => TextNode(
     text: json['text'] as String,
     type: TextNodeType.values.byName(json['nodeType'] as String),
-    bold: json['bold'] as bool,
-    italic: json['italic'] as bool,
     startIndex: json['startIndex'] as int,
     endIndex: json['endIndex'] as int,
+    data: json['data'] as String?,
   );
 }
 
@@ -51,9 +50,8 @@ class _TextNodeJsonEncoder {
   Map<String, dynamic> encode() => {
     'text': node.text,
     'nodeType': node.type.name,
-    'bold': node.bold,
-    'italic': node.italic,
     'startIndex': node.startIndex,
     'endIndex': node.endIndex,
+    'data': node.data,
   };
 }

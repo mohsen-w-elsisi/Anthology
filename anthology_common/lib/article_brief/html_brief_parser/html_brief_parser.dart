@@ -6,7 +6,7 @@ import '../entities.dart';
 
 class Htmlbriefparser {
   static const _contentElementQuerySelector =
-      "p, h1, h2, h3, h4, h5, h6, ul, ol";
+      "p, h1, h2, h3, h4, h5, h6, ul, ol, img";
 
   final DocumentFragment _domFragment;
   late final List<Element> _contentElements;

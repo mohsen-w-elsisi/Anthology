@@ -30,28 +30,22 @@ class ArticleBrief {
 class TextNode {
   final String text;
   final TextNodeType type;
-  final bool bold;
-  final bool italic;
   final int? _startIndex;
   final int? _endIndex;
+  final String? data;
 
   const TextNode({
     required this.text,
     required this.type,
-    required this.bold,
-    required this.italic,
     required int startIndex,
     required int endIndex,
+    this.data,
   }) : _startIndex = startIndex,
        _endIndex = endIndex;
 
-  const TextNode.indexless({
-    required this.text,
-    required this.type,
-    required this.bold,
-    required this.italic,
-  }) : _startIndex = null,
-       _endIndex = null;
+  const TextNode.indexless({required this.text, required this.type, this.data})
+    : _startIndex = null,
+      _endIndex = null;
 
   factory TextNode.fromJson(Map<String, dynamic> json) =>
       _TextNodeJsonDecoder(json).decode();
@@ -85,4 +79,5 @@ enum TextNodeType {
   body,
   orderedList,
   unorderedList,
+  image,
 }

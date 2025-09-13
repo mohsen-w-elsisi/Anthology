@@ -2,6 +2,23 @@ import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/article_brief/html_brief_parser/html_text_element_parser.dart';
 import 'package:html/dom.dart';
 
+class HtmlImageParser extends HtmlTextElementParser {
+  HtmlImageParser(super.htmlElement);
+
+  @override
+  String get htmlTag => "img";
+
+  @override
+  TextNodeType get nodeType => TextNodeType.image;
+
+  @override
+  TextNode parse() {
+    final src = htmlElement.attributes['src'];
+    print("shoud parse image with url $src");
+    return TextNode.indexless(text: "", type: nodeType, data: src);
+  }
+}
+
 class HtmlUnorderdListParser extends HtmlListElementParser {
   HtmlUnorderdListParser(super.htmlElement);
 
@@ -38,12 +55,7 @@ abstract class HtmlListElementParser extends HtmlTextElementParser {
   TextNode parse() {
     _queryListItems();
     _stackListItemsText();
-    return TextNode.indexless(
-      text: _text,
-      type: nodeType,
-      bold: false,
-      italic: false,
-    );
+    return TextNode.indexless(text: _text, type: nodeType);
   }
 
   void _queryListItems() {
@@ -74,12 +86,7 @@ class HtmlParagraphParser extends HtmlTextElementParser {
     final elementText = htmlElement.text.endsWith("\n")
         ? htmlElement.text
         : "${htmlElement.text}\n";
-    return TextNode.indexless(
-      text: elementText,
-      type: nodeType,
-      bold: false,
-      italic: false,
-    );
+    return TextNode.indexless(text: elementText, type: nodeType);
   }
 
   @override
