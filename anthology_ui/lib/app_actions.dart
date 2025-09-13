@@ -1,9 +1,10 @@
+import 'package:anthology_common/article_brief/entities.dart';
+import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
+import 'package:anthology_ui/data/article_brief_cache.dart';
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_common/shared_impls/local_article_data_gateway.dart';
-import 'package:anthology_common/shared_impls/local_highlight_data_gateway.dart';
 import 'package:anthology_ui/data/data_gateway_manager.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/highlight_ui_notifier.dart';
@@ -13,6 +14,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'config.dart';
 
 abstract class AppActions {
+  static Future<ArticleBrief> getBrief(String articleId) async {
+    final cache = GetIt.I<ArticleBriefCache>();
+    if (await cache.isCached(articleId)) {
+      return cache.get(articleId);
+    } else {
+      final brief = await ArticleBriefFetcher(articleId).fetchBrief();
+      cache.cache(articleId, brief);
+      return brief;
+    }
+  }
+
   static Future<void> setLocalDataFolder(String folderPath) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(SharedPrefsKeys.localDataFolder, folderPath);

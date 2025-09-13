@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/generator.dart';
-import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/server_request_interface.dart';
+import 'package:anthology_common/shared_impls/article_brief_html_generator.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/highlight_ui_notifier.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
@@ -33,7 +35,7 @@ class AppDependencyIniter {
     await _initTagAggregator();
     await _initArticlePresentationMetaDataCache();
     await _initArticleBriefCache();
-    _initArticleBriefGenerator();
+    await _initArticleBriefGenerator();
     _initReaderViewStatusNotifier();
   }
 
@@ -75,10 +77,16 @@ class AppDependencyIniter {
     );
   }
 
-  static void _initArticleBriefGenerator() {
-    ReadabilityArticleBriefGenerator.init();
+  static Future<void> _initArticleBriefGenerator() async {
+    if (!Platform.isLinux) await ReadabilityArticleBriefGenerator.init();
     GetIt.I.registerFactoryParam<ArticleBriefHtmlGenerator, Article, Null>(
-      (article, _) => ReadabilityArticleBriefGenerator(article),
+      (article, _) {
+        if (Platform.isLinux) {
+          return BriefingServerArticleBriefHtmlGenerator(article);
+        } else {
+          return ReadabilityArticleBriefGenerator(article);
+        }
+      },
     );
   }
 

@@ -1,6 +1,5 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
-import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
@@ -8,7 +7,6 @@ import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.da
 import 'package:anthology_ui/screens/reader/text_options/shared_preferences_initer.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
-import 'package:anthology_ui/data/article_brief_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
@@ -79,7 +77,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
         },
         child: Scaffold(
           body: FutureBuilder(
-            future: _getBrief(),
+            future: AppActions.getBrief(widget.article.id),
             builder: (_, snapshot) {
               if (snapshot.hasData) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -154,17 +152,4 @@ class _ReaderScreenState extends State<ReaderScreen> {
   Widget get _loadingSpinner => const SliverFillRemaining(
     child: Center(child: CircularProgressIndicator()),
   );
-
-  Future<ArticleBrief> _getBrief() async {
-    final articleBriefCache = GetIt.I<ArticleBriefCache>();
-    if (await articleBriefCache.isCached(widget.article.id)) {
-      return articleBriefCache.get(widget.article.id);
-    } else {
-      final articleBrief = await ArticleBriefFetcher(
-        widget.article.id,
-      ).fetchBrief();
-      articleBriefCache.cache(widget.article.id, articleBrief);
-      return articleBrief;
-    }
-  }
 }

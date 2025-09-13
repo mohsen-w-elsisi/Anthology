@@ -30,6 +30,7 @@ class _SaveTileState extends State<SaveTile> {
       builder: (_, _) {
         return ListTile(
           onTap: _openReaderScreen,
+          isThreeLine: true,
           leading: _image(),
           title: Text(
             _metaDataFetcher.metaData.title,
@@ -65,7 +66,7 @@ class _SaveTileState extends State<SaveTile> {
                 _metaDataFetcher.metaData.image!,
                 alignment: Alignment.center,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return Container(color: ColorScheme.of(context).surface);
                 },
               )

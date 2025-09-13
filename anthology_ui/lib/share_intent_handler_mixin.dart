@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:anthology_ui/screens/saves/new_save_modal.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,11 @@ mixin ShareIntentHandlerMixin<T extends StatefulWidget> on State<T> {
   GlobalKey<NavigatorState> get navigatorKey;
 
   void initShareIntentHandler() {
+    if (Platform.isLinux || Platform.isWindows) return;
     // For sharing or opening urls/text while app is in memory
     _intentDataStreamSubscription = FlutterSharingIntent.instance
         .getMediaStream()
         .listen(_handleSharedUrl);
-
     // For sharing or opening urls/text while app is closed
     FlutterSharingIntent.instance.getInitialSharing().then(
       _handleSharedUrl,

@@ -4,7 +4,7 @@ import 'package:anthology_common/article_brief/generator.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/shared_impls/local_article_data_gateway.dart';
 import 'package:anthology_common/shared_impls/local_highlight_data_gateway.dart';
-import 'package:anthology_server/article_brief_html_generator.dart';
+import 'package:anthology_common/shared_impls/article_brief_html_generator.dart';
 import 'package:anthology_server/server_initer.dart';
 import 'package:get_it/get_it.dart';
 
