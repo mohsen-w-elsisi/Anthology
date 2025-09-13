@@ -3,7 +3,9 @@ import 'package:anthology_ui/app_actions.dart';
 import 'package:flutter/material.dart';
 
 class NewSaveModal extends StatefulWidget {
-  const NewSaveModal({super.key});
+  final String? initialUrl;
+
+  const NewSaveModal({super.key, this.initialUrl});
 
   void show(BuildContext context) {
     final isExpanded = MediaQuery.of(context).size.width > 600;
@@ -32,6 +34,12 @@ class NewSaveModal extends StatefulWidget {
 class _NewSaveModalState extends State<NewSaveModal> {
   final _controller = TextEditingController();
   bool _showInvalidUriText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialUrl != null) _controller.text = widget.initialUrl!;
+  }
 
   @override
   void dispose() {
