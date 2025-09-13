@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 mixin UtilityModal on Widget {
-  static const modalPadding = EdgeInsets.all(8.0);
+  static const modalPadding = EdgeInsets.all(24.0);
   static const _breakpoint = 840.0;
 
   BoxConstraints _constraints(BuildContext context) => BoxConstraints(

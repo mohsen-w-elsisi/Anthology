@@ -17,8 +17,10 @@ class TextOptionsModal extends StatelessWidget with UtilityModal {
       padding: UtilityModal.modalPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           modalTitle(context),
+          Text("Text size", style: TextTheme.of(context).headlineSmall),
           _TextScaleControls(textOptionsController),
         ],
       ),
@@ -33,60 +35,24 @@ class _TextScaleControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        RoundedSquareTonalButton(
-          onPressed: textOptionsController.increaseScale,
-          child: const Icon(Icons.add),
-        ),
-        _scaleLabel(context),
-        RoundedSquareTonalButton(
-          onPressed: textOptionsController.decreaseScale,
-          child: const Icon(Icons.remove),
-        ),
-      ],
+    return ListenableBuilder(
+      listenable: textOptionsController,
+      builder: (context, child) {
+        final scaleFactor = textOptionsController.options.textScaleFactor;
+        return Slider(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          value: scaleFactor,
+          min: TextOptionsController.minScale,
+          max: TextOptionsController.maxScale,
+          divisions: _divisions,
+          label: "x${scaleFactor.toStringAsFixed(1)}",
+          onChanged: textOptionsController.updateScale,
+        );
+      },
     );
   }
 
-  Widget _scaleLabel(BuildContext context) {
-    return SizedBox(
-      width: 100,
-      child: ListenableBuilder(
-        listenable: textOptionsController,
-        builder: (_, _) => Text(
-          "x${textOptionsController.options.textScaleFactor}".substring(0, 4),
-          style: TextTheme.of(context).headlineSmall,
-        ),
-      ),
-    );
-  }
-}
-
-class RoundedSquareTonalButton extends StatelessWidget {
-  final Function()? onPressed;
-  final Widget? child;
-
-  const RoundedSquareTonalButton({super.key, this.onPressed, this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60,
-      child: AspectRatio(
-        aspectRatio: 5 / 3,
-        child: FilledButton.tonal(
-          onPressed: onPressed,
-          style: FilledButton.styleFrom(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
-              ),
-            ),
-          ),
-          child: child,
-        ),
-      ),
-    );
-  }
+  int get _divisions =>
+      ((TextOptionsController.maxScale - TextOptionsController.minScale) / 0.1)
+          .round();
 }

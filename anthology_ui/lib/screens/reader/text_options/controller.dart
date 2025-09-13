@@ -14,27 +14,10 @@ class TextOptionsController with ChangeNotifier {
 
   ReaderViewTextOptions get options => _options;
 
-  void increaseScale() {
-    if (_options.textScaleFactor < maxScale) {
-      _options = ReaderViewTextOptions(
-        textScaleFactor: (_options.textScaleFactor + 0.1).clamp(
-          minScale,
-          maxScale,
-        ),
-      );
-      notifyListeners();
-    }
-  }
-
-  void decreaseScale() {
-    if (_options.textScaleFactor > minScale) {
-      _options = ReaderViewTextOptions(
-        textScaleFactor: (_options.textScaleFactor - 0.1).clamp(
-          minScale,
-          maxScale,
-        ),
-      );
-      notifyListeners();
-    }
+  void updateScale(double newScale) {
+    _options = ReaderViewTextOptions(
+      textScaleFactor: newScale.clamp(minScale, maxScale),
+    );
+    notifyListeners();
   }
 }

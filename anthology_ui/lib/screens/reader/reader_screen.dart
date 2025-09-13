@@ -5,6 +5,7 @@ import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
 import 'package:anthology_ui/screens/reader/text_node_widget/heading_registry.dart';
+import 'package:anthology_ui/screens/reader/text_options/shared_preferences_initer.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/screens/reader/text_options/controller.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
@@ -27,27 +28,43 @@ class ReaderScreen extends StatefulWidget {
 class _ReaderScreenState extends State<ReaderScreen> {
   // TODO: there should be more restrain and flags behind altering global state like this
   final _readerStatusNotifier = GetIt.I<ReaderViewStatusNotifier>();
+
   late final ScrollController _scrollController;
+  TextOptionsController? _textOptionsController;
 
   @override
   void initState() {
     super.initState();
     if (widget.isModal) _readerStatusNotifier.isReaderModalActive = true;
     _scrollController = ScrollController();
+    _loadTextOptionsController();
+  }
+
+  void _loadTextOptionsController() async {
+    final controller = await TextOptionsPersistence().loadController();
+    if (mounted) {
+      setState(() {
+        _textOptionsController = controller;
+      });
+    }
   }
 
   @override
   void dispose() {
     if (widget.isModal) _readerStatusNotifier.isReaderModalActive = false;
     _scrollController.dispose();
+    _textOptionsController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_textOptionsController == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => TextOptionsController.inital()),
+        ChangeNotifierProvider.value(value: _textOptionsController!),
         Provider(create: (_) => HeadingRegistry()),
         ChangeNotifierProvider(
           create: (_) {
