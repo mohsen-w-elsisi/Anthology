@@ -33,13 +33,14 @@ class _SaveTileState extends State<SaveTile> {
           leading: _image(),
           title: Text(
             _metaDataFetcher.metaData.title,
+            maxLines: widget.article.tags.isEmpty ? 2 : 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(fontWeight: _titleFontWeight),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _DescribtorText(article: widget.article),
-              const SizedBox(height: 8),
               _tagChips,
             ],
           ),
@@ -78,6 +79,7 @@ class _SaveTileState extends State<SaveTile> {
       for (final tag in widget.article.tags)
         Chip(
           visualDensity: VisualDensity.compact,
+          labelPadding: EdgeInsets.zero,
           label: Text(tag),
           labelStyle: Theme.of(context).textTheme.labelSmall,
         ),

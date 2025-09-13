@@ -28,13 +28,13 @@ class AppDependencyIniter {
       localDataFolder: await _localDataFolder,
       serverRequestInterface: GetIt.I<ServerRequestInterface>(),
     ).init();
+    _initArticleUiNotifier();
+    _initHighlightUiNotifier();
     await _initTagAggregator();
     await _initArticlePresentationMetaDataCache();
     await _initArticleBriefCache();
     _initArticleBriefGenerator();
     _initReaderViewStatusNotifier();
-    _initArticleUiNotifier();
-    _initHighlightUiNotifier();
   }
 
   static Future<bool> get _useHttp async {
