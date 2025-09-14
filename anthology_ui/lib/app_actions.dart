@@ -59,6 +59,8 @@ abstract class AppActions {
   static Future<void> deleteArticle(String articleId) async {
     await _articleDataGateway.delete(articleId);
     await _highlightDataGateway.deleteForArticle(articleId);
+    await _articleBriefCache.remove(articleId);
+    await _articlePresentationMetaDataCache.remove(articleId);
     _articleUiNotifier.notify();
     _highlightUiNotifier.notify();
   }

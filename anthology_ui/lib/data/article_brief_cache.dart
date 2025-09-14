@@ -26,6 +26,12 @@ class ArticleBriefCache {
     return ArticleBrief.fromJson(briefJson);
   }
 
+  Future<void> remove(String id) async {
+    final cache = await _readCacheFile();
+    cache.remove(id);
+    await _writeCacheFile(cache);
+  }
+
   Future<void> clear() async {
     await _writeCacheFile({});
   }
