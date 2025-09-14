@@ -1,6 +1,7 @@
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_common/article_brief/article_brief_fetcher.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
+import 'package:anthology_ui/data/article_presentation_meta_data/cache.dart';
 import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
@@ -8,6 +9,7 @@ import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/data/data_gateway_manager.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/highlight_ui_notifier.dart';
+import 'package:flutter/painting.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,12 +17,11 @@ import 'config.dart';
 
 abstract class AppActions {
   static Future<ArticleBrief> getBrief(String articleId) async {
-    final cache = GetIt.I<ArticleBriefCache>();
-    if (await cache.isCached(articleId)) {
-      return cache.get(articleId);
+    if (await _articleBriefCache.isCached(articleId)) {
+      return _articleBriefCache.get(articleId);
     } else {
       final brief = await ArticleBriefFetcher(articleId).fetchBrief();
-      cache.cache(articleId, brief);
+      _articleBriefCache.cache(articleId, brief);
       return brief;
     }
   }
@@ -67,7 +68,10 @@ abstract class AppActions {
   }
 
   static Future<void> clearCache() async {
-    throw UnimplementedError();
+    await _articleBriefCache.clear();
+    await _articlePresentationMetaDataCache.clear();
+    PaintingBinding.instance.imageCache.clear();
+    PaintingBinding.instance.imageCache.clearLiveImages();
   }
 
   static ArticleDataGateway get _articleDataGateway =>
@@ -78,4 +82,9 @@ abstract class AppActions {
       GetIt.I<HighlightDataGateway>();
   static HighlightUiNotifier get _highlightUiNotifier =>
       GetIt.I<HighlightUiNotifier>();
+  static ArticleBriefCache get _articleBriefCache =>
+      GetIt.I<ArticleBriefCache>();
+  static ArticlePresentationMetaDataCache
+  get _articlePresentationMetaDataCache =>
+      GetIt.I<ArticlePresentationMetaDataCache>();
 }

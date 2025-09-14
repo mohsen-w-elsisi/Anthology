@@ -76,18 +76,24 @@ class _MainSaveViewState extends State<MainSaveView> {
         TagSelectorChips(tagSelectionController: _tagfilterationController),
         FutureBuilder(
           future: _articlesFuture,
-          initialData: _previousArticles ?? [],
+          initialData: _previousArticles,
           builder: (_, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
             } else {
-              return StreamBuilder(
-                stream: _tagfilterationController.stream,
-                initialData: _tagfilterationController.selectedTags,
-                builder: (_, _) => SaveCardsList(
-                  _filterArticles(snapshot.data ?? []),
-                ),
-              );
+              if (snapshot.data!.isNotEmpty) {
+                return StreamBuilder(
+                  stream: _tagfilterationController.stream,
+                  initialData: _tagfilterationController.selectedTags,
+                  builder: (_, _) => SaveCardsList(
+                    _filterArticles(snapshot.data!),
+                  ),
+                );
+              } else {
+                return Center(child: Text('No articles saved yet.'));
+              }
             }
           },
         ),

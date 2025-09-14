@@ -26,6 +26,10 @@ class ArticleBriefCache {
     return ArticleBrief.fromJson(briefJson);
   }
 
+  Future<void> clear() async {
+    await _writeCacheFile({});
+  }
+
   Future<Map<String, dynamic>> _readCacheFile() async {
     final file = File(path);
     if (!await file.exists() || (await file.readAsString()).isEmpty) {

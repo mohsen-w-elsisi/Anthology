@@ -18,12 +18,19 @@ class SettingsScreen extends StatelessWidget {
             title: Text("chang storage locations"),
           ),
           ListTile(
-            onTap: AppActions.clearCache,
+            onTap: () => _clearCache(context),
             titleTextStyle: TextStyle(color: ColorScheme.of(context).error),
             title: const Text('Clear cache'),
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _clearCache(BuildContext context) async {
+    await AppActions.clearCache();
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      const SnackBar(content: Text('Cache cleared.')),
     );
   }
 

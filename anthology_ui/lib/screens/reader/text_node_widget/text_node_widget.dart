@@ -115,6 +115,7 @@ class NodeWidgetBuilder {
             _currentPosition,
             _localHighlightStartIndex,
           ),
+          mouseCursor: SystemMouseCursors.text,
         ),
       );
     }

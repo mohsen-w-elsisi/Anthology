@@ -1,5 +1,6 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
+import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:flutter/material.dart';
@@ -15,39 +16,44 @@ class SaveTile extends StatefulWidget {
 }
 
 class _SaveTileState extends State<SaveTile> {
-  late final ArticlePresentationMetaDataFetcher _metaDataFetcher;
+  late final Future<ArticlePresentationMetaData> _metadataFuture;
 
   @override
   void initState() {
     super.initState();
-    _metaDataFetcher = ArticlePresentationMetaDataFetcher(widget.article);
+    _metadataFuture = ArticlePresentationMetaDataFetcher(
+      widget.article,
+    ).fetch();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _metaDataFetcher.fetch(),
-      builder: (_, _) {
-        return ListTile(
-          onTap: _openReaderScreen,
-          isThreeLine: true,
-          leading: _image(),
-          title: Text(
-            _metaDataFetcher.metaData.title,
+    return ListTile(
+      onTap: _openReaderScreen,
+      isThreeLine: true,
+      leading: FutureBuilder(
+        future: _metadataFuture,
+        builder: (_, snapshot) => _image(snapshot.data?.image),
+      ),
+      title: FutureBuilder(
+        future: _metadataFuture,
+        builder: (_, snapshot) {
+          return Text(
+            snapshot.data?.title ?? 'Loading...',
             maxLines: widget.article.tags.isEmpty ? 2 : 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontWeight: _titleFontWeight),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _DescribtorText(article: widget.article),
-              _tagChips,
-            ],
-          ),
-          trailing: _ActionsMenu(widget: widget),
-        );
-      },
+          );
+        },
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _DescribtorText(article: widget.article),
+          _tagChips,
+        ],
+      ),
+      trailing: _ActionsMenu(widget: widget),
     );
   }
 
@@ -55,15 +61,14 @@ class _SaveTileState extends State<SaveTile> {
     return widget.article.progress == 0 ? FontWeight.bold : FontWeight.normal;
   }
 
-  Widget _image() {
-    final hasImage = _metaDataFetcher.metaData.image != null;
+  Widget _image(String? imageUri) {
     return AspectRatio(
       aspectRatio: 1,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
-        child: hasImage
+        child: imageUri != null
             ? Image.network(
-                _metaDataFetcher.metaData.image!,
+                imageUri,
                 alignment: Alignment.center,
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) {

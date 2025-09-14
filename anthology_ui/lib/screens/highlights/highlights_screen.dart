@@ -7,6 +7,7 @@ import 'package:anthology_ui/screens/highlights/article_highlights_card.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
+import 'package:anthology_ui/state/highlight_ui_notifier.dart';
 import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -48,31 +49,45 @@ class _ArticleHighlightsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<_ArticleHighlights>>(
-      future: _getArticleHighlights(),
-      builder: (_, snapshot) {
-        if (snapshot.hasData) {
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1400),
-              child: ListView(
-                padding: screenMainScrollViewHorizontalPadding,
-                children: [
-                  for (final item in snapshot.data!)
-                    ArticleHighlightsCard(
-                      article: item.article,
-                      articleTitle: item.articleTitle,
-                      highlights: item.highlights,
-                    ),
-                ],
-              ),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return ListenableBuilder(
+      listenable: GetIt.I<HighlightUiNotifier>(),
+      builder: (context, _) {
+        return FutureBuilder<List<_ArticleHighlights>>(
+          future: _getArticleHighlights(),
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              final items = snapshot.data!;
+              if (items.isEmpty) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: Text("You haven't highlighted anything yet."),
+                  ),
+                );
+              }
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1400),
+                  child: ListView(
+                    padding: screenMainScrollViewHorizontalPadding,
+                    children: [
+                      for (final item in items)
+                        ArticleHighlightsCard(
+                          article: item.article,
+                          articleTitle: item.articleTitle,
+                          highlights: item.highlights,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        );
       },
     );
   }
