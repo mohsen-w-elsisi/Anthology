@@ -18,13 +18,14 @@ class ArticlePresentationMetaDataFetcher {
     return _metaData ?? ArticlePresentationMetaData(title: 'Loading...');
   }
 
-  Future<void> fetch() async {
-    if (_metaData != null) return;
+  Future<ArticlePresentationMetaData> fetch() async {
+    if (_metaData != null) return _metaData!;
     if (await _cache.isCached(article.id)) {
       _metaData = await _cache.getCached(article.id);
     } else {
       await _getMetaDataFromNetwork();
     }
+    return _metaData!;
   }
 
   Future<void> _getMetaDataFromNetwork() async {

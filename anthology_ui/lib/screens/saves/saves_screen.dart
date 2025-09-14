@@ -86,7 +86,6 @@ class _MainSaveViewState extends State<MainSaveView> {
                 initialData: _tagfilterationController.selectedTags,
                 builder: (_, _) => SaveCardsList(
                   _filterArticles(snapshot.data ?? []),
-                  key: UniqueKey(),
                 ),
               );
             }
@@ -117,7 +116,8 @@ class SaveCardsList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        for (final article in articles) SaveTile(article),
+        for (final article in articles)
+          SaveTile(article, key: ValueKey(article.id)),
       ].reversed.toList(),
     );
   }
