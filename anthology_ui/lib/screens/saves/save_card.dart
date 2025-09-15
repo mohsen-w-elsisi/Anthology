@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
@@ -113,10 +115,11 @@ class _ActionsMenu extends StatelessWidget {
         const PopupMenuItem(
           child: Text('Edit Tags'),
         ),
-        PopupMenuItem(
-          onTap: _shareArticle,
-          child: Text('Share'),
-        ),
+        if (!Platform.isLinux)
+          PopupMenuItem(
+            onTap: _shareArticle,
+            child: Text('Share'),
+          ),
       ],
     );
   }

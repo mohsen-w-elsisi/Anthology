@@ -3,6 +3,7 @@ import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:anthology_ui/utils.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 import 'show_highlights_button.dart';
@@ -84,30 +85,37 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
         : TextTheme.of(context).titleMedium,
   );
 
-  Widget get _subtitleText => RichText(
-    maxLines: 1,
-    textScaler: TextScaler.linear(1.4),
-    text: TextSpan(
-      style: TextTheme.of(context).titleMedium,
-      children: [
-        TextSpan(text: "${widget.highlights.length} highlights"),
-        const TextSpan(text: " • "),
-        TextSpan(
-          text: "full article",
-          recognizer: _fullArticleGestureRecogniser,
-          style: TextStyle(decoration: TextDecoration.underline),
-          mouseCursor: SystemMouseCursors.click,
-        ),
-      ],
-    ),
+  Widget get _subtitleText => Row(
+    children: [
+      Text("${widget.highlights.length} highlights"),
+      TextButton(onPressed: _openFullArticle, child: Text("View article")),
+      TextButton(
+        onPressed: _copyHighlightsToClipboard,
+        child: Text("Copy all"),
+      ),
+    ],
   );
 
-  TapGestureRecognizer get _fullArticleGestureRecogniser {
-    return TapGestureRecognizer()
-      ..onTap = () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => ReaderScreen(widget.article)));
-      };
+  void _openFullArticle() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => ReaderScreen(widget.article)));
+  }
+
+  void _copyHighlightsToClipboard() {
+    final buffer = StringBuffer();
+    for (final highlight in widget.highlights) {
+      buffer.writeln('"${highlight.text}"');
+      if (highlight.comment?.isNotEmpty ?? false) {
+        buffer.writeln('Comment: ${highlight.comment}');
+      }
+      buffer.writeln();
+    }
+    if (buffer.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: buffer.toString().trim()));
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('Highlights copied to clipboard.')),
+      );
+    }
   }
 }
