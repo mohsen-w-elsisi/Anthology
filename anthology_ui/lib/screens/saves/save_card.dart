@@ -5,6 +5,7 @@ import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
+import 'package:anthology_ui/screens/saves/edit_tags_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -83,6 +84,8 @@ class _SaveTileState extends State<SaveTile> {
   }
 
   Widget get _tagChips => Wrap(
+    spacing: 4.0,
+    runSpacing: 4.0,
     children: [
       for (final tag in widget.article.tags)
         Chip(
@@ -112,7 +115,8 @@ class _ActionsMenu extends StatelessWidget {
           onTap: _deleteArticle,
           child: Text('Delete'),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
+          onTap: () => _editTags(context),
           child: Text('Edit Tags'),
         ),
         if (!Platform.isLinux)
@@ -126,6 +130,10 @@ class _ActionsMenu extends StatelessWidget {
 
   void _deleteArticle() => AppActions.deleteArticle(widget.article.id);
   void _shareArticle() => AppActions.shareArticle(widget.article);
+
+  void _editTags(BuildContext context) {
+    EditTagsModal(article: widget.article).show(context);
+  }
 }
 
 class _DescribtorText extends StatelessWidget {

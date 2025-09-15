@@ -3,12 +3,16 @@ import 'package:anthology_ui/state/tag_selection_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+enum TagSelectorLayout { horizontal, wrap }
+
 class TagSelectorChips extends StatelessWidget {
   final TagSelectionController tagSelectionController;
+  final TagSelectorLayout layout;
 
   const TagSelectorChips({
     super.key,
     required this.tagSelectionController,
+    this.layout = TagSelectorLayout.horizontal,
   });
 
   @override
@@ -19,39 +23,28 @@ class TagSelectorChips extends StatelessWidget {
       builder: (_, allTagsSnapshot) => StreamBuilder(
         stream: tagSelectionController.stream,
         initialData: tagSelectionController.selectedTags,
-        builder: (_, selectedTagsSnapshot) => SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: _TagChipRow(
-            tags: allTagsSnapshot.data!.toList(),
-            selectionController: tagSelectionController,
-          ),
-        ),
+        builder: (_, selectedTagsSnapshot) {
+          final chips = _chipsFromTags(allTagsSnapshot.data!);
+          if (layout == TagSelectorLayout.horizontal) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: chips),
+            );
+          } else {
+            return Wrap(
+              runSpacing: 8.0,
+              children: chips,
+            );
+          }
+        },
       ),
     );
   }
-}
 
-class _TagChipRow extends StatelessWidget {
-  final List<String> tags;
-  final TagSelectionController selectionController;
-
-  const _TagChipRow({
-    required this.tags,
-    required this.selectionController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final tag in tags)
-          _TagChip(
-            tag: tag,
-            selectionController: selectionController,
-          ),
-      ],
-    );
-  }
+  List<Widget> _chipsFromTags(Set<String> tags) => [
+    for (final tag in tags)
+      _TagChip(tag: tag, selectionController: tagSelectionController),
+  ];
 }
 
 class _TagChip extends StatelessWidget {

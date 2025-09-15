@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config.dart';
+import 'state/tag_aggregator.dart';
 
 abstract class AppActions {
   static Future<void> deleteHighlight(String highlightId) async {
@@ -52,6 +53,14 @@ abstract class AppActions {
   static Future<void> updateArticleProgress(String id, double progress) async {
     await _articleDataGateway.updateProgress(id, progress);
     _articleUiNotifier.notify();
+  }
+
+  static Future<void> updateArticleTags(String id, Set<String> tags) async {
+    final article = await _articleDataGateway.get(id);
+    final updatedArticle = article.copyWith(tags: tags);
+    await _articleDataGateway.save(updatedArticle);
+    _articleUiNotifier.notify();
+    GetIt.I<TagAggregator>().refresh();
   }
 
   static Future<void> saveHighlight(Highlight highlight) async {

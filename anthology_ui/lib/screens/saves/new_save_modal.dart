@@ -1,6 +1,7 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
+import 'package:anthology_ui/shared_widgets/new_tag_button.dart';
 import 'package:anthology_ui/shared_widgets/utility_modal.dart';
 import 'package:anthology_ui/state/tag_aggregator.dart';
 import 'package:anthology_ui/state/tag_selection_controller.dart';
@@ -105,61 +106,16 @@ class _TageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8.0,
       children: [
-        TagSelectorChips(tagSelectionController: tagSelectionController),
-        OutlinedButton.icon(
-          onPressed: () => _addNewTag(context),
-          label: Text("New tag"),
-          icon: Icon(Icons.add),
+        TagSelectorChips(
+          tagSelectionController: tagSelectionController,
+          layout: TagSelectorLayout.wrap,
+        ),
+        NewTagButton(
+          tagSelectionController: tagSelectionController,
         ),
       ],
     );
   }
-
-  void _addNewTag(BuildContext context) => showDialog(
-    context: context,
-    builder: (context) => _NewTagModal(
-      tagSelectionController: tagSelectionController,
-    ),
-  );
-}
-
-class _NewTagModal extends StatefulWidget {
-  final TagSelectionController tagSelectionController;
-
-  const _NewTagModal({required this.tagSelectionController});
-
-  @override
-  State<_NewTagModal> createState() => _NewTagModalState();
-}
-
-class _NewTagModalState extends State<_NewTagModal> {
-  String _tagName = "";
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text("New tag"),
-      content: TextField(
-        decoration: InputDecoration(hintText: "Tag name"),
-        autofocus: true,
-        onChanged: _updateTagName,
-        onSubmitted: (_) => _saveNewTag(),
-      ),
-      actions: [
-        TextButton(onPressed: _closeModal, child: Text("Cancel")),
-        FilledButton.tonal(onPressed: _saveNewTag, child: Text("Add tag")),
-      ],
-    );
-  }
-
-  void _saveNewTag() {
-    GetIt.I<TagAggregator>().addNewTag(_tagName);
-    widget.tagSelectionController.select(_tagName);
-    _closeModal();
-  }
-
-  void _updateTagName(value) => setState(() => _tagName = value);
-
-  void _closeModal() => Navigator.pop(context);
 }
