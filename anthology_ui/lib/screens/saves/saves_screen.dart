@@ -38,33 +38,32 @@ class MainSaveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<SavesProvider>();
     return ListView(
       padding: screenMainScrollViewHorizontalPadding(context),
       children: [
         const _TopChips(),
         const SizedBox(height: 16),
-        _buildArticleList(context, provider),
+        _buildArticleList(context),
       ],
     );
   }
 
-  Widget _buildArticleList(BuildContext context, SavesProvider provider) {
+  Widget _buildArticleList(BuildContext context) {
+    final provider = context.watch<SavesProvider>();
     if (provider.isLoading && provider.articles == null) {
       return const Center(child: CircularProgressIndicator());
-    }
-    if (provider.error != null) {
+    } else if (provider.error != null) {
       return Center(child: Text('Error: ${provider.error}'));
-    }
-    if (provider.articles?.isEmpty ?? true) {
+    } else if (provider.articles?.isEmpty ?? true) {
       return const Center(child: Text('No articles saved yet.'));
+    } else {
+      final filteredArticles = provider.filteredArticles;
+      return SaveCardsList(
+        articles: filteredArticles,
+        onArticleDismissed: (article) =>
+            context.read<SavesProvider>().archiveArticle(article),
+      );
     }
-    final filteredArticles = provider.filteredArticles;
-    return SaveCardsList(
-      articles: filteredArticles,
-      onArticleDismissed: (article) =>
-          context.read<SavesProvider>().archiveArticle(article),
-    );
   }
 }
 

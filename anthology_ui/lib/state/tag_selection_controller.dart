@@ -29,6 +29,7 @@ class TagSelectionController with ChangeNotifier {
     if (!isSelected(tag)) {
       _selectedTags.add(tag);
       _updateStream();
+      notifyListeners();
     }
   }
 
@@ -36,14 +37,18 @@ class TagSelectionController with ChangeNotifier {
     if (isSelected(tag)) {
       _selectedTags.remove(tag);
       _updateStream();
+      notifyListeners();
     }
   }
 
   bool isSelected(String tag) => _selectedTags.contains(tag);
 
   void clear() {
-    _selectedTags.clear();
-    _updateStream();
+    if (_selectedTags.isNotEmpty) {
+      _selectedTags.clear();
+      _updateStream();
+      notifyListeners();
+    }
   }
 
   @override
