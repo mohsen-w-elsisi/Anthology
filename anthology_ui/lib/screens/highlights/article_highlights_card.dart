@@ -85,13 +85,24 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
         : TextTheme.of(context).titleMedium,
   );
 
-  Widget get _subtitleText => Row(
+  Widget get _subtitleText => Wrap(
+    runSpacing: 8.0,
     children: [
       Text("${widget.highlights.length} highlights"),
-      TextButton(onPressed: _openFullArticle, child: Text("View article")),
-      TextButton(
-        onPressed: _copyHighlightsToClipboard,
-        child: Text("Copy all"),
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextButton.icon(
+            onPressed: _openFullArticle,
+            icon: const Icon(Icons.open_in_new_outlined),
+            label: const Text("View article"),
+          ),
+          TextButton.icon(
+            onPressed: _copyHighlightsToClipboard,
+            icon: const Icon(Icons.copy_all_outlined),
+            label: const Text("Copy all"),
+          ),
+        ],
       ),
     ],
   );
