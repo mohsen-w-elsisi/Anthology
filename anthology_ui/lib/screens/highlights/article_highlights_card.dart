@@ -2,7 +2,6 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:anthology_ui/utils.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 

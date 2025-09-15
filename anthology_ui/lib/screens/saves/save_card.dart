@@ -11,9 +11,9 @@ import 'package:get_it/get_it.dart';
 
 class SaveTile extends StatefulWidget {
   final Article article;
+  final Function()? onDismissed;
 
-  const SaveTile(this.article, {super.key});
-
+  const SaveTile(this.article, {super.key, this.onDismissed});
   @override
   State<SaveTile> createState() => _SaveTileState();
 }
@@ -31,32 +31,48 @@ class _SaveTileState extends State<SaveTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: _openReaderScreen,
-      isThreeLine: true,
-      leading: FutureBuilder(
-        future: _metadataFuture,
-        builder: (_, snapshot) => _image(snapshot.data?.image),
+    return Dismissible(
+      key: ValueKey(widget.article.id),
+      direction: widget.article.isArchived
+          ? DismissDirection.none
+          : DismissDirection.endToStart,
+      background: Container(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Icon(
+          Icons.archive_outlined,
+          color: ColorScheme.of(context).onSecondaryContainer,
+        ),
       ),
-      title: FutureBuilder(
-        future: _metadataFuture,
-        builder: (_, snapshot) {
-          return Text(
-            snapshot.data?.title ?? 'Loading...',
-            maxLines: widget.article.tags.isEmpty ? 2 : 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontWeight: _titleFontWeight),
-          );
-        },
+      onDismissed: (_) => widget.onDismissed!(),
+      child: ListTile(
+        onTap: _openReaderScreen,
+        isThreeLine: true,
+        leading: FutureBuilder(
+          future: _metadataFuture,
+          builder: (_, snapshot) => _image(snapshot.data?.image),
+        ),
+        title: FutureBuilder(
+          future: _metadataFuture,
+          builder: (_, snapshot) {
+            return Text(
+              snapshot.data?.title ?? 'Loading...',
+              maxLines: widget.article.tags.isEmpty ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontWeight: _titleFontWeight),
+            );
+          },
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _DescribtorText(article: widget.article),
+            _tagChips,
+          ],
+        ),
+        trailing: _ActionsMenu(widget: widget),
       ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _DescribtorText(article: widget.article),
-          _tagChips,
-        ],
-      ),
-      trailing: _ActionsMenu(widget: widget),
     );
   }
 
@@ -112,22 +128,22 @@ class _ActionsMenu extends StatelessWidget {
     return PopupMenuButton(
       itemBuilder: (context) => [
         PopupMenuItem(
-          onTap: _deleteArticle,
-          child: Text('Delete'),
+          onTap: _toggleArchiveStatus,
+          child: Text(widget.article.isArchived ? 'Unarchive' : 'Archive'),
         ),
         PopupMenuItem(
           onTap: () => _editTags(context),
           child: Text('Edit Tags'),
-        ),
-        PopupMenuItem(
-          onTap: _toggleArchiveStatus,
-          child: Text(widget.article.isArchived ? 'Unarchive' : 'Archive'),
         ),
         if (!Platform.isLinux)
           PopupMenuItem(
             onTap: _shareArticle,
             child: Text('Share'),
           ),
+        PopupMenuItem(
+          onTap: _deleteArticle,
+          child: Text('Delete'),
+        ),
       ],
     );
   }

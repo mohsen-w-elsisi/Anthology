@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/shared_widgets/utility_modal.dart';
-import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 class HighlightDetailModal extends StatefulWidget with UtilityModal {
   final Highlight highlight;

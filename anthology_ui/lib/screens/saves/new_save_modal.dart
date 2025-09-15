@@ -101,7 +101,7 @@ class _NewSaveModalState extends State<NewSaveModal> {
 class _TageSelector extends StatelessWidget {
   final TagSelectionController tagSelectionController;
 
-  const _TageSelector(this.tagSelectionController, {super.key});
+  const _TageSelector(this.tagSelectionController);
 
   @override
   Widget build(BuildContext context) {

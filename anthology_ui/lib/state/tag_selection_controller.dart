@@ -1,6 +1,8 @@
 import 'dart:async';
 
-class TagSelectionController {
+import 'package:flutter/material.dart';
+
+class TagSelectionController with ChangeNotifier {
   final Set<String> _selectedTags = {};
   final _streamController = StreamController<Set<String>>.broadcast();
 
@@ -44,7 +46,11 @@ class TagSelectionController {
     _updateStream();
   }
 
-  void dispose() => _streamController.close();
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
+  }
 
   void _updateStream() => _streamController.add(selectedTags);
 }
