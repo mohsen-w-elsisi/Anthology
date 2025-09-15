@@ -70,7 +70,6 @@ class _HighlightDetailModalState extends State<HighlightDetailModal> {
                 _highlightText(context),
                 const SizedBox(height: 16.0),
                 _commentTextField(context),
-                // const Spacer(),
                 const SizedBox(height: 16.0),
                 _Actions(highlight: widget.highlight),
               ],
@@ -116,7 +115,6 @@ class _Actions extends StatelessWidget {
       alignment: WrapAlignment.end,
       children: [
         _closeButton(context),
-        const Spacer(),
         _deleteButton(context),
         _revealButton,
         if (Platform.isAndroid) _shareButton,
