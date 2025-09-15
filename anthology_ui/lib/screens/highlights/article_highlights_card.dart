@@ -36,6 +36,7 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.hardEdge,
       child: Column(
         children: [
           ListTile(
@@ -86,10 +87,12 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
 
   Widget get _subtitleText => Wrap(
     runSpacing: 8.0,
+    crossAxisAlignment: WrapCrossAlignment.center,
     children: [
       Text("${widget.highlights.length} highlights"),
       Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextButton.icon(
             onPressed: _openFullArticle,
