@@ -7,6 +7,7 @@ import 'package:anthology_ui/shared_widgets/settings.dart';
 import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
 import 'package:anthology_ui/state/tag_selection_controller.dart';
+import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -72,8 +73,10 @@ class _MainSaveViewState extends State<MainSaveView> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      padding: screenMainScrollViewHorizontalPadding(context),
       children: [
         TagSelectorChips(tagSelectionController: _tagfilterationController),
+        const SizedBox(height: 8),
         FutureBuilder(
           future: _articlesFuture,
           initialData: _previousArticles,
@@ -118,13 +121,16 @@ class SaveCardsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        for (final article in articles)
-          SaveTile(article, key: ValueKey(article.id)),
-      ].reversed.toList(),
+    return Card.filled(
+      color: ColorScheme.of(context).surfaceContainerLowest,
+      child: ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          for (final article in articles)
+            SaveTile(article, key: ValueKey(article.id)),
+        ].reversed.toList(),
+      ),
     );
   }
 }

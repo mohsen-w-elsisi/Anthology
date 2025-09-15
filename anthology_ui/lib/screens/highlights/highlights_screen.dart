@@ -2,7 +2,6 @@ import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/data_gateway.dart';
 import 'package:anthology_common/highlight/entities.dart';
-import 'package:anthology_ui/config.dart';
 import 'package:anthology_ui/screens/highlights/article_highlights_card.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
@@ -69,7 +68,7 @@ class _ArticleHighlightsList extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1400),
                   child: ListView(
-                    padding: screenMainScrollViewHorizontalPadding,
+                    padding: screenMainScrollViewHorizontalPadding(context),
                     children: [
                       for (final item in items)
                         ArticleHighlightsCard(

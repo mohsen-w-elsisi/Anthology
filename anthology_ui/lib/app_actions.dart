@@ -16,6 +16,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'config.dart';
 
 abstract class AppActions {
+  static Future<void> deleteHighlight(String highlightId) async {
+    await _highlightDataGateway.delete(highlightId);
+    _highlightUiNotifier.notify();
+  }
+
+  static Future<void> shareHighlight(Highlight highlight) async {
+    // This shares the highlight text
+    await SharePlus.instance.share(ShareParams(text: highlight.text));
+  }
+
   static Future<ArticleBrief> getBrief(String articleId) async {
     if (await _articleBriefCache.isCached(articleId)) {
       return _articleBriefCache.get(articleId);
