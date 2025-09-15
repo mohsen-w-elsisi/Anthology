@@ -10,6 +10,7 @@ class Article {
   final Set<String> tags;
   final bool read;
   final double progress;
+  final bool isArchived;
 
   const Article({
     required this.uri,
@@ -18,6 +19,7 @@ class Article {
     required this.dateSaved,
     required this.read,
     required this.progress,
+    this.isArchived = false,
   });
 
   factory Article.fromJson(Json json) => ArticleJsonDecoder(json).decode();
@@ -38,6 +40,7 @@ class ArticleJsonEncoder {
       "tags": _article.tags.toList(),
       "read": _article.read,
       "progress": _article.progress,
+      "isArchived": _article.isArchived,
     };
   }
 }
@@ -55,6 +58,7 @@ class ArticleJsonDecoder {
       dateSaved: DateTime.parse(_json["dateSaved"]),
       read: _json["read"],
       progress: (_json["progress"] as num?)?.toDouble() ?? 0.0,
+      isArchived: _json["isArchived"] ?? false,
     );
   }
 }

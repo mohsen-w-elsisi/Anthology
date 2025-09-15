@@ -50,6 +50,16 @@ abstract class AppActions {
     _articleUiNotifier.notify();
   }
 
+  static Future<void> setArticleArchiveStatus(
+    String id,
+    bool isArchived,
+  ) async {
+    final article = await _articleDataGateway.get(id);
+    final updatedArticle = article.copyWith(isArchived: isArchived);
+    await _articleDataGateway.save(updatedArticle);
+    _articleUiNotifier.notify();
+  }
+
   static Future<void> updateArticleProgress(String id, double progress) async {
     await _articleDataGateway.updateProgress(id, progress);
     _articleUiNotifier.notify();

@@ -19,6 +19,8 @@ abstract class _$ArticleCWProxy {
 
   Article progress(double progress);
 
+  Article isArchived(bool isArchived);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Article(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -32,6 +34,7 @@ abstract class _$ArticleCWProxy {
     DateTime dateSaved,
     bool read,
     double progress,
+    bool isArchived,
   });
 }
 
@@ -60,6 +63,9 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
   Article progress(double progress) => this(progress: progress);
 
   @override
+  Article isArchived(bool isArchived) => this(isArchived: isArchived);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Article(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -73,6 +79,7 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
     Object? dateSaved = const $CopyWithPlaceholder(),
     Object? read = const $CopyWithPlaceholder(),
     Object? progress = const $CopyWithPlaceholder(),
+    Object? isArchived = const $CopyWithPlaceholder(),
   }) {
     return Article(
       uri: uri == const $CopyWithPlaceholder()
@@ -99,6 +106,10 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
           ? _value.progress
           // ignore: cast_nullable_to_non_nullable
           : progress as double,
+      isArchived: isArchived == const $CopyWithPlaceholder()
+          ? _value.isArchived
+          // ignore: cast_nullable_to_non_nullable
+          : isArchived as bool,
     );
   }
 }

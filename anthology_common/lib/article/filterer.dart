@@ -6,6 +6,14 @@ class ArticleFilterer {
   ArticleFilterer(List<Article> articles)
     : articles = List.unmodifiable(articles);
 
+  ArticleFilterer byArchiveStatus(bool isArchived) {
+    final filteredArticles = [
+      for (final article in articles)
+        if (article.isArchived == isArchived) article,
+    ];
+    return ArticleFilterer(filteredArticles);
+  }
+
   ArticleFilterer onlyTags(Set<String> tags) {
     assert(tags.isNotEmpty, "Tags cannot be empty for filtering");
     final filteredArticles = [

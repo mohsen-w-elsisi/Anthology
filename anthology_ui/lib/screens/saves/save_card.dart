@@ -119,6 +119,10 @@ class _ActionsMenu extends StatelessWidget {
           onTap: () => _editTags(context),
           child: Text('Edit Tags'),
         ),
+        PopupMenuItem(
+          onTap: _toggleArchiveStatus,
+          child: Text(widget.article.isArchived ? 'Unarchive' : 'Archive'),
+        ),
         if (!Platform.isLinux)
           PopupMenuItem(
             onTap: _shareArticle,
@@ -130,6 +134,12 @@ class _ActionsMenu extends StatelessWidget {
 
   void _deleteArticle() => AppActions.deleteArticle(widget.article.id);
   void _shareArticle() => AppActions.shareArticle(widget.article);
+  void _toggleArchiveStatus() {
+    AppActions.setArticleArchiveStatus(
+      widget.article.id,
+      !widget.article.isArchived,
+    );
+  }
 
   void _editTags(BuildContext context) {
     EditTagsModal(article: widget.article).show(context);

@@ -88,6 +88,7 @@ class _NewSaveModalState extends State<NewSaveModal> {
         dateSaved: DateTime.now(),
         read: false,
         progress: 0,
+        isArchived: false,
       );
       AppActions.saveArticle(article);
       Navigator.pop(context);

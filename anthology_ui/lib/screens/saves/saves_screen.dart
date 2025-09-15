@@ -44,6 +44,7 @@ class _MainSaveViewState extends State<MainSaveView> {
   final _tagfilterationController = TagSelectionController();
   late Future<List<Article>> _articlesFuture;
   List<Article>? _previousArticles;
+  bool _showArchived = false;
 
   @override
   void initState() {
@@ -75,8 +76,8 @@ class _MainSaveViewState extends State<MainSaveView> {
     return ListView(
       padding: screenMainScrollViewHorizontalPadding(context),
       children: [
-        TagSelectorChips(tagSelectionController: _tagfilterationController),
-        const SizedBox(height: 8),
+        _topChips,
+        const SizedBox(height: 16),
         FutureBuilder(
           future: _articlesFuture,
           initialData: _previousArticles,
@@ -104,13 +105,30 @@ class _MainSaveViewState extends State<MainSaveView> {
     );
   }
 
+  Row get _topChips => Row(
+    children: [
+      FilterChip(
+        avatar: Icon(Icons.archive_outlined),
+        label: const Text('Archived'),
+        selected: _showArchived,
+        onSelected: (value) => setState(() => _showArchived = value),
+      ),
+      const SizedBox(width: 4),
+      Expanded(
+        child: TagSelectorChips(
+          tagSelectionController: _tagfilterationController,
+        ),
+      ),
+    ],
+  );
+
   List<Article> _filterArticles(List<Article> articles) {
+    var filterer = ArticleFilterer(articles).byArchiveStatus(_showArchived);
     final selectedTags = _tagfilterationController.selectedTags;
     if (selectedTags.isNotEmpty) {
-      return ArticleFilterer(articles).onlyTags(selectedTags).articles;
-    } else {
-      return articles;
+      filterer = filterer.onlyTags(selectedTags);
     }
+    return filterer.articles;
   }
 }
 
