@@ -73,6 +73,7 @@ abstract class HtmlListElementParser extends HtmlTextElementParser {
       }
     }
     _text = formattedItems.join('\n');
+    _text = _text.endsWith("\n") ? _text : "$_text\n";
   }
 
   String _bullet(int index);
