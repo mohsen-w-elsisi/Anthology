@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/generator.dart';
 import 'package:anthology_common/server_request_interface.dart';
@@ -55,8 +54,7 @@ class AppDependencyIniter {
   }
 
   static Future<void> _initTagAggregator() async {
-    final articleDataGateway = GetIt.I<ArticleDataGateway>();
-    final tagAggregator = TagAggregator(articleDataGateway);
+    final tagAggregator = TagAggregator();
     await tagAggregator.init();
     GetIt.I.registerSingleton<TagAggregator>(tagAggregator);
   }

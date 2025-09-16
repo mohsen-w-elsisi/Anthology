@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 class SavesProvider extends ChangeNotifier {
-  final ArticleDataGateway _articleDataGateway = GetIt.I<ArticleDataGateway>();
-  final ArticleUiNotifier _articleUiNotifier = GetIt.I<ArticleUiNotifier>();
+  ArticleDataGateway get _articleDataGateway => GetIt.I<ArticleDataGateway>();
+  ArticleUiNotifier get _articleUiNotifier => GetIt.I<ArticleUiNotifier>();
+
   final TagSelectionController tagSelectionController =
       TagSelectionController();
 

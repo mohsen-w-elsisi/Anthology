@@ -1,12 +1,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!--
+         Permissions for accessing external storage.
+         `requestLegacyExternalStorage` is for Android 10 to opt-out of scoped storage.
+         For Android 11+, this is largely ignored and Storage Access Framework (SAF) should be used.
+         However, having these permissions can help with compatibility on some devices/older OS versions.
+    -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!--
+         Required for Android 11+ to grant broad file access 
+         outside of the app's private directory.
+    -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     
     <application
         android:label="anthology_ui"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

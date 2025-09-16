@@ -6,13 +6,12 @@ import 'package:anthology_common/article/data_gaetway.dart';
 import 'package:get_it/get_it.dart';
 
 class TagAggregator {
-  final ArticleDataGateway _articleDataGateway;
   final _controller = StreamController<Set<String>>.broadcast();
 
   final Set<String> _transientTags = {};
   Set<String> _persistentTags = {};
 
-  TagAggregator(this._articleDataGateway);
+  TagAggregator();
 
   Stream<Set<String>> get stream => _controller.stream;
 
@@ -60,4 +59,6 @@ class TagAggregator {
   }
 
   void _updateListeners() => _controller.add(tags);
+
+  ArticleDataGateway get _articleDataGateway => GetIt.I<ArticleDataGateway>();
 }
