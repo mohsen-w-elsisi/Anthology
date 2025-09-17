@@ -26,10 +26,7 @@ class TagSelectorChips extends StatelessWidget {
         builder: (_, selectedTagsSnapshot) {
           final chips = _chipsFromTags(allTagsSnapshot.data!);
           if (layout == TagSelectorLayout.horizontal) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(children: chips),
-            );
+            return Row(children: chips);
           } else {
             return Wrap(
               runSpacing: 8.0,

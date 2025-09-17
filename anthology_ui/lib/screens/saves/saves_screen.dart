@@ -73,16 +73,17 @@ class _TopChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<SavesProvider>();
-    return Row(
-      children: [
-        _archiveChip(provider),
-        const SizedBox(width: 4),
-        Expanded(
-          child: TagSelectorChips(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _archiveChip(provider),
+          const SizedBox(width: 4),
+          TagSelectorChips(
             tagSelectionController: provider.tagSelectionController,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
