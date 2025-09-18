@@ -3,16 +3,13 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article/filterer.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/state/article_ui_notifier.dart';
-import 'package:anthology_ui/state/tag_selection_controller.dart';
+import 'package:anthology_ui/shared_widgets/filterable_chips.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class SavesProvider extends ChangeNotifier {
+class SavesProvider with ChangeNotifier, ArticleFilterNotifier {
   ArticleDataGateway get _articleDataGateway => GetIt.I<ArticleDataGateway>();
   ArticleUiNotifier get _articleUiNotifier => GetIt.I<ArticleUiNotifier>();
-
-  final TagSelectionController tagSelectionController =
-      TagSelectionController();
 
   List<Article>? _articles;
   List<Article>? get articles => _articles;
@@ -23,25 +20,17 @@ class SavesProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  bool _showArchived = false;
-  bool get showArchived => _showArchived;
-
   SavesProvider() {
     _articleUiNotifier.addListener(fetchArticles);
-    tagSelectionController.addListener(_onTagFilterChanged);
+    initFilterable();
     fetchArticles();
   }
 
   @override
   void dispose() {
     _articleUiNotifier.removeListener(fetchArticles);
-    tagSelectionController.removeListener(_onTagFilterChanged);
-    tagSelectionController.dispose();
+    disposeFilterable();
     super.dispose();
-  }
-
-  void _onTagFilterChanged() {
-    notifyListeners();
   }
 
   Future<void> fetchArticles() async {
@@ -63,7 +52,7 @@ class SavesProvider extends ChangeNotifier {
 
   List<Article> get filteredArticles {
     if (_articles == null) return [];
-    var filterer = ArticleFilterer(_articles!).byArchiveStatus(_showArchived);
+    var filterer = ArticleFilterer(_articles!).byArchiveStatus(showArchived);
     final selectedTags = tagSelectionController.selectedTags;
     if (selectedTags.isNotEmpty) {
       filterer = filterer.onlyTags(selectedTags);
@@ -71,13 +60,8 @@ class SavesProvider extends ChangeNotifier {
     return filterer.articles;
   }
 
-  void setShowArchived(bool value) {
-    _showArchived = value;
-    notifyListeners();
-  }
-
   void archiveArticle(Article article) {
-    if (!_showArchived) {
+    if (!showArchived) {
       _articles?.removeWhere((a) => a.id == article.id);
       notifyListeners();
     }

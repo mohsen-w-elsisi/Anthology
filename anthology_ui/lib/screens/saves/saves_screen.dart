@@ -2,8 +2,8 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/screens/saves/saves_provider.dart';
 import 'package:anthology_ui/screens/saves/save_card.dart';
 import 'package:anthology_ui/shared_widgets/navigation_bar.dart';
+import 'package:anthology_ui/shared_widgets/filterable_chips.dart';
 import 'package:anthology_ui/shared_widgets/settings.dart';
-import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
 import 'package:anthology_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +41,7 @@ class MainSaveView extends StatelessWidget {
     return ListView(
       padding: screenMainScrollViewHorizontalPadding(context),
       children: [
-        const _TopChips(),
+        const ArticleFilterChipsRow<SavesProvider>(),
         const SizedBox(height: 16),
         _buildArticleList(context),
       ],
@@ -64,36 +64,6 @@ class MainSaveView extends StatelessWidget {
             context.read<SavesProvider>().archiveArticle(article),
       );
     }
-  }
-}
-
-class _TopChips extends StatelessWidget {
-  const _TopChips();
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = context.watch<SavesProvider>();
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _archiveChip(provider),
-          const SizedBox(width: 4),
-          TagSelectorChips(
-            tagSelectionController: provider.tagSelectionController,
-          ),
-        ],
-      ),
-    );
-  }
-
-  FilterChip _archiveChip(SavesProvider provider) {
-    return FilterChip(
-      avatar: const Icon(Icons.archive_outlined),
-      label: const Text('Archived'),
-      selected: provider.showArchived,
-      onSelected: provider.setShowArchived,
-    );
   }
 }
 
