@@ -43,7 +43,9 @@ class ReaderScreenAppBar extends StatelessWidget {
         icon: Icon(Icons.headphones_outlined),
       ),
       IconButton(
-        onPressed: () => _showTextOptionsModal(context),
+        onPressed: context.watch<TextOptionsController>().isInitialized
+            ? () => _showTextOptionsModal(context)
+            : null,
         icon: Icon(Icons.format_color_text_outlined),
       ),
     ];

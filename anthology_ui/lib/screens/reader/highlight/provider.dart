@@ -11,7 +11,7 @@ class ReaderScreenHighlightProvider with ChangeNotifier {
 
   ReaderScreenHighlightProvider(this._articleId);
 
-  Future<void> initHighlights() async {
+  Future<void> init() async {
     await _getCurrentHighlights();
     GetIt.I<HighlightUiNotifier>().addListener(_getCurrentHighlights);
   }
