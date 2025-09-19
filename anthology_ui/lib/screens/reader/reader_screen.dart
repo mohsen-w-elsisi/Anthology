@@ -45,6 +45,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        FutureProvider<ArticleBrief?>(
+          create: (_) => AppActions.getBrief(widget.article.id),
+          initialData: null,
+        ),
         Provider(create: (_) => HeadingRegistry()),
         ChangeNotifierProvider(
           create: (_) => ReaderProgressTracker(widget.article),
@@ -72,11 +76,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
             GetIt.I<ReaderViewStatusNotifier>().clearActiveArticle();
           },
           child: Scaffold(
-            body: FutureBuilder(
-              future: AppActions.getBrief(widget.article.id),
-              builder: (context, snapshot) {
+            body: Consumer<ArticleBrief?>(
+              builder: (context, brief, _) {
                 final progressTracker = context.read<ReaderProgressTracker>();
-                if (snapshot.hasData) {
+                if (brief != null) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
                       progressTracker.jumpToArticleProgress();
@@ -84,7 +87,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   });
                 }
                 return Shortcuts(
-                  shortcuts: _shortcuts(snapshot, context, progressTracker),
+                  shortcuts: _shortcuts(context),
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (notification) {
                       if (notification is ScrollEndNotification) {
@@ -97,13 +100,13 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       slivers: [
                         ReaderScreenAppBar(
                           widget.article,
-                          brief: snapshot.data,
+                          brief: brief,
                         ),
                         Consumer<TextOptionsController>(
                           builder: (_, textOptionsController, _) {
-                            if (snapshot.hasData &&
+                            if (brief != null &&
                                 textOptionsController.isInitialized) {
-                              return _textView(snapshot.data!);
+                              return _textView(brief);
                             } else {
                               return _loadingSpinner;
                             }
@@ -121,17 +124,15 @@ class _ReaderScreenState extends State<ReaderScreen> {
     );
   }
 
-  Map<ShortcutActivator, Intent> _shortcuts(
-    AsyncSnapshot<ArticleBrief> snapshot,
-    BuildContext context,
-    ReaderProgressTracker progressTracker,
-  ) {
+  Map<ShortcutActivator, Intent> _shortcuts(BuildContext context) {
+    final brief = context.watch<ArticleBrief?>();
+    final progressTracker = context.read<ReaderProgressTracker>();
     return {
-      if (snapshot.hasData)
+      if (brief != null)
         const SingleActivator(
           LogicalKeyboardKey.keyC,
         ): ShowTocIntent(
-          brief: snapshot.data!,
+          brief: brief,
           headingRegistry: context.read<HeadingRegistry>(),
           context: context,
         ),
@@ -140,7 +141,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
         alt: true,
       ): ShowHighlightsModalIntent(
         context: context,
-        highlights: context.read<ReaderScreenHighlightProvider>().highlights,
+        highlights: context.watch<ReaderScreenHighlightProvider>().highlights,
       ),
       const SingleActivator(
         LogicalKeyboardKey.keyT,

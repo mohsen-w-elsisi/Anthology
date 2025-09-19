@@ -1,7 +1,8 @@
+import 'package:anthology_ui/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'app_dependency_initer.dart';
-import 'main_view.dart';
 import 'share_intent_handler_mixin.dart';
 
 void main() async {
@@ -37,6 +38,9 @@ class _MainAppState extends State<MainApp> with ShareIntentHandlerMixin {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Anthology',
+      onGenerateRoute: (settings) => _generatePageTransition(settings, context),
+      initialRoute: AppRoutes.main,
       navigatorKey: _navigatorKey,
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -45,7 +49,19 @@ class _MainAppState extends State<MainApp> with ShareIntentHandlerMixin {
           brightness: Brightness.dark,
         ),
       ),
-      home: const MainView(),
+    );
+  }
+
+  PageTransition<dynamic> _generatePageTransition(
+    RouteSettings settings,
+    BuildContext context,
+  ) {
+    final builder = AppRoutes.routes[settings.name]!;
+    return PageTransition(
+      type: PageTransitionType.fade,
+      duration: const Duration(milliseconds: 100),
+      child: builder(context),
+      settings: settings,
     );
   }
 }
