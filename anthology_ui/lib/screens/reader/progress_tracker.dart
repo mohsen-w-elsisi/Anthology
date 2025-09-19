@@ -14,6 +14,34 @@ class ReaderProgressTracker with ChangeNotifier {
     super.dispose();
   }
 
+  void scrollUp() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        (scrollController.offset - 100.0).clamp(
+          0.0,
+          scrollController.position.maxScrollExtent,
+        ),
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+      updateProgress();
+    }
+  }
+
+  void scrollDown() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        (scrollController.offset + 100.0).clamp(
+          0.0,
+          scrollController.position.maxScrollExtent,
+        ),
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+      updateProgress();
+    }
+  }
+
   void jumpToArticleProgress() {
     if (scrollController.hasClients && article.progress > 0) {
       final maxScroll = scrollController.position.maxScrollExtent;

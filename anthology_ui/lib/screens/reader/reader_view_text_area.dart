@@ -1,7 +1,9 @@
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'highlight/context_menu_button_item_factory.dart';
+import 'shortcuts.dart';
 import 'text_node_widget/factory.dart';
 import 'text_options/text_options.dart';
 
@@ -68,15 +70,30 @@ class __SelectableAreaState extends State<_SelectableArea> {
 
   @override
   Widget build(BuildContext context) {
-    return SelectionArea(
-      onSelectionChanged: (value) => _textSelection = value?.plainText ?? "",
-      contextMenuBuilder: _buildContextMenu,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: _textNodes,
+    return Shortcuts(
+      shortcuts: _shortcuts,
+      child: SelectionArea(
+        onSelectionChanged: _updateSelectedText,
+        contextMenuBuilder: _buildContextMenu,
+        child: Column(
+          key: const Key('text_nodes'),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _textNodes,
+        ),
       ),
     );
   }
+
+  Map<ShortcutActivator, Intent> get _shortcuts => {
+    SingleActivator(LogicalKeyboardKey.keyH): AddHighlightIntent(
+      selectedText: _textSelection,
+      brief: widget.brief,
+    ),
+  };
+
+  void _updateSelectedText(value) => setState(() {
+    _textSelection = value?.plainText ?? "";
+  });
 
   Widget _buildContextMenu(
     BuildContext context,
