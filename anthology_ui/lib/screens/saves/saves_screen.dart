@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'new_save_modal.dart';
+import 'search.dart';
 
 class SavesScreen extends StatelessWidget {
   const SavesScreen({super.key});
@@ -20,7 +21,7 @@ class SavesScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Saves'),
-          actions: const [SettingsButton()],
+          actions: [const ArticleSearchButton(), const SettingsButton()],
         ),
         body: const MainSaveView(),
         floatingActionButton: FloatingActionButton(
