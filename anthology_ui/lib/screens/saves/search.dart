@@ -1,4 +1,5 @@
-import 'package:anthology_common/article/entities.dart';
+import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
+import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/screens/saves/article_searcher.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:flutter/material.dart';
@@ -12,19 +13,19 @@ class ArticleSearchButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.search),
       onPressed: () async {
-        final result = await showSearch<Article?>(
+        final result = await showSearch(
           context: context,
           delegate: ArticleSearchDelegate(),
         );
         if (result != null && context.mounted) {
-          GetIt.I<ReaderViewStatusNotifier>().setActiveArticle(result);
+          GetIt.I<ReaderViewStatusNotifier>().setActiveArticle(result.article);
         }
       },
     );
   }
 }
 
-class ArticleSearchDelegate extends SearchDelegate<Article?> {
+class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
   final _searcher = ArticleSearcher();
 
   @override
@@ -74,35 +75,64 @@ class ArticleSearchDelegate extends SearchDelegate<Article?> {
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
-        final filteredArticles = snapshot.data ?? [];
 
-        if (filteredArticles.isEmpty) {
+        final searchresults = snapshot.data ?? [];
+
+        if (searchresults.isEmpty) {
           return Center(child: Text('No results for "$query"'));
         }
 
-        return ListView.builder(
-          itemCount: filteredArticles.length,
-          itemBuilder: (context, index) {
-            final item = filteredArticles[index];
-            final article = item.article;
-            final meta = item.meta;
-            return ListTile(
-              leading: _articleFieldIconMap[item.querySatisfiedIn.first] != null
-                  ? Icon(_articleFieldIconMap[item.querySatisfiedIn.first])
-                  : null,
-              title: Text(meta?.title ?? 'No title'),
-              subtitle: item.previewText != null
-                  ? Text(
-                      item.previewText!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : null,
-              onTap: () => close(context, article),
-            );
-          },
+        return ListView(
+          children: [
+            for (final result in searchresults)
+              ArticleSearchTile(
+                result,
+                onTap: (searchResult) => close(context, searchResult),
+              ),
+          ],
         );
       },
+    );
+  }
+}
+
+class ArticleSearchTile extends StatelessWidget {
+  final ArticleSearchResult searchResult;
+  final Function(ArticleSearchResult searchResult) onTap;
+
+  const ArticleSearchTile(this.searchResult, {super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () => onTap(searchResult),
+      isThreeLine: _previewText != null,
+      leading: icon,
+      title: articleTitle,
+      subtitle: _previewText,
+    );
+  }
+
+  Widget get icon => Padding(
+    padding: const EdgeInsets.only(top: 8.0),
+    child: Icon(
+      _articleFieldIconMap[searchResult.resultDiscribtor.field]!,
+    ),
+  );
+
+  Widget get articleTitle => FutureBuilder(
+    future: ArticlePresentationMetaDataFetcher(searchResult.article).fetch(),
+    initialData: ArticlePresentationMetaData(title: ""),
+    builder: (context, snapshot) => Text(snapshot.data!.title),
+  );
+
+  Widget? get _previewText {
+    final previewText = searchResult.resultDiscribtor.previewText();
+    if (previewText == null) return null;
+    return Text(
+      previewText,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

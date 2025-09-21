@@ -9,20 +9,24 @@ import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:get_it/get_it.dart';
 
 class ArticleSearcher {
-  List<ArticleSearchResult>? _searchResults;
+  List<SearchableArticleBundle>? _articleBundles;
 
   Future<List<ArticleSearchResult>> search(String query) async {
     final allArticles = await _fetchAll();
     query = query.toLowerCase();
 
     return allArticles
-        .map(_QuerySatisfier(query).assign)
-        .where((item) => item.querySatisfiedIn.isNotEmpty)
+        .expand(
+          (bundle) => _ArticleSearcher(
+            query: query,
+            searchableBundle: bundle,
+          ).search(),
+        )
         .toList();
   }
 
-  Future<List<ArticleSearchResult>> _fetchAll() async {
-    if (_searchResults != null) return _searchResults!;
+  Future<List<SearchableArticleBundle>> _fetchAll() async {
+    if (_articleBundles != null) return _articleBundles!;
 
     final articles = await GetIt.I<ArticleDataGateway>().getAll();
     if (articles.isEmpty) return [];
@@ -38,11 +42,11 @@ class ArticleSearcher {
         )
         .toList();
 
-    _searchResults = await Future.wait(futures);
-    return _searchResults!;
+    _articleBundles = await Future.wait(futures);
+    return _articleBundles!;
   }
 
-  Future<ArticleSearchResult> constructResult({
+  Future<SearchableArticleBundle> constructResult({
     required Article article,
     required ArticleBriefCache briefCache,
   }) async {
@@ -64,7 +68,7 @@ class ArticleSearcher {
     } catch (_) {
       highlights = null;
     }
-    return ArticleSearchResult.unQueried(
+    return SearchableArticleBundle(
       article: article,
       meta: meta,
       brief: brief,
@@ -73,78 +77,82 @@ class ArticleSearcher {
   }
 }
 
-class _QuerySatisfier {
+class _ArticleSearcher {
   final String query;
+  final SearchableArticleBundle searchableBundle;
 
-  _QuerySatisfier(this.query);
+  final List<ArticleSearchFieldResultDiscribtor> _searchResultDiscribtors = [];
 
-  ArticleSearchResult assign(ArticleSearchResult item) {
-    final satisfiedIn = <ArticleSearchField>{};
-    if (item.meta?.title.toLowerCase().contains(query) ?? false) {
-      satisfiedIn.add(ArticleSearchField.title);
+  _ArticleSearcher({required this.query, required this.searchableBundle});
+
+  List<ArticleSearchResult> search() {
+    _searchTitle();
+    _searchHighlight();
+    _searchContent();
+
+    return [
+      for (final discribtor in _searchResultDiscribtors)
+        ArticleSearchResult(
+          article: searchableBundle.article,
+          resultDiscribtor: discribtor,
+        ),
+    ];
+  }
+
+  void _searchTitle() {
+    final title = searchableBundle.meta?.title ?? '';
+    if (title.toLowerCase().contains(query)) {
+      _searchResultDiscribtors.add(
+        ArticleTitleSearchResultDiscribtor(title),
+      );
     }
+  }
 
-    String? previewText;
-    Highlight? matchingHighlight;
-    if (item.highlights != null) {
-      for (final h in item.highlights!) {
-        if (h.text.toLowerCase().contains(query)) {
-          matchingHighlight = h;
-          break;
-        }
+  void _searchHighlight() {
+    final highlights = searchableBundle.highlights ?? [];
+    for (final highlight in highlights) {
+      if (highlight.text.toLowerCase().contains(query)) {
+        _searchResultDiscribtors.add(
+          ArticleHighlightSearchResultDiscribtor(highlight),
+        );
       }
     }
+  }
 
-    if (matchingHighlight != null) {
-      satisfiedIn.add(ArticleSearchField.highlight);
-      previewText = '"${matchingHighlight.text}"';
-    } else if (item.brief?.text.toLowerCase().contains(query) ?? false) {
-      satisfiedIn.add(ArticleSearchField.content);
-      String? matchingNodeText;
-      if (item.brief?.body != null) {
-        for (final node in item.brief!.body) {
-          if (node.text.toLowerCase().contains(query)) {
-            matchingNodeText = node.text;
-            break;
-          }
-        }
+  void _searchContent() {
+    final body = searchableBundle.brief?.body ?? [];
+    for (var i = 0; i < body.length; i++) {
+      final node = body[i];
+      if (node.text.toLowerCase().contains(query)) {
+        _searchResultDiscribtors.add(
+          ArticleContentSearchResultDiscribtor(node, i),
+        );
       }
-      previewText = matchingNodeText ?? item.article.uri.host;
     }
-
-    return ArticleSearchResult(
-      article: item.article,
-      meta: item.meta,
-      brief: item.brief,
-      highlights: item.highlights,
-      querySatisfiedIn: satisfiedIn,
-      previewText: previewText,
-    );
   }
 }
 
-class ArticleSearchResult {
+class SearchableArticleBundle {
   final Article article;
   final ArticlePresentationMetaData? meta;
   final ArticleBrief? brief;
   final List<Highlight>? highlights;
-  late final Set<ArticleSearchField> querySatisfiedIn;
-  late final String? previewText;
 
-  ArticleSearchResult({
+  SearchableArticleBundle({
     required this.article,
     this.meta,
     this.brief,
     this.highlights,
-    required this.querySatisfiedIn,
-    this.previewText,
   });
+}
 
-  ArticleSearchResult.unQueried({
+class ArticleSearchResult {
+  final Article article;
+  final ArticleSearchFieldResultDiscribtor resultDiscribtor;
+
+  const ArticleSearchResult({
     required this.article,
-    this.meta,
-    this.brief,
-    this.highlights,
+    required this.resultDiscribtor,
   });
 }
 
@@ -152,4 +160,50 @@ enum ArticleSearchField {
   title,
   highlight,
   content,
+}
+
+sealed class ArticleSearchFieldResultDiscribtor {
+  ArticleSearchField get field;
+
+  String? previewText();
+}
+
+class ArticleTitleSearchResultDiscribtor
+    implements ArticleSearchFieldResultDiscribtor {
+  final String title;
+
+  ArticleTitleSearchResultDiscribtor(this.title);
+
+  @override
+  ArticleSearchField get field => ArticleSearchField.title;
+
+  @override
+  String? previewText() => null;
+}
+
+class ArticleHighlightSearchResultDiscribtor
+    implements ArticleSearchFieldResultDiscribtor {
+  final Highlight highlight;
+
+  ArticleHighlightSearchResultDiscribtor(this.highlight);
+
+  @override
+  ArticleSearchField get field => ArticleSearchField.highlight;
+
+  @override
+  String? previewText() => '"${highlight.text}"';
+}
+
+class ArticleContentSearchResultDiscribtor
+    implements ArticleSearchFieldResultDiscribtor {
+  final TextNode node;
+  final int nodeIndex;
+
+  ArticleContentSearchResultDiscribtor(this.node, this.nodeIndex);
+
+  @override
+  ArticleSearchField get field => ArticleSearchField.content;
+
+  @override
+  String? previewText() => node.text.trim();
 }
