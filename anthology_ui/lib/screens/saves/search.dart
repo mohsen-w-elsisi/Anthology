@@ -131,10 +131,10 @@ class ArticleSearchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => onTap(searchResult),
-      isThreeLine: _previewText != null,
+      isThreeLine: _previewText(context) != null,
       leading: icon,
       title: articleTitle,
-      subtitle: _previewText,
+      subtitle: _previewText(context),
     );
   }
 
@@ -148,16 +148,62 @@ class ArticleSearchTile extends StatelessWidget {
   Widget get articleTitle => FutureBuilder(
     future: ArticlePresentationMetaDataFetcher(searchResult.article).fetch(),
     initialData: ArticlePresentationMetaData(title: ""),
-    builder: (context, snapshot) => Text(snapshot.data!.title),
+    builder: (context, snapshot) {
+      final title = snapshot.data!.title;
+      if (searchResult.resultDiscribtor.field != ArticleSearchField.title ||
+          snapshot.connectionState == ConnectionState.waiting) {
+        return Text(title);
+      } else {
+        return _produceHighlightedText(
+          context: context,
+          text: title,
+          baseStyle: Theme.of(context).textTheme.titleMedium,
+        );
+      }
+    },
   );
 
-  Widget? get _previewText {
-    final previewText = searchResult.resultDiscribtor.previewText();
-    if (previewText == null) return null;
-    return Text(
-      previewText,
-      maxLines: 2,
+  Widget? _previewText(BuildContext context) {
+    final previewText = searchResult.resultDiscribtor.previewText;
+    if (previewText == null || previewText.isEmpty) return null;
+
+    return _produceHighlightedText(
+      context: context,
+      text: previewText,
+      baseStyle: Theme.of(context).textTheme.bodyMedium,
+      maxLines: 2, //TODO: guarentee highlighted text always shown
       overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _produceHighlightedText({
+    required BuildContext context,
+    required String text,
+    required TextStyle? baseStyle,
+    int? maxLines,
+    TextOverflow? overflow,
+  }) {
+    final highlightRange = searchResult.resultDiscribtor.highlightRange;
+
+    final textBeforeHighlight = TextSpan(
+      text: text.substring(0, highlightRange.start),
+    );
+    final highlightedText = TextSpan(
+      style: TextStyle(backgroundColor: Colors.yellow.withAlpha(100)),
+      text: text.substring(highlightRange.start, highlightRange.end),
+    );
+    final textAfterHighlight = TextSpan(
+      text: text.substring(highlightRange.end),
+    );
+
+    return RichText(
+      textScaler: MediaQuery.of(context).textScaler,
+      maxLines: maxLines,
+      overflow: overflow ?? TextOverflow.clip,
+      text: TextSpan(
+        style: baseStyle,
+        children: [textBeforeHighlight, highlightedText, textAfterHighlight],
+      ),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/data/article_brief_cache.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 
 class ArticleSearcher {
@@ -103,7 +104,7 @@ class _ArticleSearcher {
     final title = searchableBundle.meta?.title ?? '';
     if (title.toLowerCase().contains(query)) {
       _searchResultDiscribtors.add(
-        ArticleTitleSearchResultDiscribtor(title),
+        ArticleTitleSearchResultDiscribtor(title, query),
       );
     }
   }
@@ -113,7 +114,7 @@ class _ArticleSearcher {
     for (final highlight in highlights) {
       if (highlight.text.toLowerCase().contains(query)) {
         _searchResultDiscribtors.add(
-          ArticleHighlightSearchResultDiscribtor(highlight),
+          ArticleHighlightSearchResultDiscribtor(highlight, query),
         );
       }
     }
@@ -125,7 +126,7 @@ class _ArticleSearcher {
       final node = body[i];
       if (node.text.toLowerCase().contains(query)) {
         _searchResultDiscribtors.add(
-          ArticleContentSearchResultDiscribtor(node, i),
+          ArticleContentSearchResultDiscribtor(node, i, query),
         );
       }
     }
@@ -162,48 +163,74 @@ enum ArticleSearchField {
   content,
 }
 
-sealed class ArticleSearchFieldResultDiscribtor {
-  ArticleSearchField get field;
+class SearchResultHighlightRange {
+  final int start;
+  final int end;
 
-  String? previewText();
+  const SearchResultHighlightRange(this.start, this.end);
+}
+
+sealed class ArticleSearchFieldResultDiscribtor {
+  late final SearchResultHighlightRange highlightRange;
+
+  ArticleSearchFieldResultDiscribtor(String query) {
+    highlightRange = computeHighlightRange(query);
+  }
+
+  ArticleSearchField get field;
+  String? get previewText;
+
+  @protected
+  String get highlightContainingText => previewText ?? '';
+
+  SearchResultHighlightRange computeHighlightRange(String query) {
+    final lowerText = highlightContainingText.toLowerCase();
+    final lowerQuery = query.toLowerCase();
+    final start = lowerText.indexOf(lowerQuery);
+    if (start == -1) return const SearchResultHighlightRange(0, 0);
+    final end = (start + lowerQuery.length);
+    return SearchResultHighlightRange(start, end);
+  }
 }
 
 class ArticleTitleSearchResultDiscribtor
-    implements ArticleSearchFieldResultDiscribtor {
+    extends ArticleSearchFieldResultDiscribtor {
+  @override
+  final field = ArticleSearchField.title;
+  @override
+  final previewText = null;
+
   final String title;
 
-  ArticleTitleSearchResultDiscribtor(this.title);
+  ArticleTitleSearchResultDiscribtor(this.title, super.query);
 
   @override
-  ArticleSearchField get field => ArticleSearchField.title;
-
-  @override
-  String? previewText() => null;
+  String get highlightContainingText => title;
 }
 
 class ArticleHighlightSearchResultDiscribtor
-    implements ArticleSearchFieldResultDiscribtor {
+    extends ArticleSearchFieldResultDiscribtor {
   final Highlight highlight;
 
-  ArticleHighlightSearchResultDiscribtor(this.highlight);
-
   @override
-  ArticleSearchField get field => ArticleSearchField.highlight;
-
+  final String previewText;
   @override
-  String? previewText() => '"${highlight.text}"';
+  final field = ArticleSearchField.highlight;
+
+  ArticleHighlightSearchResultDiscribtor(this.highlight, super.query)
+    : previewText = highlight.text;
 }
 
 class ArticleContentSearchResultDiscribtor
-    implements ArticleSearchFieldResultDiscribtor {
+    extends ArticleSearchFieldResultDiscribtor {
   final TextNode node;
   final int nodeIndex;
 
-  ArticleContentSearchResultDiscribtor(this.node, this.nodeIndex);
-
   @override
-  ArticleSearchField get field => ArticleSearchField.content;
-
+  final field = ArticleSearchField.content;
   @override
-  String? previewText() => node.text.trim();
+  final String? previewText;
+
+  ArticleContentSearchResultDiscribtor(this.node, this.nodeIndex, super.query)
+    : previewText = node.text.trim();
 }

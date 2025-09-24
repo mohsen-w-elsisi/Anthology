@@ -151,7 +151,7 @@ class NodeWidgetBuilder {
     key: key,
     selectionRegistrar: SelectionContainer.maybeOf(context),
     selectionColor: _selectionColor,
-    textScaler: TextScaler.linear(1.6), // TODO: this is magic num that works
+    textScaler: MediaQuery.of(context).textScaler,
     text: TextSpan(
       style: _baseStyle,
       children: withHighlights ? _spans : null,
