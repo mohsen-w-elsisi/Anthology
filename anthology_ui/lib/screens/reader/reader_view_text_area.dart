@@ -1,9 +1,11 @@
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'highlight/context_menu_button_item_factory.dart';
 import 'shortcuts.dart';
+import 'text_node_registry.dart';
 import 'text_node_widget/factory.dart';
 import 'text_options/text_options.dart';
 
@@ -78,7 +80,7 @@ class __SelectableAreaState extends State<_SelectableArea> {
         child: Column(
           key: const Key('text_nodes'),
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: _textNodes,
+          children: _buildTextNodes(context),
         ),
       ),
     );
@@ -115,7 +117,20 @@ class __SelectableAreaState extends State<_SelectableArea> {
     ).buttonItem();
   }
 
-  List<Widget> get _textNodes => [
-    for (final node in widget.brief.body) TextNodeWidgetFactory(node).widget(),
-  ];
+  List<Widget> _buildTextNodes(BuildContext context) {
+    final registry = context.read<TextNodeRegistry>();
+    final nodes = widget.brief.body;
+    final widgets = <Widget>[];
+    for (var i = 0; i < nodes.length; i++) {
+      final key = GlobalKey();
+      registry.register(i, key);
+      widgets.add(
+        Builder(
+          key: key,
+          builder: (context) => TextNodeWidgetFactory(nodes[i]).widget(),
+        ),
+      );
+    }
+    return widgets;
+  }
 }

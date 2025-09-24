@@ -75,11 +75,19 @@ class _MainViewState extends State<MainView> {
   }
 
   void _onReaderStatusChanged() {
-    final activeArticle = _readerStatusNotifier.activeArticle;
-    if (!isExpanded(context) && activeArticle != null) {
+    final notifier = _readerStatusNotifier;
+    if (!isExpanded(context) &&
+        notifier.activeArticle != null &&
+        notifier.activeReaderScreenSettings != null) {
+      final modalSettings = notifier.activeReaderScreenSettings!.copyWith(
+        isModal: true,
+      );
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => ReaderScreen(activeArticle, isModal: true),
+          builder: (_) => ReaderScreen(
+            article: notifier.activeArticle!,
+            settings: modalSettings,
+          ),
         ),
       );
     }
@@ -98,14 +106,21 @@ class _MainViewState extends State<MainView> {
   }
 
   void _showReaderAsModal() {
-    final activeArticle = GetIt.I<ReaderViewStatusNotifier>().activeArticle;
-    if (activeArticle != null) {
+    final notifier = GetIt.I<ReaderViewStatusNotifier>();
+    if (notifier.activeArticle != null &&
+        notifier.activeReaderScreenSettings != null) {
       // cannot retrigger build stage during build stage, hence pop postframe
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
+          final modalSettings = notifier.activeReaderScreenSettings!.copyWith(
+            isModal: true,
+          );
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => ReaderScreen(activeArticle, isModal: true),
+              builder: (_) => ReaderScreen(
+                article: notifier.activeArticle!,
+                settings: modalSettings,
+              ),
             ),
           );
         }
@@ -122,10 +137,12 @@ class _ReaderViewPane extends StatelessWidget {
     return ListenableBuilder(
       listenable: GetIt.I<ReaderViewStatusNotifier>(),
       builder: (_, _) {
-        final activeArticle = GetIt.I<ReaderViewStatusNotifier>().activeArticle;
-        if (activeArticle != null) {
+        final notifier = GetIt.I<ReaderViewStatusNotifier>();
+        if (notifier.activeArticle != null &&
+            notifier.activeReaderScreenSettings != null) {
           return ReaderScreen(
-            activeArticle,
+            article: notifier.activeArticle!,
+            settings: notifier.activeReaderScreenSettings!,
             key: GlobalKey(),
           );
         } else {

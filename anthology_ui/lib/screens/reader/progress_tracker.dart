@@ -1,12 +1,17 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
+import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
 import 'package:flutter/material.dart';
 
 class ReaderProgressTracker with ChangeNotifier {
   final Article article;
+  final ScrollDestination scrollDestination;
   final ScrollController scrollController = ScrollController();
 
-  ReaderProgressTracker(this.article);
+  ReaderProgressTracker(
+    this.article,
+    this.scrollDestination,
+  );
 
   @override
   void dispose() {
@@ -42,6 +47,12 @@ class ReaderProgressTracker with ChangeNotifier {
     }
   }
 
+  void jumpToBeginning() {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0.0);
+    }
+  }
+
   void jumpToArticleProgress() {
     if (scrollController.hasClients && article.progress > 0) {
       final maxScroll = scrollController.position.maxScrollExtent;
@@ -53,7 +64,9 @@ class ReaderProgressTracker with ChangeNotifier {
   }
 
   void updateProgress() {
-    if (!scrollController.hasClients) return;
+    if (!scrollController.hasClients ||
+        scrollDestination is! ReaderProgressDestination)
+      return;
 
     final maxScroll = scrollController.position.maxScrollExtent;
     final progress =

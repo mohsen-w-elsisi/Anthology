@@ -1,6 +1,7 @@
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/article_brief/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
+import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
 import 'package:anthology_ui/screens/reader/app_bar.dart';
 import 'package:anthology_ui/screens/reader/progress_tracker.dart';
 import 'package:anthology_ui/screens/reader/reader_view_text_area.dart';
@@ -14,12 +15,17 @@ import 'package:get_it/get_it.dart';
 
 import 'highlight/provider.dart';
 import 'shortcuts.dart';
+import 'text_node_registry.dart';
 
 class ReaderScreen extends StatefulWidget {
   final Article article;
-  final bool isModal;
+  final ReaderScreenSettings settings;
 
-  const ReaderScreen(this.article, {super.key, this.isModal = false});
+  const ReaderScreen({
+    super.key,
+    required this.article,
+    required this.settings,
+  });
 
   @override
   State<ReaderScreen> createState() => _ReaderScreenState();
@@ -32,12 +38,16 @@ class _ReaderScreenState extends State<ReaderScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.isModal) _readerStatusNotifier.isReaderModalActive = true;
+    if (widget.settings.isModal) {
+      _readerStatusNotifier.isReaderModalActive = true;
+    }
   }
 
   @override
   void dispose() {
-    if (widget.isModal) _readerStatusNotifier.isReaderModalActive = false;
+    if (widget.settings.isModal) {
+      _readerStatusNotifier.isReaderModalActive = false;
+    }
     super.dispose();
   }
 
@@ -50,8 +60,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
           initialData: null,
         ),
         Provider(create: (_) => HeadingRegistry()),
+        Provider(create: (_) => TextNodeRegistry()),
         ChangeNotifierProvider(
-          create: (_) => ReaderProgressTracker(widget.article),
+          create: (_) => ReaderProgressTracker(
+            widget.article,
+            widget.settings.scrollDestination,
+          ),
         ),
         ChangeNotifierProvider(
           create: (_) => TextOptionsController()..init(),
@@ -81,9 +95,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                 final progressTracker = context.read<ReaderProgressTracker>();
                 if (brief != null) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      progressTracker.jumpToArticleProgress();
-                    }
+                    if (mounted) _handleScrollDestination(context);
                   });
                 }
                 return Shortcuts(
@@ -122,6 +134,24 @@ class _ReaderScreenState extends State<ReaderScreen> {
         ),
       ),
     );
+  }
+
+  void _handleScrollDestination(BuildContext context) {
+    final destination = widget.settings.scrollDestination;
+    final progressTracker = context.read<ReaderProgressTracker>();
+
+    switch (destination) {
+      case BeginningDestination():
+        progressTracker.jumpToBeginning();
+        break;
+      case ReaderProgressDestination():
+        progressTracker.jumpToArticleProgress();
+        break;
+      case TextNodeDestination():
+        final registry = context.read<TextNodeRegistry>();
+        registry.scrollTo(destination.index);
+        break;
+    }
   }
 
   Map<ShortcutActivator, Intent> _shortcuts(BuildContext context) {

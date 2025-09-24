@@ -1,5 +1,6 @@
 import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
+import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
 import 'package:anthology_ui/screens/saves/article_searcher.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,27 @@ class ArticleSearchButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.search),
       onPressed: () async {
-        final result = await showSearch(
+        final result = await showSearch<ArticleSearchResult?>(
           context: context,
           delegate: ArticleSearchDelegate(),
         );
         if (result != null && context.mounted) {
-          GetIt.I<ReaderViewStatusNotifier>().setActiveArticle(result.article);
+          final ScrollDestination destination;
+          final discribtor = result.resultDiscribtor;
+          if (discribtor is ArticleContentSearchResultDiscribtor) {
+            destination = TextNodeDestination(index: discribtor.nodeIndex);
+          } else {
+            destination = const BeginningDestination();
+          }
+
+          final settings = ReaderScreenSettings(
+            scrollDestination: destination,
+            isModal: false,
+          );
+          GetIt.I<ReaderViewStatusNotifier>().setActiveArticleWithSettings(
+            result.article,
+            settings,
+          );
         }
       },
     );
@@ -27,6 +43,8 @@ class ArticleSearchButton extends StatelessWidget {
 
 class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
   final _searcher = ArticleSearcher();
+
+  Widget? _previousSearchContent;
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -61,37 +79,44 @@ class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
 
   Widget _buildSearchResults(BuildContext context) {
     if (query.isEmpty) {
-      return const Center(
-        child: Text('Search saved articles by title and content.'),
-      );
+      return _emptySearchMessage;
     }
 
     return FutureBuilder<List<ArticleSearchResult>>(
       future: _searcher.search(query),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return _previousSearchContent ?? _emptySearchMessage;
         }
 
+        late Widget currentContent;
         final searchresults = snapshot.data ?? [];
 
-        if (searchresults.isEmpty) {
-          return Center(child: Text('No results for "$query"'));
+        if (snapshot.hasError) {
+          currentContent = Center(child: Text('Error: ${snapshot.error}'));
+        } else if (searchresults.isEmpty) {
+          currentContent = Center(child: Text('No results for "$query"'));
+        } else {
+          currentContent = ListView(
+            children: [
+              for (final result in searchresults)
+                ArticleSearchTile(
+                  result,
+                  onTap: (searchResult) => close(context, searchResult),
+                ),
+            ],
+          );
         }
 
-        return ListView(
-          children: [
-            for (final result in searchresults)
-              ArticleSearchTile(
-                result,
-                onTap: (searchResult) => close(context, searchResult),
-              ),
-          ],
-        );
+        _previousSearchContent = currentContent;
+        return currentContent;
       },
+    );
+  }
+
+  Center get _emptySearchMessage {
+    return const Center(
+      child: Text('Search saved articles by title and content.'),
     );
   }
 }

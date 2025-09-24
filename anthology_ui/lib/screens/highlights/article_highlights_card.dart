@@ -2,6 +2,7 @@ import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_common/highlight/entities.dart';
 import 'package:anthology_ui/screens/reader/reader_screen.dart';
 import 'package:anthology_ui/utils.dart';
+import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
@@ -110,9 +111,18 @@ class _ArticleHighlightsCardState extends State<ArticleHighlightsCard> {
   );
 
   void _openFullArticle() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => ReaderScreen(widget.article)));
+    final settings = ReaderScreenSettings(
+      isModal: true,
+      scrollDestination: const ReaderProgressDestination(),
+    );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ReaderScreen(
+          article: widget.article,
+          settings: settings,
+        ),
+      ),
+    );
   }
 
   void _copyHighlightsToClipboard() {

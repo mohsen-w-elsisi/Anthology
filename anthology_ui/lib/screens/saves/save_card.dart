@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:anthology_common/article/entities.dart';
 import 'package:anthology_ui/app_actions.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
+import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/screens/saves/edit_tags_modal.dart';
@@ -114,7 +115,12 @@ class _SaveTileState extends State<SaveTile> {
   );
 
   void _openReaderScreen() {
-    GetIt.I<ReaderViewStatusNotifier>().setActiveArticle(widget.article);
+    GetIt.I<ReaderViewStatusNotifier>().setActiveArticleWithSettings(
+      widget.article,
+      const ReaderScreenSettings(
+        scrollDestination: ReaderProgressDestination(),
+      ),
+    );
   }
 }
 
