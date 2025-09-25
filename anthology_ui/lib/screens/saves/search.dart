@@ -2,7 +2,9 @@ import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
 import 'package:anthology_ui/screens/saves/article_searcher.dart';
+import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
+import 'package:anthology_ui/state/tag_selection_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -43,6 +45,7 @@ class ArticleSearchButton extends StatelessWidget {
 
 class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
   final _searcher = ArticleSearcher();
+  final _tagSelectionController = TagSelectionController();
 
   Widget? _previousSearchContent;
 
@@ -78,46 +81,101 @@ class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
   }
 
   Widget _buildSearchResults(BuildContext context) {
-    if (query.isEmpty) {
-      return _emptySearchMessage;
-    }
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            left: 16.0,
+            right: 16.0,
+            bottom: 8,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: TagSelectorChips(
+              tagSelectionController: _tagSelectionController,
+            ),
+          ),
+        ),
+        FutureBuilder<List<ArticleSearchResult>>(
+          future: _searcher.search(query),
+          builder: (context, snapshot) => ListenableBuilder(
+            listenable: _tagSelectionController,
+            builder: (context, _) {
+              if (query.isEmpty) return _emptySearchMessage;
 
-    return FutureBuilder<List<ArticleSearchResult>>(
-      future: _searcher.search(query),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _previousSearchContent ?? _emptySearchMessage;
-        }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return _previousSearchContent ?? _emptySearchMessage;
+              }
 
-        late Widget currentContent;
-        final searchresults = snapshot.data ?? [];
+              late Widget currentContent;
+              final searchresults = _filterResultsBySelectedTags(
+                snapshot.data ?? [],
+              );
 
-        if (snapshot.hasError) {
-          currentContent = Center(child: Text('Error: ${snapshot.error}'));
-        } else if (searchresults.isEmpty) {
-          currentContent = Center(child: Text('No results for "$query"'));
-        } else {
-          currentContent = ListView(
-            children: [
-              for (final result in searchresults)
-                ArticleSearchTile(
-                  result,
-                  onTap: (searchResult) => close(context, searchResult),
-                ),
-            ],
-          );
-        }
+              if (snapshot.hasError) {
+                currentContent = SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              } else if (searchresults.isEmpty) {
+                currentContent = SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(
+                      'No results for "$query"',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              } else {
+                currentContent = SliverList.list(
+                  children: [
+                    for (final result in searchresults)
+                      ArticleSearchTile(
+                        result,
+                        onTap: (searchResult) => close(context, searchResult),
+                      ),
+                  ],
+                );
+              }
 
-        _previousSearchContent = currentContent;
-        return currentContent;
-      },
+              _previousSearchContent = currentContent;
+              return currentContent;
+            },
+          ),
+        ),
+      ],
     );
   }
 
-  Center get _emptySearchMessage {
-    return const Center(
-      child: Text('Search saved articles by title and content.'),
+  Widget get _emptySearchMessage {
+    return const SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Text(
+          'Search saved articles by title and content.',
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
+  }
+
+  List<ArticleSearchResult> _filterResultsBySelectedTags(
+    List<ArticleSearchResult> results,
+  ) {
+    final selectedTags = _tagSelectionController.selectedTags;
+    if (selectedTags.isEmpty) return results;
+
+    return results.where((result) {
+      final articleTags = result.article.tags;
+      final hasCommonTag = articleTags.any((tag) => selectedTags.contains(tag));
+      return hasCommonTag;
+    }).toList();
   }
 }
 
