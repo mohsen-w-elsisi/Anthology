@@ -1,12 +1,13 @@
 import 'package:anthology_ui/data/article_presentation_meta_data/entities.dart';
 import 'package:anthology_ui/data/article_presentation_meta_data/fetcher.dart';
 import 'package:anthology_ui/screens/reader/reader_screen_settings.dart';
+import 'package:anthology_ui/screens/saves/article_search_provider.dart';
 import 'package:anthology_ui/screens/saves/article_searcher.dart';
 import 'package:anthology_ui/shared_widgets/tag_selector_chips.dart';
 import 'package:anthology_ui/state/reader_view_status_notifier.dart';
-import 'package:anthology_ui/state/tag_selection_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class ArticleSearchButton extends StatelessWidget {
   const ArticleSearchButton({super.key});
@@ -15,6 +16,7 @@ class ArticleSearchButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.search),
+      tooltip: "Search",
       onPressed: () async {
         final result = await showSearch<ArticleSearchResult?>(
           context: context,
@@ -44,10 +46,13 @@ class ArticleSearchButton extends StatelessWidget {
 }
 
 class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
-  final _searcher = ArticleSearcher();
-  final _tagSelectionController = TagSelectionController();
+  final ArticleSearchProvider _provider = ArticleSearchProvider();
 
-  Widget? _previousSearchContent;
+  @override
+  void close(BuildContext context, ArticleSearchResult? result) {
+    _provider.dispose();
+    super.close(context, result);
+  }
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -72,83 +77,94 @@ class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return _buildSearchResults(context);
+    return _buildSearchResults();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return _buildSearchResults(context);
+    return _buildSearchResults();
   }
 
-  Widget _buildSearchResults(BuildContext context) {
+  Widget _buildSearchResults() {
+    _provider.search(query);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: _provider),
+        Provider<ResultSelectedCallback>(
+          create: (context) {
+            return (result) => close(context, result);
+          },
+        ),
+      ],
+      child: const _SearchResults(),
+    );
+  }
+}
+
+class _SearchResults extends StatelessWidget {
+  const _SearchResults();
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<ArticleSearchProvider>();
+
     return CustomScrollView(
       slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
-            bottom: 8,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: TagSelectorChips(
-              tagSelectionController: _tagSelectionController,
-            ),
-          ),
+        _filterChps(provider),
+        _buildBody(context, provider),
+      ],
+    );
+  }
+
+  SliverPadding _filterChps(ArticleSearchProvider provider) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        top: 16.0,
+        left: 16.0,
+        right: 16.0,
+        bottom: 8.0,
+      ),
+      sliver: SliverToBoxAdapter(
+        child: TagSelectorChips(
+          tagSelectionController: provider.tagSelectionController,
         ),
-        FutureBuilder<List<ArticleSearchResult>>(
-          future: _searcher.search(query),
-          builder: (context, snapshot) => ListenableBuilder(
-            listenable: _tagSelectionController,
-            builder: (context, _) {
-              if (query.isEmpty) return _emptySearchMessage;
+      ),
+    );
+  }
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return _previousSearchContent ?? _emptySearchMessage;
-              }
+  Widget _buildBody(BuildContext context, ArticleSearchProvider provider) {
+    if (provider.query.isEmpty) {
+      return _emptySearchMessage;
+    }
 
-              late Widget currentContent;
-              final searchresults = _filterResultsBySelectedTags(
-                snapshot.data ?? [],
-              );
+    if (provider.isLoading && provider.results == null) {
+      return const SliverFillRemaining(
+        child: SizedBox.shrink(),
+      );
+    }
 
-              if (snapshot.hasError) {
-                currentContent = SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              } else if (searchresults.isEmpty) {
-                currentContent = SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Text(
-                      'No results for "$query"',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              } else {
-                currentContent = SliverList.list(
-                  children: [
-                    for (final result in searchresults)
-                      ArticleSearchTile(
-                        result,
-                        onTap: (searchResult) => close(context, searchResult),
-                      ),
-                  ],
-                );
-              }
+    if (provider.error != null) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(child: Text('Error: ${provider.error}')),
+      );
+    }
 
-              _previousSearchContent = currentContent;
-              return currentContent;
-            },
+    final searchResults = provider.filteredResults;
+    if (searchResults.isEmpty) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(child: Text('No results for "${provider.query}"')),
+      );
+    }
+
+    return SliverList.list(
+      children: [
+        for (final result in searchResults)
+          ArticleSearchTile(
+            result,
+            onTap: context.read<ResultSelectedCallback>(),
           ),
-        ),
       ],
     );
   }
@@ -164,20 +180,10 @@ class ArticleSearchDelegate extends SearchDelegate<ArticleSearchResult?> {
       ),
     );
   }
-
-  List<ArticleSearchResult> _filterResultsBySelectedTags(
-    List<ArticleSearchResult> results,
-  ) {
-    final selectedTags = _tagSelectionController.selectedTags;
-    if (selectedTags.isEmpty) return results;
-
-    return results.where((result) {
-      final articleTags = result.article.tags;
-      final hasCommonTag = articleTags.any((tag) => selectedTags.contains(tag));
-      return hasCommonTag;
-    }).toList();
-  }
 }
+
+typedef ResultSelectedCallback =
+    void Function(ArticleSearchResult searchResult);
 
 class ArticleSearchTile extends StatelessWidget {
   final ArticleSearchResult searchResult;
