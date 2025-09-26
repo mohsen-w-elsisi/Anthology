@@ -28,7 +28,7 @@ mixin ShareIntentHandlerMixin<T extends StatefulWidget> on State<T> {
     final sharedUrl = value.first.value;
     final context = navigatorKey.currentContext;
     if (sharedUrl != null && context != null) {
-      NewSaveModal(initialUrl: sharedUrl).show(context);
+      NewSaveModal(initialUrl: sharedUrl).show();
     }
   }
 

@@ -23,6 +23,7 @@ import 'data/readability_article_brief_generator.dart';
 class AppDependencyIniter {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
+    _initNavigatorKey();
     _initServerRequestInterface();
     DataGatewayIniter(
       useHttp: await _useHttp,
@@ -36,6 +37,10 @@ class AppDependencyIniter {
     await _initArticleBriefCache();
     await _initArticleBriefGenerator();
     _initReaderViewStatusNotifier();
+  }
+
+  static void _initNavigatorKey() {
+    GetIt.I.registerSingleton(GlobalKey<NavigatorState>());
   }
 
   static Future<bool> get _useHttp async {

@@ -84,7 +84,7 @@ class _HighlightTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        HighlightDetailModal(highlight).show(context);
+        HighlightDetailModal(highlight).show();
       },
       title: Text(
         highlight.text,

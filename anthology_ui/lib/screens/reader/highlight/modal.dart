@@ -37,7 +37,7 @@ class HighlightCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(9.0),
       child: ListTile(
-        onTap: () => HighlightDetailModal(highlight).show(context),
+        onTap: () => HighlightDetailModal(highlight).show(),
         title: Text(highlight.text),
         subtitle: highlight.comment != null ? Text(highlight.comment!) : null,
       ),

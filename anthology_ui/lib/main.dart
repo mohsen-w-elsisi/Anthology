@@ -1,4 +1,6 @@
 import 'package:anthology_ui/app_routes.dart';
+import 'package:anthology_ui/intents_and_actions.dart';
+import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -18,10 +20,9 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with ShareIntentHandlerMixin {
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-
   @override
-  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+  GlobalKey<NavigatorState> get navigatorKey =>
+      GetIt.I<GlobalKey<NavigatorState>>();
 
   @override
   void initState() {
@@ -41,7 +42,9 @@ class _MainAppState extends State<MainApp> with ShareIntentHandlerMixin {
       title: 'Anthology',
       onGenerateRoute: (settings) => _generatePageTransition(settings, context),
       initialRoute: AppRoutes.main,
-      navigatorKey: _navigatorKey,
+      navigatorKey: navigatorKey,
+      shortcuts: globalShortcuts(),
+      actions: globalActions(),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(

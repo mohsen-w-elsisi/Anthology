@@ -49,29 +49,33 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    if (isExpanded(context)) {
-      return Row(
-        children: [
-          AppNavigationBar.rail(),
-          Expanded(
-            child: MultiSplitView(
-              dividerBuilder: (_, _, _, dragging, highlighted, _) {
-                return ResizablePaneDragHandle(
-                  isPressed: dragging,
-                  isHovered: highlighted,
-                );
-              },
-              initialAreas: [
-                Area(builder: (_, _) => const SavesScreen()),
-                Area(builder: (_, _) => const _ReaderViewPane()),
-              ],
-            ),
-          ),
-        ],
-      );
-    } else {
-      return const SavesScreen();
-    }
+    return Builder(
+      builder: (context) {
+        if (isExpanded(context)) {
+          return Row(
+            children: [
+              AppNavigationBar.rail(),
+              Expanded(
+                child: MultiSplitView(
+                  dividerBuilder: (_, _, _, dragging, highlighted, _) {
+                    return ResizablePaneDragHandle(
+                      isPressed: dragging,
+                      isHovered: highlighted,
+                    );
+                  },
+                  initialAreas: [
+                    Area(builder: (_, _) => const SavesScreen()),
+                    Area(builder: (_, _) => const _ReaderViewPane()),
+                  ],
+                ),
+              ),
+            ],
+          );
+        } else {
+          return const SavesScreen();
+        }
+      },
+    );
   }
 
   void _onReaderStatusChanged() {

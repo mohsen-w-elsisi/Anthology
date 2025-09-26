@@ -164,7 +164,7 @@ class _ActionsMenu extends StatelessWidget {
   }
 
   void _editTags(BuildContext context) {
-    EditTagsModal(article: widget.article).show(context);
+    EditTagsModal(article: widget.article).show();
   }
 }
 

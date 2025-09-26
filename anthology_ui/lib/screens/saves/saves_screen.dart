@@ -25,7 +25,7 @@ class SavesScreen extends StatelessWidget {
         ),
         body: const MainSaveView(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => NewSaveModal().show(context),
+          onPressed: () => NewSaveModal().show(),
           child: const Icon(Icons.add),
         ),
         bottomNavigationBar: AppNavigationBar.ifNotExpanded(context),

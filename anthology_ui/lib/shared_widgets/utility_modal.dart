@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 mixin UtilityModal on Widget {
   static const modalPadding = EdgeInsets.all(24.0);
@@ -10,7 +11,8 @@ mixin UtilityModal on Widget {
     minHeight: MediaQuery.of(context).size.height * 0.4,
   );
 
-  void show(BuildContext context) {
+  void show() {
+    final context = GetIt.I<GlobalKey<NavigatorState>>().currentContext!;
     if (_screenIsSmall(context)) {
       _showBottomSheet(context);
     } else {
@@ -34,10 +36,14 @@ mixin UtilityModal on Widget {
   void _showDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        content: ConstrainedBox(
-          constraints: _constraints(context),
-          child: this,
+      builder: (dialogContext) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(28.0)),
+          child: ConstrainedBox(
+            constraints: _constraints(context),
+            child: this,
+          ),
         ),
       ),
     );

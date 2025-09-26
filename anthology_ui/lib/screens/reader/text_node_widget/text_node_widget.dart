@@ -130,7 +130,7 @@ class NodeWidgetBuilder {
         text: node.text.substring(_nodeBoundStartIndex, _nodeBoundEndIndex),
         style: _highlightStyle,
         recognizer: TapGestureRecognizer()
-          ..onTap = () => highlightDetailModal.show(context),
+          ..onTap = () => highlightDetailModal.show(),
       ),
     );
   }

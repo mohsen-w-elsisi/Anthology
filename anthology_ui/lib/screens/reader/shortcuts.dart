@@ -29,14 +29,14 @@ class ShowTocModalActions extends Action<ShowTocIntent> {
     TocModal(
       brief: intent.brief,
       headingRegistry: intent.headingRegistry,
-    ).show(intent.context);
+    ).show();
   }
 }
 
 class ShowHighlightsModalAction extends Action<ShowHighlightsModalIntent> {
   @override
   void invoke(covariant ShowHighlightsModalIntent intent) {
-    HighlightsModal(highlights: intent.highlights).show(intent.context);
+    HighlightsModal(highlights: intent.highlights).show();
   }
 }
 
@@ -44,7 +44,7 @@ class ShowTextOptionsModalAction extends Action<ShowTextOptionsIntent> {
   @override
   void invoke(covariant ShowTextOptionsIntent intent) {
     if (intent.controller.isInitialized) {
-      TextOptionsModal(intent.controller).show(intent.context);
+      TextOptionsModal(intent.controller).show();
     }
   }
 }

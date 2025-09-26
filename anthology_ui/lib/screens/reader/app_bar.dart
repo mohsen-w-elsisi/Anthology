@@ -54,17 +54,17 @@ class ReaderScreenAppBar extends StatelessWidget {
   void _showTextOptionsModal(BuildContext context) {
     TextOptionsModal(
       context.read<TextOptionsController>(),
-    ).show(context);
+    ).show();
   }
 
   void _showHighlightsModal(BuildContext context) {
     HighlightsModal(
       highlights: context.read<ReaderScreenHighlightProvider>().highlights,
-    ).show(context);
+    ).show();
   }
 
   void _showTocModal(BuildContext context) => TocModal(
     brief: brief!,
     headingRegistry: context.read<HeadingRegistry>(),
-  ).show(context);
+  ).show();
 }
